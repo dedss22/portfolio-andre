@@ -1298,11 +1298,11 @@ function initScrolltriggerAnimations() {
   });
   }
 
-  if(document.querySelector(".awwwards-badge")) {
-  // Scrolltrigger Animation : Awwwards
-  $(".awwwards-badge").each(function (index) {
+  if(document.querySelector(".standards-badge")) {
+  // Scrolltrigger Animation : Standards Badge
+  $(".standards-badge").each(function (index) {
     let triggerElement = $(this);
-    let targetElement = $(".awwwards-badge svg:nth-child(1)");
+    let targetElement = $(".standards-badge svg:nth-child(1)");
   
     let tl = gsap.timeline({
       scrollTrigger: {
