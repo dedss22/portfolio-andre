@@ -1,0 +1,1740 @@
+<!DOCTYPE html><!--  This site was created by André Carvalho (Code by André)  -->
+<html lang="pt-BR">
+   <head>
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <title>Cassiano Imóveis — Estudo de Caso | André Carvalho</title>
+      <meta name="description" content="Estudo de caso técnico do projeto Cassiano Imóveis (Trancoso / Porto Seguro, BA, 2024): plataforma web desenvolvida com Astro 4 SSG, modelagem e migrações no Supabase e scripts de dados em Python por André Carvalho."/>
+      <meta property="og:title" content="Cassiano Imóveis — Estudo de Caso | André Carvalho"/>
+      <meta property="og:description" content="Plataforma imobiliária em Trancoso / Porto Seguro, BA (2024), construída com Astro SSG, integrações e migrações Supabase e scripts de dados em Python."/>
+      <meta property="og:image" content="https://andrecarvalhodev.com.br/cassiano_thumb.jpg"/>
+      <meta property="og:url" content="https://andrecarvalhodev.com.br/cassiano-imoveis.html"/>
+      <meta property="og:site_name" content="André Carvalho"/>
+      <meta property="og:locale" content="pt_BR"/>
+      <meta property="og:type" content="article"/>
+      <meta name="twitter:card" content="summary_large_image"/>
+      <meta name="twitter:title" content="Cassiano Imóveis — Estudo de Caso | André Carvalho"/>
+      <meta name="twitter:description" content="Estudo de caso técnico: Astro 4 SSG, Supabase e scripts Python para a Cassiano Imóveis em Trancoso / Porto Seguro, BA (2024)."/>
+      <meta name="twitter:image" content="https://andrecarvalhodev.com.br/cassiano_thumb.jpg"/>
+      <meta name="google" content="notranslate"/>
+      <link rel="canonical" href="https://andrecarvalhodev.com.br/cassiano-imoveis.html"/>
+      <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+
+      <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
+
+      <link href="assets/css/normalize.css" rel="stylesheet">
+      <link href="assets/css/locomotive-scroll.css" rel="stylesheet">
+      <link href="assets/css/styleguide.css" rel="stylesheet">
+      <link href="assets/css/components.css" rel="stylesheet">
+      <link href="assets/css/style-new.css" rel="stylesheet">
+
+<style>
+  /* Remover cursor azul gigante legado */
+  .mouse-pos-list-image-bounce, .mouse-pos-list-image, .mouse-pos-list-btn, .mouse-pos-list-span {
+    display: none !important;
+  }
+
+  /* Botão Seletor PT | EN no Header */
+  .lang-switcher-wrap {
+    display: inline-flex !important;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    padding: 3px 5px;
+    margin-left: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lang-switcher-wrap:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none !important;
+  }
+  .lang-btn {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    color: rgba(255, 255, 255, 0.55);
+    transition: all 0.25s ease;
+    user-select: none;
+    line-height: 1.2;
+  }
+  .lang-btn.active {
+    background: #FFFFFF !important;
+    color: #0B1220 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  }
+  .lang-btn:not(.active):hover {
+    color: #FFFFFF;
+  }
+  .lang-divider {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 10px;
+    margin: 0 2px;
+    user-select: none;
+  }
+
+  .nav-bar .links-wrap {
+    display: flex !important;
+    align-items: center !important;
+  }
+  .nav-bar .links-wrap li:has(.lang-switcher-wrap),
+  .nav-bar .links-wrap li.lang-item {
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  @media screen and (max-width: 540px) {
+    .lang-switcher-wrap {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+    .nav-bar .links-wrap li.btn-menu {
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+  }
+</style>
+
+<style id="logo-calibrated">
+  /* Calibração milimétrica do logo Feito por André -> André Carvalho */
+  .btn-link.btn-left-top .credit {
+    padding-right: 0.28em !important;
+  }
+  .btn-link.btn-left-top .dennis {
+    padding-right: 0 !important;
+  }
+  .btn-link.btn-left-top .snellenberg {
+    transform: translateX(3.08em) !important;
+    padding-left: 0 !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.7, 0, 0.3, 1) !important;
+  }
+  .btn-link.btn-left-top:hover .code-by {
+    transform: translateX(-4.05em) rotate(0.001deg) !important;
+  }
+  .btn-link.btn-left-top:hover .dennis {
+    transform: translateX(-4.05em) rotate(0.001deg) !important;
+    padding-right: 4.8em !important;
+  }
+  .btn-link.btn-left-top:hover .snellenberg {
+    opacity: 1 !important;
+  }
+</style>
+
+<style id="luxury-navy-wave">
+  /* Palette Deep Navy & Midnight Sapphire */
+  :root {
+    --color-navy: #0B1220;
+    --color-navy-dark: #070B14;
+    --color-navy-card: #10192B;
+    --color-navy-surface: #131E35;
+    --color-cyan-glow: #38BDF8;
+    --color-sapphire: #0284C7;
+    --color-dark: #0B1220;
+    --color-dark-dark: #070B14;
+    --color-blue: #38BDF8;
+    --color-blue-dark: #0284C7;
+  }
+
+  html, body, .main, .main-wrap {
+    background-color: #0B1220 !important;
+    color: #FFFFFF !important;
+  }
+
+  body {
+    overflow: auto !important;
+  }
+
+  ::selection {
+    background-color: #0284C7 !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Preloader background in dark navy */
+  .loading-screen {
+    background: #070B14 !important;
+  }
+  .loading-container {
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  /* Mobile Drawer Nav in Deep Navy */
+  .fixed-nav, .nav-container {
+    background: #0B1220 !important;
+  }
+
+  /* Rounded Div Seamless Dark Curve */
+  .footer-rounded-div .rounded-div {
+    background: #0B1220 !important;
+  }
+
+  /* Navbar links in Deep Navy */
+  .case-hero-section .nav-bar,
+  .case-hero-section .nav-bar a,
+  .case-hero-section .nav-bar .btn-text-inner,
+  .case-hero-section .nav-bar .code-by,
+  .case-hero-section .nav-bar .dennis-span,
+  .case-hero-section .nav-bar .snellenberg,
+  .case-hero-section .nav-bar .credit span {
+    color: #FFFFFF !important;
+  }
+  .case-hero-section .nav-bar .btn-link:not(.active) .btn-text-inner {
+    color: rgba(255, 255, 255, 0.72) !important;
+  }
+  .case-hero-section .nav-bar .btn-link:hover .btn-text-inner {
+    color: #FFFFFF !important;
+  }
+  .case-hero-section .nav-bar .btn-link.active .btn-text-inner::before {
+    background: #38BDF8 !important;
+  }
+
+  /* Footer Section in Deep Navy */
+  .section.footer {
+    background: #0B1220 !important;
+    background: radial-gradient(ellipse 100% 90% at 50% 100%, #162444 0%, #0B1220 65%, #070B14 100%) !important;
+    border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
+  }
+
+  footer h2 span:first-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+  }
+
+  .profile-picture {
+    position: relative !important;
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
+    background: url("andre_avatar.jpg") center center no-repeat !important;
+    background-size: cover !important;
+    width: 0.82em !important;
+    height: 0.82em !important;
+    margin-right: 0.18em !important;
+    transform: translateY(0.04em) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* Normal buttons on Deep Navy */
+  .btn-normal .btn-click {
+    box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.3) !important;
+    background: rgba(16, 25, 43, 0.65) !important;
+  }
+  .btn-normal .btn-fill {
+    background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%) !important;
+  }
+  .btn-normal .btn-text-inner,
+  .btn-normal .btn-text-inner.change {
+    color: #FFFFFF !important;
+  }
+
+  /* ========================================================
+     CASE STUDY STYLES — CASSIANO IMÓVEIS (DEEP NAVY)
+     ======================================================== */
+  .case-hero-section {
+    background: #0B1220 !important;
+    background: radial-gradient(ellipse 90% 80% at 50% 12%, #162444 0%, #0B1220 70%, #070B14 100%) !important;
+    padding-top: calc(var(--section-padding) * 1.25) !important;
+    padding-bottom: clamp(3rem, 5vw, 5.5rem) !important;
+    position: relative;
+  }
+
+  .case-breadcrumb-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: clamp(2rem, 3.5vw, 3.25rem);
+  }
+
+  .case-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.55rem 1.05rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.04);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+  }
+  .case-back-link:hover {
+    color: #FFFFFF;
+    border-color: rgba(56, 189, 248, 0.6);
+    background: rgba(56, 189, 248, 0.12);
+    transform: translateX(-3px);
+  }
+
+  .case-eyebrow-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.48rem 1rem;
+    border-radius: 9999px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.32);
+    color: #7DD3FC;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .case-eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38BDF8;
+    box-shadow: 0 0 10px #38BDF8;
+  }
+
+  .case-hero-title {
+    color: #FFFFFF !important;
+    font-size: clamp(3rem, 7.2vw, 7.4rem) !important;
+    font-weight: 450 !important;
+    line-height: 1.04 !important;
+    letter-spacing: -0.03em !important;
+    margin-bottom: 1.35rem !important;
+  }
+
+  .case-hero-lead {
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: clamp(1.1rem, 1.45vw, 1.45rem) !important;
+    line-height: 1.55 !important;
+    max-width: 760px;
+    margin-bottom: clamp(2.5rem, 4.5vw, 4.25rem) !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Metadata Grid */
+  .case-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 2.5rem);
+    margin-bottom: clamp(3rem, 5vw, 4.5rem);
+  }
+  .case-meta-item {
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    padding-top: 1.25rem;
+  }
+  .case-meta-item h5 {
+    color: rgba(56, 189, 248, 0.82) !important;
+    font-size: 0.78rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.65rem !important;
+    opacity: 1 !important;
+  }
+  .case-meta-item p {
+    color: #FFFFFF !important;
+    font-size: clamp(1rem, 1.1vw, 1.15rem) !important;
+    line-height: 1.45 !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  @media screen and (max-width: 900px) {
+    .case-meta-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media screen and (max-width: 540px) {
+    .case-meta-grid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  /* Hero Showcase Image */
+  .case-hero-showcase {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #10192B;
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 40px rgba(2, 132, 199, 0.14);
+    aspect-ratio: 3 / 2;
+    width: 100%;
+  }
+  .case-hero-showcase img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media screen and (max-width: 640px) {
+    .case-hero-showcase {
+      border-radius: 16px;
+    }
+  }
+
+  /* Case Sections */
+  .case-section {
+    background: #0B1220;
+    padding: clamp(3.5rem, 6.5vw, 7rem) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    position: relative;
+  }
+  .case-section.alt-surface {
+    background: linear-gradient(180deg, #0D1628 0%, #0B1220 100%);
+  }
+
+  .case-two-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    gap: clamp(2rem, 5vw, 5.5rem);
+    align-items: start;
+  }
+  @media screen and (max-width: 860px) {
+    .case-two-col {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+  }
+
+  .case-section-label {
+    display: inline-block;
+    color: #38BDF8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.9rem;
+  }
+
+  .case-section-title {
+    color: #FFFFFF !important;
+    font-size: clamp(2rem, 3.2vw, 3.1rem) !important;
+    font-weight: 450 !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.02em !important;
+    margin-bottom: 0 !important;
+  }
+
+  .case-prose p {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: clamp(1.05rem, 1.25vw, 1.25rem) !important;
+    line-height: 1.68 !important;
+    margin-bottom: 1.4rem !important;
+  }
+  .case-prose p:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Highlight tags */
+  .case-pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.75rem;
+  }
+  .case-pill {
+    padding: 0.45rem 0.95rem;
+    border-radius: 9999px;
+    background: #131E35;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: #E0F2FE;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  /* Architecture 3-Column Grid */
+  .case-arch-header {
+    max-width: 780px;
+    margin-bottom: clamp(2.5rem, 4.5vw, 4rem);
+  }
+  .case-arch-header p {
+    color: rgba(255, 255, 255, 0.76) !important;
+    font-size: clamp(1.05rem, 1.25vw, 1.22rem) !important;
+    line-height: 1.6 !important;
+    margin-top: 1.1rem !important;
+  }
+
+  .case-arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+    margin-bottom: clamp(2.5rem, 4vw, 3.5rem);
+  }
+  @media screen and (max-width: 960px) {
+    .case-arch-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .case-arch-card {
+    background: #10192B;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: clamp(1.6rem, 2.5vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .case-arch-card:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.38);
+  }
+  .case-arch-num {
+    color: #38BDF8;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .case-arch-card .stripe {
+    background: rgba(255, 255, 255, 0.14) !important;
+    margin-bottom: 1.25rem;
+  }
+  .case-arch-card h4 {
+    color: #FFFFFF !important;
+    font-size: clamp(1.3rem, 1.55vw, 1.55rem) !important;
+    line-height: 1.25 !important;
+    margin-bottom: 0.85rem !important;
+  }
+  .case-arch-card p {
+    color: rgba(255, 255, 255, 0.76) !important;
+    font-size: 1rem !important;
+    line-height: 1.62 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Data Pipeline Flow Strip */
+  .case-flow-box {
+    background: linear-gradient(135deg, rgba(22, 36, 68, 0.75) 0%, rgba(16, 25, 43, 0.95) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.24);
+    border-radius: 20px;
+    padding: clamp(1.5rem, 2.5vw, 2.25rem);
+  }
+  .case-flow-title {
+    color: #7DD3FC !important;
+    font-size: 0.82rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.09em !important;
+    margin-bottom: 1.35rem !important;
+    opacity: 1 !important;
+  }
+  .case-flow-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  @media screen and (max-width: 900px) {
+    .case-flow-steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media screen and (max-width: 540px) {
+    .case-flow-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+  .case-flow-step {
+    background: rgba(7, 11, 20, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+  }
+  .case-flow-step strong {
+    display: block;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+  .case-flow-step span {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  /* Case Study CTA Section */
+  .case-cta-section {
+    background: radial-gradient(ellipse 85% 90% at 50% 50%, #162444 0%, #0B1220 72%);
+    padding: clamp(4rem, 7vw, 7.5rem) 0;
+    border-top: 1px solid rgba(56, 189, 248, 0.14);
+  }
+  .case-cta-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .case-cta-copy {
+    max-width: 640px;
+  }
+  .case-cta-copy h2 {
+    color: #FFFFFF !important;
+    font-size: clamp(2.1rem, 3.6vw, 3.6rem) !important;
+    line-height: 1.12 !important;
+    margin-bottom: 1rem !important;
+  }
+  .case-cta-copy p {
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: clamp(1.05rem, 1.25vw, 1.25rem) !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+  }
+  .case-cta-actions {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+</style>
+
+<style id="interactive-fluid-css">
+  /* Esfera de Vidro com Física Líquida Interativa */
+  .btn-round .btn-click {
+    position: relative !important;
+    overflow: hidden !important;
+    background: #070D18 !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 25px rgba(56, 189, 248, 0.15) !important;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.25s ease !important;
+  }
+
+  .btn-round .btn-click:hover {
+    border-color: rgba(56, 189, 248, 0.75) !important;
+    box-shadow: 0 15px 45px rgba(2, 132, 199, 0.45), 0 0 30px rgba(56, 189, 248, 0.3) !important;
+  }
+
+  .btn-round .btn-click::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 40%, transparent 65%);
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  .btn-round canvas.fluid-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+  }
+
+  .btn-round .liquid-wave-container,
+  .btn-round .btn-fill {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .btn-round .btn-text {
+    position: relative !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+  }
+
+  .btn-round .btn-text-inner {
+    color: #FFFFFF !important;
+    font-weight: 500 !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 15px rgba(11, 18, 32, 0.95) !important;
+    letter-spacing: 0.02em !important;
+  }
+</style>
+
+<script id="brazil-timezone-patch">
+(function() {
+  const OrigDateTimeFormat = Intl.DateTimeFormat;
+  Intl.DateTimeFormat = function(locales, options) {
+    if (options && options.timeZone === 'Europe/Amsterdam') {
+      options.timeZone = 'America/Sao_Paulo';
+    }
+    const instance = new OrigDateTimeFormat(locales, options);
+    const origFormat = instance.format.bind(instance);
+    instance.format = function(date) {
+      const res = origFormat(date);
+      return res.replace(/GMT-3|UTC-3|BRST/g, 'BRT');
+    };
+    return instance;
+  };
+  Intl.DateTimeFormat.prototype = OrigDateTimeFormat.prototype;
+
+  function updateBrazilClock() {
+    const timeSpan = document.getElementById('timeSpan');
+    if (!timeSpan) return;
+    try {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Sao_Paulo',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+      timeSpan.textContent = formatter.format(new Date()) + ' BRT';
+    } catch(e) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', updateBrazilClock);
+  window.addEventListener('load', updateBrazilClock);
+  setInterval(updateBrazilClock, 1000);
+})();
+</script>
+</head>
+
+   <body data-barba="wrapper">
+      <div class="no-scroll-overlay"></div>
+      <div class="loading-container">
+         <div class="loading-screen">
+            <div class="rounded-div-wrap top">
+               <div class="rounded-div"></div>
+            </div>
+            <div class="loading-words">
+               <h2 class="home-active home-active-first">Olá<div class="dot"></div></h2>
+               <h2 class="home-active">Bonjour<div class="dot"></div></h2>
+               <h2 class="home-active">स्वागत हे<div class="dot"></div></h2>
+               <h2 class="home-active">Ciao<div class="dot"></div></h2>
+               <h2 class="home-active jap">おい<div class="dot"></div></h2>
+               <h2 class="home-active">Hallå<div class="dot"></div></h2>
+               <h2 class="home-active">Guten tag<div class="dot"></div></h2>
+               <h2 class="home-active">Hallo<div class="dot"></div></h2>
+               <h2 class="home-active-last">Hello<div class="dot"></div></h2>
+               <h2 data-page="home"><span data-i18n="nav_home">Início</span><div class="dot"></div></h2>
+               <h2 data-page="work"><span data-i18n="nav_work">Projetos</span><div class="dot"></div></h2>
+               <h2 class="active" data-page="cassiano">Cassiano Imóveis<div class="dot"></div></h2>
+               <h2 data-page="about"><span data-i18n="nav_about">Sobre</span><div class="dot"></div></h2>
+               <h2 data-page="contact"><span data-i18n="nav_contact">Contato</span><div class="dot"></div></h2>
+               <h2 data-page="success"><span data-i18n="nav_success">Sucesso</span><div class="dot"></div></h2>
+               <h2 data-page="archive"><span data-i18n="nav_archive">Arquivo</span><div class="dot"></div></h2>
+               <h2 data-page="error">Error<div class="dot"></div></h2>
+            </div>
+            <div class="rounded-div-wrap bottom">
+               <div class="rounded-div"></div>
+            </div>
+         </div>
+      </div>
+
+      <main class="main" id="case-cassiano" data-barba="container" data-barba-namespace="case">
+         <div class="btn btn-hamburger">
+            <div class="btn-click magnetic" data-strength="50" data-strength-text="25">
+               <div class="btn-fill"></div>
+               <div class="btn-text">
+                  <div class="btn-bars"></div>
+                  <span class="btn-text-inner" data-i18n="menu_label">Menu</span>
+               </div>
+            </div>
+         </div>
+
+         <div class="overlay fixed-nav-back"></div>
+         <div class="fixed-nav theme-dark">
+            <div class="fixed-nav-rounded-div">
+               <div class="rounded-div-wrap">
+                  <div class="rounded-div"></div>
+               </div>
+            </div>
+            <div class="fixed-nav-inner">
+               <div class="row nav-row">
+                  <h5 data-i18n="nav_title">Navegação</h5>
+                  <div class="stripe"></div>
+                  <ul class="links-wrap">
+                     <li class="btn btn-link">
+                        <a href="index.html" data-barba-prevent class="btn-click magnetic" data-strength="24" data-strength-text="12">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="nav_home">Início</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link active">
+                        <a href="work.html" data-barba-prevent class="btn-click magnetic" data-strength="24" data-strength-text="12">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="work">Projetos</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link">
+                        <a href="about.html" data-barba-prevent class="btn-click magnetic" data-strength="24" data-strength-text="12">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="about">Sobre</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link">
+                        <a href="contact.html" data-barba-prevent class="btn-click magnetic" data-strength="24" data-strength-text="12">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="contact">Contato</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link lang-item">
+                        <div class="lang-switcher-wrap">
+                           <a href="#" class="lang-switch" data-barba-prevent aria-label="Alterar idioma">
+                              <span class="lang-btn btn-pt active">PT</span>
+                              <span class="lang-divider">|</span>
+                              <span class="lang-btn btn-en">EN</span>
+                           </a>
+                        </div>
+                     </li>
+                  </ul>
+               </div>
+               <div class="row social-row">
+                  <div class="stripe"></div>
+                  <div class="socials">
+                     <h5 data-i18n="socials_title">Redes Sociais</h5>
+                     <ul>
+                        <li class="btn btn-link btn-link-external">
+                           <a href="https://www.instagram.com/andrebcmoreir/" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                              <span class="btn-text">
+                                 <span class="btn-text-inner">Instagram</span>
+                              </span>
+                           </a>
+                        </li>
+                        <li class="btn btn-link btn-link-external">
+                           <a href="https://x.com/dedss22" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                              <span class="btn-text">
+                                 <span class="btn-text-inner">Twitter</span>
+                              </span>
+                           </a>
+                        </li>
+                        <li class="btn btn-link btn-link-external">
+                           <a href="https://www.linkedin.com/in/andre-carvalho-developer/" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                              <span class="btn-text">
+                                 <span class="btn-text-inner">LinkedIn</span>
+                              </span>
+                           </a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="main-wrap" data-scroll-container>
+            <header class="section default-header case-header case-hero-section theme-dark" data-scroll-section>
+               <div class="nav-bar">
+                  <div class="credits-top">
+                     <div class="btn btn-link btn-left-top">
+                        <a href="index.html" data-barba-prevent class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                           <span class="btn-text">
+                              <div class="credit"><span>©</span></div><div class="cbd"><span class="code-by">Feito por </span><span class="dennis"><span class="dennis-span">André</span> <span class="snellenberg">Carvalho</span></span></div>
+                           </span>
+                        </a>
+                     </div>
+                  </div>
+                  <ul class="links-wrap">
+                     <li class="btn btn-link active">
+                        <a href="work.html" data-barba-prevent class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="work">Projetos</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link">
+                        <a href="about.html" data-barba-prevent class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="about">Sobre</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link">
+                        <a href="contact.html" data-barba-prevent class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                           <span class="btn-text">
+                              <span class="btn-text-inner" data-i18n="contact">Contato</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li class="btn btn-link lang-item">
+                        <div class="lang-switcher-wrap">
+                           <a href="#" class="lang-switch" id="lang-switch-btn" data-barba-prevent aria-label="Alterar idioma">
+                              <span class="lang-btn btn-pt active" id="btn-pt">PT</span>
+                              <span class="lang-divider">|</span>
+                              <span class="lang-btn btn-en" id="btn-en">EN</span>
+                           </a>
+                        </div>
+                     </li>
+                     <li class="btn btn-link btn-menu">
+                        <div class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                           <div class="btn-text">
+                              <span class="btn-text-inner" data-i18n="menu_label">Menu</span>
+                           </div>
+                        </div>
+                     </li>
+                  </ul>
+               </div>
+
+               <div class="container medium once-in">
+                  <div class="case-breadcrumb-row">
+                     <a href="work.html" data-barba-prevent class="case-back-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                           <path d="M12.5 8H3.5M3.5 8L7.5 4M3.5 8L7.5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span data-i18n="case_back_work">Voltar para Projetos</span>
+                     </a>
+                     <div class="case-eyebrow-pill">
+                        <span class="case-eyebrow-dot"></span>
+                        <span data-i18n="case_eyebrow">Estudo de Caso • 2024</span>
+                     </div>
+                  </div>
+
+                  <h1 class="case-hero-title">Cassiano Imóveis</h1>
+                  <p class="case-hero-lead" data-i18n="case_hero_lead">Plataforma web imobiliária desenvolvida para apresentar propriedades em Trancoso e Porto Seguro (BA), unindo geração estática com Astro 4 SSG, modelagem e migrações no Supabase e scripts de dados em Python.</p>
+
+                  <div class="case-meta-grid">
+                     <div class="case-meta-item">
+                        <h5 data-i18n="meta_client_label">Cliente / Localização</h5>
+                        <p>Trancoso / Porto Seguro, BA</p>
+                     </div>
+                     <div class="case-meta-item">
+                        <h5 data-i18n="meta_services_label">Serviços</h5>
+                        <p data-i18n="meta_services_value">Desenvolvimento Web & Astro SSG</p>
+                     </div>
+                     <div class="case-meta-item">
+                        <h5 data-i18n="meta_stack_label">Stack</h5>
+                        <p>Astro 4 • Supabase • Python</p>
+                     </div>
+                     <div class="case-meta-item">
+                        <h5 data-i18n="meta_year_label">Ano</h5>
+                        <p>2024</p>
+                     </div>
+                  </div>
+
+                  <div class="case-hero-showcase">
+                     <img src="cassiano_thumb.jpg" width="1200" height="800" alt="Cassiano Imóveis — Plataforma web em Trancoso e Porto Seguro, BA"/>
+                  </div>
+               </div>
+            </header>
+
+            <section class="section case-section" data-scroll-section>
+               <div class="container medium">
+                  <div class="case-two-col">
+                     <div>
+                        <span class="case-section-label" data-i18n="overview_label">01 • Visão Geral & Desafio</span>
+                        <h2 class="case-section-title" data-i18n="overview_title">Vitrine imobiliária leve com base de dados estruturada</h2>
+                     </div>
+                     <div class="case-prose">
+                        <p data-i18n="overview_p1">A atuação no mercado imobiliário de Trancoso e Porto Seguro (BA) demanda uma presença digital clara, confiável e responsiva, permitindo que compradores e investidores explorem imóveis da região sem lentidão ou interfaces carregadas.</p>
+                        <p data-i18n="overview_p2">O desafio central do projeto foi combinar a entrega estática enxuta do Astro SSG com uma camada de dados organizada no Supabase e rotinas de tratamento em Python — garantindo consistência cadastral entre localidades, categorias e mídias dos imóveis sem depender de arquiteturas pesadas em tempo de execução.</p>
+                        <div class="case-pill-list">
+                           <span class="case-pill">Astro 4 SSG</span>
+                           <span class="case-pill">Supabase</span>
+                           <span class="case-pill">Python</span>
+                           <span class="case-pill" data-i18n="pill_location">Trancoso / Porto Seguro, BA</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <section class="section case-section alt-surface" data-scroll-section>
+               <div class="container medium">
+                  <div class="case-arch-header">
+                     <span class="case-section-label" data-i18n="arch_label">02 • Arquitetura Técnica</span>
+                     <h2 class="case-section-title" data-i18n="arch_title">SSG em Astro, Supabase e scripts Python em sintonia</h2>
+                     <p data-i18n="arch_intro">A solução foi estruturada em três camadas complementares para separar com clareza a preparação dos dados imobiliários, o armazenamento relacional e a geração das páginas estáticas.</p>
+                  </div>
+
+                  <div class="case-arch-grid">
+                     <article class="case-arch-card">
+                        <span class="case-arch-num">01 / FRONTEND SSG</span>
+                        <div class="stripe"></div>
+                        <h4 data-i18n="arch_c1_title">Astro 4 & Geração Estática</h4>
+                        <p data-i18n="arch_c1_desc">Construção de templates modulares e componentes reutilizáveis em Astro 4 no modelo Static Site Generation (SSG). O build gera HTML semântico e leve, enviando JavaScript ao navegador apenas para interações pontuais e mantendo foco em SEO técnico.</p>
+                     </article>
+
+                     <article class="case-arch-card">
+                        <span class="case-arch-num">02 / DATABASE & SCHEMA</span>
+                        <div class="stripe"></div>
+                        <h4 data-i18n="arch_c2_title">Integrações & Migrações Supabase</h4>
+                        <p data-i18n="arch_c2_desc">Modelagem relacional no Supabase acompanhada de migrações versionadas para estruturar imóveis, localidades de Trancoso e Porto Seguro, tipologias e referências de mídia, oferecendo rastreabilidade na evolução do banco de dados.</p>
+                     </article>
+
+                     <article class="case-arch-card">
+                        <span class="case-arch-num">03 / DATA PIPELINE</span>
+                        <div class="stripe"></div>
+                        <h4 data-i18n="arch_c3_title">Scripts Python de Dados Imobiliários</h4>
+                        <p data-i18n="arch_c3_desc">Scripts em Python responsáveis por higienização, padronização de campos e preparação do pipeline de dados imobiliários antes da sincronização com o Supabase e da geração das páginas no Astro.</p>
+                     </article>
+                  </div>
+
+                  <div class="case-flow-box">
+                     <h5 class="case-flow-title" data-i18n="flow_title">Fluxo de Pipeline & Publicação</h5>
+                     <div class="case-flow-steps">
+                        <div class="case-flow-step">
+                           <strong data-i18n="flow_s1_title">1. Scripts Python</strong>
+                           <span data-i18n="flow_s1_desc">Padronização, validação e tratamento dos registros imobiliários.</span>
+                        </div>
+                        <div class="case-flow-step">
+                           <strong data-i18n="flow_s2_title">2. Supabase</strong>
+                           <span data-i18n="flow_s2_desc">Esquema relacional e migrações controladas para catálogo e mídias.</span>
+                        </div>
+                        <div class="case-flow-step">
+                           <strong data-i18n="flow_s3_title">3. Astro 4 SSG</strong>
+                           <span data-i18n="flow_s3_desc">Consumo estruturado dos dados e geração das páginas estáticas.</span>
+                        </div>
+                        <div class="case-flow-step">
+                           <strong data-i18n="flow_s4_title">4. Entrega Web</strong>
+                           <span data-i18n="flow_s4_desc">Páginas leves e responsivas para desktop e mobile em produção.</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <section class="section case-cta-section" data-scroll-section>
+               <div class="container medium">
+                  <div class="case-cta-wrap">
+                     <div class="case-cta-copy">
+                        <span class="case-section-label" data-i18n="cta_label">03 • Próximo Passo</span>
+                        <h2 data-i18n="cta_title">Precisa de uma plataforma rápida e sob medida?</h2>
+                        <p data-i18n="cta_desc">Se você busca unir desenvolvimento web em Astro com integrações de dados e automações em Python, vamos conversar sobre o seu próximo projeto.</p>
+                     </div>
+                     <div class="case-cta-actions">
+                        <div class="btn btn-round">
+                           <a href="contact.html" data-barba-prevent class="btn-click magnetic" data-strength="100" data-strength-text="50">
+                              <div class="btn-fill"></div>
+                              <div class="liquid-wave-container">
+                                 <div class="liquid-wave-inner">
+                                    <div class="liquid-wave-shape wave-1"></div>
+                                    <div class="liquid-wave-shape wave-2"></div>
+                                    <div class="liquid-wave-shape wave-3"></div>
+                                 </div>
+                              </div>
+                              <span class="btn-text">
+                                 <span class="btn-text-inner" data-i18n="cta_btn_start">Iniciar um projeto</span>
+                              </span>
+                           </a>
+                        </div>
+                        <div class="btn btn-normal">
+                           <a href="work.html" data-barba-prevent class="btn-click magnetic" data-strength="25" data-strength-text="15">
+                              <div class="btn-fill"></div>
+                              <span class="btn-text">
+                                 <span class="btn-text-inner" data-i18n="cta_btn_work">Ver todos os projetos</span>
+                              </span>
+                           </a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <div class="footer-rounded-div" data-scroll-section>
+               <div class="rounded-div-wrap">
+                  <div class="rounded-div"></div>
+               </div>
+            </div>
+            <div class="footer-wrap footer-footer-wrap theme-dark" data-scroll-section>
+               <footer class="section footer" data-scroll data-scroll-speed="-4" data-scroll-position="bottom">
+                  <div class="container medium">
+                     <div class="row">
+                        <div class="flex-col">
+                           <div class="arrow">
+                              <svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                 <title>Cassiano Imóveis — André Carvalho</title>
+                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(-1019.000000, -279.000000)" stroke="#FFFFFF" stroke-width="1.5">
+                                       <g transform="translate(1026.000000, 286.000000) rotate(90.000000) translate(-1026.000000, -286.000000) translate(1020.000000, 280.000000)">
+                                          <polyline points="2.76923077 0 12 0 12 9.23076923"></polyline>
+                                          <line x1="12" y1="0" x2="0" y2="12"></line>
+                                       </g>
+                                    </g>
+                                 </g>
+                              </svg>
+                           </div>
+                           <h2><span><div class="profile-picture"></div> <span data-i18n="lets_work">Vamos trabalhar</span> </span><span data-i18n="together">juntos</span></h2>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="flex-col">
+                           <div class="stripe"></div>
+                           <div class="btn-fixed">
+                              <div class="btn btn-round" data-scroll data-scroll-speed="-1" data-scroll-direction="horizontal" data-scroll-position="bottom" data-scroll-offset="-50%, 0">
+                                 <a href="contact.html" data-barba-prevent class="btn-click magnetic" data-strength="100" data-strength-text="50">
+                                    <div class="btn-fill"></div>
+                                    <div class="liquid-wave-container">
+                                       <div class="liquid-wave-inner">
+                                          <div class="liquid-wave-shape wave-1"></div>
+                                          <div class="liquid-wave-shape wave-2"></div>
+                                          <div class="liquid-wave-shape wave-3"></div>
+                                       </div>
+                                    </div>
+                                    <span class="btn-text">
+                                       <span class="btn-text-inner" data-i18n="get_in_touch">Entrar em contato</span>
+                                    </span>
+                                 </a>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="flex-col">
+                           <div class="btn btn-normal">
+                              <a href="mailto:andrecarvalho2@gmail.com" class="btn-click magnetic" data-strength="25" data-strength-text="15">
+                                 <div class="btn-fill"></div>
+                                 <span class="btn-text">
+                                    <span class="btn-text-inner">andrecarvalho2@gmail.com</span>
+                                 </span>
+                              </a>
+                           </div>
+                           <div class="btn btn-normal">
+                              <a href="https://www.linkedin.com/in/andre-carvalho-developer/" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="25" data-strength-text="15">
+                                 <div class="btn-fill"></div>
+                                 <span class="btn-text">
+                                    <span class="btn-text-inner">Porto Seguro, BA • Brasil</span>
+                                 </span>
+                              </a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="container no-padding">
+                     <div class="row bottom-footer">
+                        <div class="flex-col">
+                           <div class="credits">
+                              <h5 data-i18n="version_title">Versão</h5>
+                              <p data-i18n="version_edition">2026 © Edição</p>
+                           </div>
+                           <div class="time">
+                              <h5 data-i18n="local_time">Horário local</h5>
+                              <p><span id="timeSpan">07:35 AM BRT</span></p>
+                           </div>
+                        </div>
+                        <div class="flex-col">
+                           <div class="socials">
+                              <h5 data-i18n="socials_title">Redes Sociais</h5>
+                              <ul>
+                                 <li class="btn btn-link btn-link-external">
+                                    <a href="https://www.instagram.com/andrebcmoreir/" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                                       <span class="btn-text">
+                                          <span class="btn-text-inner">Instagram</span>
+                                       </span>
+                                    </a>
+                                 </li>
+                                 <li class="btn btn-link btn-link-external">
+                                    <a href="https://x.com/dedss22" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                                       <span class="btn-text">
+                                          <span class="btn-text-inner">Twitter</span>
+                                       </span>
+                                    </a>
+                                 </li>
+                                 <li class="btn btn-link btn-link-external">
+                                    <a href="https://www.linkedin.com/in/andre-carvalho-developer/" target="_blank" rel="noopener noreferrer" class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                                       <span class="btn-text">
+                                          <span class="btn-text-inner">LinkedIn</span>
+                                       </span>
+                                    </a>
+                                 </li>
+                              </ul>
+                              <div class="stripe"></div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </footer>
+               <div class="overlay overlay-gradient"></div>
+            </div>
+         </div>
+      </main>
+
+      <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.6.1/dist/lazyload.min.js"></script>
+
+      <script src="assets/js/locomotive-scroll.min.js"></script>
+      <script defer src="assets/js/index-new.js"></script>
+
+<script>
+  (function() {
+    let currentLang = 'pt';
+    const dict = {
+      pt: {
+        // Navigation & Transition Loader
+        nav_home: 'Início',
+        nav_work: 'Projetos',
+        nav_about: 'Sobre',
+        nav_contact: 'Contato',
+        nav_success: 'Sucesso',
+        nav_archive: 'Arquivo',
+        menu_label: 'Menu',
+        work: 'Projetos',
+        about: 'Sobre',
+        contact: 'Contato',
+        nav_title: 'Navegação',
+        socials_title: 'Redes Sociais',
+
+        // Global Common Footer
+        get_in_touch: 'Entrar em contato',
+        lets_work: 'Vamos trabalhar',
+        together: 'juntos',
+        local_time: 'Horário local',
+        version_title: 'Versão',
+        version_edition: '2026 © Edição',
+
+        // Case Study: Cassiano Imóveis
+        case_back_work: 'Voltar para Projetos',
+        case_eyebrow: 'Estudo de Caso • 2024',
+        case_hero_lead: 'Plataforma web imobiliária desenvolvida para apresentar propriedades em Trancoso e Porto Seguro (BA), unindo geração estática com Astro 4 SSG, modelagem e migrações no Supabase e scripts de dados em Python.',
+        meta_client_label: 'Cliente / Localização',
+        meta_services_label: 'Serviços',
+        meta_services_value: 'Desenvolvimento Web & Astro SSG',
+        meta_stack_label: 'Stack',
+        meta_year_label: 'Ano',
+        overview_label: '01 • Visão Geral & Desafio',
+        overview_title: 'Vitrine imobiliária leve com base de dados estruturada',
+        overview_p1: 'A atuação no mercado imobiliário de Trancoso e Porto Seguro (BA) demanda uma presença digital clara, confiável e responsiva, permitindo que compradores e investidores explorem imóveis da região sem lentidão ou interfaces carregadas.',
+        overview_p2: 'O desafio central do projeto foi combinar a entrega estática enxuta do Astro SSG com uma camada de dados organizada no Supabase e rotinas de tratamento em Python — garantindo consistência cadastral entre localidades, categorias e mídias dos imóveis sem depender de arquiteturas pesadas em tempo de execução.',
+        pill_location: 'Trancoso / Porto Seguro, BA',
+        arch_label: '02 • Arquitetura Técnica',
+        arch_title: 'SSG em Astro, Supabase e scripts Python em sintonia',
+        arch_intro: 'A solução foi estruturada em três camadas complementares para separar com clareza a preparação dos dados imobiliários, o armazenamento relacional e a geração das páginas estáticas.',
+        arch_c1_title: 'Astro 4 & Geração Estática',
+        arch_c1_desc: 'Construção de templates modulares e componentes reutilizáveis em Astro 4 no modelo Static Site Generation (SSG). O build gera HTML semântico e leve, enviando JavaScript ao navegador apenas para interações pontuais e mantendo foco em SEO técnico.',
+        arch_c2_title: 'Integrações & Migrações Supabase',
+        arch_c2_desc: 'Modelagem relacional no Supabase acompanhada de migrações versionadas para estruturar imóveis, localidades de Trancoso e Porto Seguro, tipologias e referências de mídia, oferecendo rastreabilidade na evolução do banco de dados.',
+        arch_c3_title: 'Scripts Python de Dados Imobiliários',
+        arch_c3_desc: 'Scripts em Python responsáveis por higienização, padronização de campos e preparação do pipeline de dados imobiliários antes da sincronização com o Supabase e da geração das páginas no Astro.',
+        flow_title: 'Fluxo de Pipeline & Publicação',
+        flow_s1_title: '1. Scripts Python',
+        flow_s1_desc: 'Padronização, validação e tratamento dos registros imobiliários.',
+        flow_s2_title: '2. Supabase',
+        flow_s2_desc: 'Esquema relacional e migrações controladas para catálogo e mídias.',
+        flow_s3_title: '3. Astro 4 SSG',
+        flow_s3_desc: 'Consumo estruturado dos dados e geração das páginas estáticas.',
+        flow_s4_title: '4. Entrega Web',
+        flow_s4_desc: 'Páginas leves e responsivas para desktop e mobile em produção.',
+        cta_label: '03 • Próximo Passo',
+        cta_title: 'Precisa de uma plataforma rápida e sob medida?',
+        cta_desc: 'Se você busca unir desenvolvimento web em Astro com integrações de dados e automações em Python, vamos conversar sobre o seu próximo projeto.',
+        cta_btn_start: 'Iniciar um projeto',
+        cta_btn_work: 'Ver todos os projetos'
+      },
+      en: {
+        // Navigation & Transition Loader
+        nav_home: 'Home',
+        nav_work: 'Work',
+        nav_about: 'About',
+        nav_contact: 'Contact',
+        nav_success: 'Success',
+        nav_archive: 'Archive',
+        menu_label: 'Menu',
+        work: 'Work',
+        about: 'About',
+        contact: 'Contact',
+        nav_title: 'Navigation',
+        socials_title: 'Socials',
+
+        // Global Common Footer
+        get_in_touch: 'Get in touch',
+        lets_work: 'Let’s work',
+        together: 'together',
+        local_time: 'Local time',
+        version_title: 'Version',
+        version_edition: '2026 © Edition',
+
+        // Case Study: Cassiano Imóveis
+        case_back_work: 'Back to Work',
+        case_eyebrow: 'Case Study • 2024',
+        case_hero_lead: 'Real estate web platform built to showcase properties in Trancoso and Porto Seguro, Bahia, combining Astro 4 Static Site Generation (SSG), Supabase modeling and migrations, and Python data pipelines.',
+        meta_client_label: 'Client / Location',
+        meta_services_label: 'Services',
+        meta_services_value: 'Web Development & Astro SSG',
+        meta_stack_label: 'Stack',
+        meta_year_label: 'Year',
+        overview_label: '01 • Overview & Challenge',
+        overview_title: 'Lightweight property showcase backed by structured data',
+        overview_p1: 'Operating in the Trancoso and Porto Seguro real estate market requires a clear, trustworthy, and responsive digital presence so buyers and investors can browse regional properties without sluggish or bloated interfaces.',
+        overview_p2: 'The core engineering challenge was combining Astro SSG’s lean static delivery with a structured Supabase data layer and Python processing routines—keeping property listings, locations, and media consistent without heavy runtime overhead.',
+        pill_location: 'Trancoso / Porto Seguro, BA',
+        arch_label: '02 • Technical Architecture',
+        arch_title: 'Astro SSG, Supabase, and Python working in sync',
+        arch_intro: 'The system was organized into three complementary layers to cleanly separate real estate data preparation, relational storage, and static page generation.',
+        arch_c1_title: 'Astro 4 & Static Generation',
+        arch_c1_desc: 'Modular templates and reusable components built with Astro 4 Static Site Generation (SSG). The build outputs clean semantic HTML, shipping browser JavaScript only where interactivity is needed while keeping strong technical SEO.',
+        arch_c2_title: 'Supabase Modeling & Migrations',
+        arch_c2_desc: 'Relational schema design in Supabase backed by versioned migrations to structure properties, Trancoso and Porto Seguro locations, categories, and media references with predictable schema evolution.',
+        arch_c3_title: 'Python Real Estate Data Scripts',
+        arch_c3_desc: 'Dedicated Python scripts handling data sanitization, field normalization, and real estate pipeline preparation prior to Supabase synchronization and Astro static generation.',
+        flow_title: 'Pipeline & Publishing Flow',
+        flow_s1_title: '1. Python Scripts',
+        flow_s1_desc: 'Normalization, validation, and preparation of property records.',
+        flow_s2_title: '2. Supabase',
+        flow_s2_desc: 'Relational schema and controlled migrations for listings and media.',
+        flow_s3_title: '3. Astro 4 SSG',
+        flow_s3_desc: 'Structured data consumption and static page generation.',
+        flow_s4_title: '4. Web Delivery',
+        flow_s4_desc: 'Lightweight, responsive pages across desktop and mobile.',
+        cta_label: '03 • Next Step',
+        cta_title: 'Need a fast, tailor-made web platform?',
+        cta_desc: 'If you want to pair Astro web development with structured data integrations and Python automation, let’s talk about your next project.',
+        cta_btn_start: 'Start a project',
+        cta_btn_work: 'View all projects'
+      }
+    };
+
+    function updateLanguage(newLang) {
+      currentLang = newLang;
+      document.documentElement.lang = currentLang === 'pt' ? 'pt-BR' : 'en';
+      document.querySelectorAll('.btn-pt, #btn-pt').forEach(el => el.classList.toggle('active', currentLang === 'pt'));
+      document.querySelectorAll('.btn-en, #btn-en').forEach(el => el.classList.toggle('active', currentLang === 'en'));
+
+      const t = dict[currentLang];
+      if (t) {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (t[key] !== undefined) {
+            if (el.tagName === 'INPUT' && (el.type === 'submit' || el.type === 'button')) {
+              el.value = t[key];
+            } else if (el.innerHTML && el.innerHTML.includes('<br>')) {
+              el.innerHTML = t[key];
+            } else {
+              el.textContent = t[key];
+            }
+          }
+        });
+      }
+      try { localStorage.setItem('portfolio_lang', currentLang); } catch(e){}
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
+        setTimeout(() => scroll.update(), 60);
+      }
+    }
+
+    function syncLoadingWordForHref(href) {
+      if (!href) return;
+      let targetPage = null;
+      if (href.includes('cassiano-imoveis.html')) targetPage = 'cassiano';
+      else if (href.includes('work.html')) targetPage = 'work';
+      else if (href.includes('about.html')) targetPage = 'about';
+      else if (href.includes('contact.html')) targetPage = 'contact';
+      else if (href.includes('index.html') || href === '/' || href.endsWith('/')) targetPage = 'home';
+
+      if (targetPage) {
+        const loadingWords = document.querySelector('.loading-words');
+        if (loadingWords) {
+          loadingWords.querySelectorAll('h2:not(.home-active):not(.home-active-last)').forEach(h2 => {
+            if (h2.getAttribute('data-page') === targetPage) {
+              h2.classList.add('active');
+              const span = h2.querySelector('[data-i18n]');
+              if (span) {
+                const key = span.getAttribute('data-i18n');
+                if (dict[currentLang] && dict[currentLang][key]) {
+                  span.textContent = dict[currentLang][key];
+                }
+              }
+            } else {
+              h2.classList.remove('active');
+            }
+          });
+        }
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (link) {
+        syncLoadingWordForHref(link.getAttribute('href'));
+      }
+    }, true);
+
+    function observeLoadingWords() {
+      const lw = document.querySelector('.loading-words');
+      if (lw && !lw._observed) {
+        lw._observed = true;
+        const observer = new MutationObserver(function() {
+          const t = dict[currentLang];
+          if (t) {
+            lw.querySelectorAll('[data-i18n]').forEach(el => {
+              const key = el.getAttribute('data-i18n');
+              if (t[key] && el.textContent !== t[key]) {
+                el.textContent = t[key];
+              }
+            });
+          }
+        });
+        observer.observe(lw, { childList: true, subtree: true });
+      }
+    }
+
+    function initLang() {
+      try {
+        const saved = localStorage.getItem('portfolio_lang') || 'pt';
+        updateLanguage(saved);
+      } catch(e){
+        updateLanguage('pt');
+      }
+
+      observeLoadingWords();
+
+      document.querySelectorAll('.lang-switch, .lang-switcher-wrap').forEach(switcher => {
+        if (switcher._bound) return;
+        switcher._bound = true;
+        switcher.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const target = e.target.closest('.lang-btn');
+          let next = currentLang === 'pt' ? 'en' : 'pt';
+          if (target) {
+            if (target.classList.contains('btn-pt') || target.id === 'btn-pt') next = 'pt';
+            else if (target.classList.contains('btn-en') || target.id === 'btn-en') next = 'en';
+          }
+          updateLanguage(next);
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initLang);
+    window.addEventListener('load', initLang);
+
+    if (typeof barba !== 'undefined') {
+      try {
+        barba.hooks.afterEnter(function() {
+          initLang();
+        });
+        barba.hooks.beforeLeave(function(data) {
+          if (data && data.next && data.next.url) {
+            syncLoadingWordForHref(data.next.url.path || data.next.url.href);
+          }
+        });
+      } catch(e){}
+    }
+
+    function ensureScrollActive() {
+      if (typeof scroll !== 'undefined' && scroll) {
+        if (typeof scroll.start === 'function') scroll.start();
+        if (typeof scroll.update === 'function') scroll.update();
+      }
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+    }
+
+    window.addEventListener('load', function() {
+      setTimeout(ensureScrollActive, 600);
+      setTimeout(ensureScrollActive, 1500);
+      setTimeout(ensureScrollActive, 3000);
+    });
+
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) ensureScrollActive();
+    });
+
+    let lastWheelRescue = 0;
+    window.addEventListener('wheel', function() {
+      const now = Date.now();
+      if (now - lastWheelRescue > 600) {
+        lastWheelRescue = now;
+        if (typeof scroll !== 'undefined' && scroll && scroll.isStopped) {
+          scroll.start();
+          scroll.update();
+        }
+      }
+    }, { passive: true });
+  })();
+</script>
+
+<script>
+  // Garantir que a tela de carregamento nunca trave a visualização
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      var lc = document.querySelector('.loading-container');
+      if (lc) {
+        lc.style.opacity = '0';
+        lc.style.transition = 'opacity 0.5s ease';
+        setTimeout(function() { lc.style.display = 'none'; }, 500);
+      }
+    }, 1800);
+  });
+</script>
+
+<script id="interactive-fluid-physics">
+(function() {
+  class InteractiveFluidSphere {
+    constructor(container, canvas) {
+      this.container = container;
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d');
+
+      this.numPoints = 28;
+      this.points = [];
+      this.k = 0.038;
+      this.d = 0.048;
+      this.spread = 0.22;
+
+      this.baseLevel = 0.52;
+      this.targetLevel = 0.52;
+      this.currentLevel = 0.52;
+
+      this.tilt = 0;
+      this.tiltTarget = 0;
+      this.tiltVel = 0;
+
+      this.isHovered = false;
+      this.mouse = { x: 0, y: 0, prevX: 0, prevY: 0, speed: 0 };
+
+      this.initSize();
+      this.initPoints();
+      this.bindEvents();
+      this.animate();
+    }
+
+    initSize() {
+      this.dpr = window.devicePixelRatio || 1;
+      this.w = this.container.offsetWidth || 160;
+      this.h = this.container.offsetHeight || 160;
+      this.canvas.width = this.w * this.dpr;
+      this.canvas.height = this.h * this.dpr;
+      this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      this.radius = this.w / 2;
+    }
+
+    initPoints() {
+      this.points = [];
+      for (let i = 0; i <= this.numPoints; i++) {
+        this.points.push({
+          x: (i / this.numPoints) * this.w,
+          y: this.h * this.baseLevel,
+          targetY: this.h * this.baseLevel,
+          vel: 0
+        });
+      }
+    }
+
+    bindEvents() {
+      this.container.addEventListener('mouseenter', (e) => {
+        this.isHovered = true;
+        this.targetLevel = 0.42;
+        const rect = this.container.getBoundingClientRect();
+        this.mouse.prevX = e.clientX - rect.left;
+        this.mouse.prevY = e.clientY - rect.top;
+        this.splash(this.mouse.prevX, 22);
+      });
+
+      this.container.addEventListener('mouseleave', () => {
+        this.isHovered = false;
+        this.targetLevel = this.baseLevel;
+        this.tiltTarget = 0;
+      });
+
+      this.container.addEventListener('mousemove', (e) => {
+        const rect = this.container.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        const vx = mx - this.mouse.prevX;
+        const vy = my - this.mouse.prevY;
+        const speed = Math.sqrt(vx * vx + vy * vy);
+
+        this.mouse.x = mx;
+        this.mouse.y = my;
+        this.mouse.prevX = mx;
+        this.mouse.prevY = my;
+        this.mouse.speed = speed;
+
+        this.tiltTarget = Math.max(-0.45, Math.min(0.45, -vx * 0.028));
+
+        const idx = Math.round((mx / this.w) * this.numPoints);
+        if (idx >= 0 && idx <= this.numPoints) {
+          const force = Math.min(20, speed * 0.5);
+          this.points[idx].vel += (vy > 0 ? force : -force * 0.7);
+          if (idx > 0) this.points[idx - 1].vel += force * 0.4;
+          if (idx < this.numPoints) this.points[idx + 1].vel += force * 0.4;
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        this.initSize();
+        this.initPoints();
+      });
+    }
+
+    splash(x, strength) {
+      const idx = Math.round((x / this.w) * this.numPoints);
+      if (idx >= 0 && idx <= this.numPoints) {
+        this.points[idx].vel += strength;
+      }
+    }
+
+    updatePhysics(time) {
+      this.currentLevel += (this.targetLevel - this.currentLevel) * 0.08;
+      const baseTargetY = this.h * this.currentLevel;
+
+      const tiltSpring = -0.16 * (this.tilt - this.tiltTarget) - 0.76 * this.tiltVel;
+      this.tiltVel += tiltSpring;
+      this.tilt += this.tiltVel;
+
+      const cx = this.w / 2;
+      for (let i = 0; i <= this.numPoints; i++) {
+        const pt = this.points[i];
+        const xOffset = pt.x - cx;
+        const tiltOffset = xOffset * Math.tan(this.tilt);
+        const idleWave = Math.sin(time * 0.003 + i * 0.4) * 3.5;
+
+        pt.targetY = baseTargetY + tiltOffset + idleWave;
+
+        const dy = pt.targetY - pt.y;
+        pt.vel += dy * this.k - pt.vel * this.d;
+        pt.y += pt.vel;
+      }
+
+      const leftDeltas = new Array(this.numPoints + 1).fill(0);
+      const rightDeltas = new Array(this.numPoints + 1).fill(0);
+
+      for (let j = 0; j < 4; j++) {
+        for (let i = 0; i <= this.numPoints; i++) {
+          if (i > 0) {
+            leftDeltas[i] = this.spread * (this.points[i].y - this.points[i - 1].y);
+            this.points[i - 1].vel += leftDeltas[i];
+          }
+          if (i < this.numPoints) {
+            rightDeltas[i] = this.spread * (this.points[i].y - this.points[i + 1].y);
+            this.points[i + 1].vel += rightDeltas[i];
+          }
+        }
+        for (let i = 0; i <= this.numPoints; i++) {
+          if (i > 0) this.points[i - 1].y += leftDeltas[i];
+          if (i < this.numPoints) this.points[i + 1].y += rightDeltas[i];
+        }
+      }
+    }
+
+    draw() {
+      this.ctx.clearRect(0, 0, this.w, this.h);
+
+      this.ctx.save();
+      this.ctx.beginPath();
+      this.ctx.arc(this.w / 2, this.h / 2, this.radius, 0, Math.PI * 2);
+      this.ctx.clip();
+
+      const time = performance.now();
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, this.h);
+      for (let i = 0; i <= this.numPoints; i++) {
+        const pt = this.points[i];
+        const backY = pt.y + Math.sin(time * 0.0025 + i * 0.35 + 1.5) * 6 - 8;
+        if (i === 0) this.ctx.lineTo(pt.x, backY);
+        else {
+          const prev = this.points[i - 1];
+          const prevBackY = prev.y + Math.sin(time * 0.0025 + (i - 1) * 0.35 + 1.5) * 6 - 8;
+          const midX = (prev.x + pt.x) / 2;
+          const midY = (prevBackY + backY) / 2;
+          this.ctx.quadraticCurveTo(prev.x, prevBackY, midX, midY);
+        }
+      }
+      this.ctx.lineTo(this.w, this.h);
+      this.ctx.closePath();
+
+      const backGrad = this.ctx.createLinearGradient(0, this.h * 0.3, 0, this.h);
+      backGrad.addColorStop(0, 'rgba(14, 165, 233, 0.45)');
+      backGrad.addColorStop(0.5, 'rgba(2, 132, 199, 0.7)');
+      backGrad.addColorStop(1, 'rgba(8, 47, 73, 0.95)');
+      this.ctx.fillStyle = backGrad;
+      this.ctx.fill();
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, this.h);
+      for (let i = 0; i <= this.numPoints; i++) {
+        const pt = this.points[i];
+        if (i === 0) this.ctx.lineTo(pt.x, pt.y);
+        else {
+          const prev = this.points[i - 1];
+          const midX = (prev.x + pt.x) / 2;
+          const midY = (prev.y + pt.y) / 2;
+          this.ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+        }
+      }
+      this.ctx.lineTo(this.w, this.h);
+      this.ctx.closePath();
+
+      const frontGrad = this.ctx.createLinearGradient(0, this.h * 0.35, 0, this.h);
+      frontGrad.addColorStop(0, '#38BDF8');
+      frontGrad.addColorStop(0.4, '#0284C7');
+      frontGrad.addColorStop(1, '#071E3D');
+      this.ctx.fillStyle = frontGrad;
+      this.ctx.fill();
+
+      this.ctx.beginPath();
+      for (let i = 0; i <= this.numPoints; i++) {
+        const pt = this.points[i];
+        if (i === 0) this.ctx.moveTo(pt.x, pt.y);
+        else {
+          const prev = this.points[i - 1];
+          const midX = (prev.x + pt.x) / 2;
+          const midY = (prev.y + pt.y) / 2;
+          this.ctx.quadraticCurveTo(prev.x, prev.y, midX, midY);
+        }
+      }
+      this.ctx.strokeStyle = 'rgba(224, 242, 254, 0.8)';
+      this.ctx.lineWidth = 2.5;
+      this.ctx.stroke();
+
+      if (this.isHovered) {
+        const glow = this.ctx.createRadialGradient(
+          this.mouse.x, this.mouse.y, 0,
+          this.mouse.x, this.mouse.y, 70
+        );
+        glow.addColorStop(0, 'rgba(125, 211, 252, 0.4)');
+        glow.addColorStop(0.6, 'rgba(56, 189, 248, 0.15)');
+        glow.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = glow;
+        this.ctx.beginPath();
+        this.ctx.arc(this.mouse.x, this.mouse.y, 70, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
+
+      this.ctx.restore();
+    }
+
+    animate() {
+      const time = performance.now();
+      this.updatePhysics(time);
+      this.draw();
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  function initAllFluidSpheres() {
+    document.querySelectorAll('.btn-round .btn-click').forEach(btn => {
+      if (btn._fluidInit) return;
+      btn._fluidInit = true;
+      let canvas = btn.querySelector('canvas.fluid-canvas');
+      if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.className = 'fluid-canvas';
+        btn.insertBefore(canvas, btn.firstChild);
+      }
+      new InteractiveFluidSphere(btn, canvas);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllFluidSpheres);
+  } else {
+    initAllFluidSpheres();
+  }
+})();
+</script>
+   </body>
+</html>

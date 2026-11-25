@@ -1,37 +1,32 @@
 <!DOCTYPE html><!--  This site was created by André Carvalho (Code by André)  -->
-<html lang="en">
+<html lang="pt-BR">
    <head>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
       <title>Sobre — André Carvalho</title>
-      <meta name="description" content="Helping brands thrive in the digital world. From my office in the Netherlands I help companies with Digital Design, Front-End Development & Interaction."/>
-      <meta property="og:title" content="About - André Carvalho"/>
-      <meta property="og:description" content="Helping brands thrive in the digital world. From my office in the Netherlands I help companies with Digital Design, Front-End Development & Interaction."/>
-      <meta property="og:image" content="https://dennissnellenberg.com/media/pages/about/d289927735-1646837228/meta-dennis-about-860x540-crop-q72.jpg"/>
+      <meta name="description" content="Conheça André Carvalho, Desenvolvedor Web (Astro) e Otimizador de Processos (Python) no Brasil (Porto Seguro, BA). Engenharia digital de alta performance e automação operacional."/>
+      <meta property="og:title" content="Sobre — André Carvalho"/>
+      <meta property="og:description" content="Conheça André Carvalho, Desenvolvedor Web (Astro) e Otimizador de Processos (Python) no Brasil (Porto Seguro, BA). Engenharia digital de alta performance e automação operacional."/>
+      <meta property="og:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
+      <meta property="og:url" content="https://andrecarvalhodev.com.br/about.html"/>
       <meta property="og:site_name" content="André Carvalho"/>
-                              <meta property="og:locale" content="en"/>
-      <meta property="og:type" content="website"/>      <meta property="twitter:title" content="About - André Carvalho"/>
-      <meta property="twitter:description" content="Helping brands thrive in the digital world. From my office in the Netherlands I help companies with Digital Design, Front-End Development & Interaction."/>
-      <meta property="twitter:image" content="https://dennissnellenberg.com/media/pages/about/d289927735-1646837228/meta-dennis-about-860x540-crop-q72.jpg"/>
+      <meta property="og:locale" content="pt_BR"/>
+      <meta property="og:type" content="website"/>
+      <meta name="twitter:title" content="Sobre — André Carvalho"/>
+      <meta name="twitter:description" content="Conheça André Carvalho, Desenvolvedor Web (Astro) e Otimizador de Processos (Python) no Brasil (Porto Seguro, BA). Engenharia digital de alta performance e automação operacional."/>
+      <meta name="twitter:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
-      <meta property="og:locale" content="en"/>
-      <link rel="canonical" href="about.html" data-barba-prevent/>
+      <link rel="canonical" href="https://andrecarvalhodev.com.br/about.html"/>
+      <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 
-      <link rel="preload" as="font" href="https://dennissnellenberg.com/assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
+      <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
 
-      <link href="https://dennissnellenberg.com/assets/css/normalize.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/locomotive-scroll.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/styleguide.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/components.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/style-new.css" rel="stylesheet">
-            <!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-SGWQQRQ15Y"></script>
-		<script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-         gtag('set', 'page', window.location.pathname);
-         gtag('send', 'pageview');
-         
-         gtag('config', 'G-SGWQQRQ15Y');
-		</script>
+      <link href="assets/css/normalize.css" rel="stylesheet">
+      <link href="assets/css/locomotive-scroll.css" rel="stylesheet">
+      <link href="assets/css/styleguide.css" rel="stylesheet">
+      <link href="assets/css/components.css" rel="stylesheet">
+      <link href="assets/css/style-new.css" rel="stylesheet">
       
    <style>
   /* Requirement 1: Remover o botão azul gigante "View" que tampa a tela */
@@ -572,6 +567,22 @@
     display: inline-flex !important;
     align-items: center !important;
   }
+  @media screen and (max-width: 540px) {
+    .nav-bar .links-wrap {
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+    }
+    .nav-bar .links-wrap li.lang-item {
+      margin-right: 4px !important;
+    }
+    .nav-bar .links-wrap li.lang-item .lang-switcher-wrap {
+      margin-left: 0 !important;
+    }
+    .nav-bar .links-wrap li.btn-menu {
+      margin-left: 4px !important;
+    }
+  }
 </style>
 </head>
 
@@ -629,6 +640,13 @@
                         <div class="stripe"></div>
                         <ul class="links-wrap">
         <li class="btn btn-link">
+            <a href="index.html" class="btn-click magnetic" data-strength="24" data-strength-text="12" data-barba-prevent>
+            <span class="btn-text">
+                <span class="btn-text-inner" data-i18n="nav_home">Início</span>
+            </span>
+            </a>
+        </li>
+        <li class="btn btn-link">
             <a href="work.html" class="btn-click magnetic" data-strength="20" data-strength-text="10" data-barba-prevent>
             <span class="btn-text">
                 <span class="btn-text-inner" data-i18n="work">Projetos</span>
@@ -651,10 +669,10 @@
         </li>
         <li class="btn btn-link lang-item">
             <div class="lang-switcher-wrap">
-        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent>
-            <span class="lang-btn btn-pt active" id="btn-pt">PT</span>
+        <a href="#" class="lang-switch" data-barba-prevent aria-label="Alterar idioma">
+            <span class="lang-btn btn-pt active">PT</span>
             <span class="lang-divider">|</span>
-            <span class="lang-btn btn-en" id="btn-en">EN</span>
+            <span class="lang-btn btn-en">EN</span>
         </a>
     </div>
         </li>
@@ -727,12 +745,19 @@
         </li>
         <li class="btn btn-link lang-item">
             <div class="lang-switcher-wrap">
-        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent>
+        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent aria-label="Alterar idioma">
             <span class="lang-btn btn-pt active" id="btn-pt">PT</span>
             <span class="lang-divider">|</span>
             <span class="lang-btn btn-en" id="btn-en">EN</span>
         </a>
     </div>
+        </li>
+        <li class="btn btn-link btn-menu">
+            <div class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                <div class="btn-text">
+                    <span class="btn-text-inner" data-i18n="menu_label">Menu</span>
+                </div>
+            </div>
         </li>
     </ul>
 </div>   <div class="container medium once-in">
@@ -862,7 +887,7 @@
                                     <div class="stripe"></div>
                                     <div class="btn-fixed">
                                         <div class="btn btn-round" data-scroll data-scroll-speed="-1" data-scroll-direction="horizontal" data-scroll-position="bottom" data-scroll-offset="-50%, 0">
-                                            <a href="mailto:andrecarvalho2@gmail.com" class="btn-click magnetic " data-strength="100" data-strength-text="50">
+                                            <a href="contact.html" data-barba-prevent class="btn-click magnetic " data-strength="100" data-strength-text="50">
                                                 <div class="btn-fill"></div>
                                                 <div class="liquid-wave-container">
                   <div class="liquid-wave-inner">
@@ -957,7 +982,8 @@
         <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3"></script>
         <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.6.1/dist/lazyload.min.js"></script>
         
-        <script src="https://dennissnellenberg.com/assets/js/locomotive-scroll.min.js"></script>        <script defer src="assets/js/index-new.js"></script>    <script>
+        <script src="assets/js/locomotive-scroll.min.js"></script>
+        <script defer src="assets/js/index-new.js"></script>    <script>
   (function() {
     let currentLang = 'pt';
     const dict = {
@@ -972,6 +998,7 @@
         work: 'Projetos',
         about: 'Sobre',
         contact: 'Contato',
+        menu_label: 'Menu',
         nav_title: 'Navegação',
         socials_title: 'Redes Sociais',
 
@@ -1041,6 +1068,7 @@
         work: 'Work',
         about: 'About',
         contact: 'Contact',
+        menu_label: 'Menu',
         nav_title: 'Navigation',
         socials_title: 'Socials',
 
@@ -1128,6 +1156,7 @@
       if (!href) return;
       let targetPage = null;
       if (href.includes('work.html')) targetPage = 'work';
+      else if (href.includes('cassiano-imoveis.html')) targetPage = 'cassiano';
       else if (href.includes('about.html')) targetPage = 'about';
       else if (href.includes('contact.html')) targetPage = 'contact';
       else if (href.includes('index.html') || href === '/' || href.endsWith('/')) targetPage = 'home';

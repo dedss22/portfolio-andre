@@ -1,37 +1,32 @@
 <!DOCTYPE html><!--  This site was created by André Carvalho (Code by André)  -->
-<html lang="en">
+<html lang="pt-BR">
    <head>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
       <title>Projetos — André Carvalho</title>
-      <meta name="description" content="Creating next level digital products. I help companies from all over the world (Netherlands, United States, United Kingdom, Australia, Germany etc.)"/>
-      <meta property="og:title" content="Work - André Carvalho"/>
-      <meta property="og:description" content="Creating next level digital products. I help companies from all over the world (Netherlands, United States, United Kingdom, Australia, Germany etc.)"/>
-      <meta property="og:image" content="https://dennissnellenberg.com/media/site/89d468b455-1646837228/meta-image-dennis-snellenberg-860x540-crop-q72.jpg"/>
+      <meta name="description" content="Portfólio de projetos web de alta performance com Astro e automações em Python desenvolvidos por André Carvalho no Brasil (Porto Seguro, BA)."/>
+      <meta property="og:title" content="Projetos — André Carvalho"/>
+      <meta property="og:description" content="Portfólio de projetos web de alta performance com Astro e automações em Python desenvolvidos por André Carvalho no Brasil (Porto Seguro, BA)."/>
+      <meta property="og:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
+      <meta property="og:url" content="https://andrecarvalhodev.com.br/work.html"/>
       <meta property="og:site_name" content="André Carvalho"/>
-                              <meta property="og:locale" content="en"/>
-      <meta property="og:type" content="website"/>      <meta property="twitter:title" content="Work - André Carvalho"/>
-      <meta property="twitter:description" content="Creating next level digital products. I help companies from all over the world (Netherlands, United States, United Kingdom, Australia, Germany etc.)"/>
-      <meta property="twitter:image" content="https://dennissnellenberg.com/media/site/89d468b455-1646837228/meta-image-dennis-snellenberg-860x540-crop-q72.jpg"/>
+      <meta property="og:locale" content="pt_BR"/>
+      <meta property="og:type" content="website"/>
+      <meta name="twitter:title" content="Projetos — André Carvalho"/>
+      <meta name="twitter:description" content="Portfólio de projetos web de alta performance com Astro e automações em Python desenvolvidos por André Carvalho no Brasil (Porto Seguro, BA)."/>
+      <meta name="twitter:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
-      <meta property="og:locale" content="en"/>
-      <link rel="canonical" href="work.html" data-barba-prevent/>
+      <link rel="canonical" href="https://andrecarvalhodev.com.br/work.html"/>
+      <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 
-      <link rel="preload" as="font" href="https://dennissnellenberg.com/assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
+      <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
 
-      <link href="https://dennissnellenberg.com/assets/css/normalize.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/locomotive-scroll.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/styleguide.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/components.css" rel="stylesheet">      <link href="https://dennissnellenberg.com/assets/css/style-new.css" rel="stylesheet">
-            <!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-SGWQQRQ15Y"></script>
-		<script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-         gtag('set', 'page', window.location.pathname);
-         gtag('send', 'pageview');
-         
-         gtag('config', 'G-SGWQQRQ15Y');
-		</script>
+      <link href="assets/css/normalize.css" rel="stylesheet">
+      <link href="assets/css/locomotive-scroll.css" rel="stylesheet">
+      <link href="assets/css/styleguide.css" rel="stylesheet">
+      <link href="assets/css/components.css" rel="stylesheet">
+      <link href="assets/css/style-new.css" rel="stylesheet">
       
    <style>
   /* Requirement 1: Remover o botão azul gigante "View" que tampa a tela */
@@ -415,6 +410,22 @@
     display: inline-flex !important;
     align-items: center !important;
   }
+  @media screen and (max-width: 540px) {
+    .nav-bar .links-wrap {
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+    }
+    .nav-bar .links-wrap li.lang-item {
+      margin-right: 4px !important;
+    }
+    .nav-bar .links-wrap li.lang-item .lang-switcher-wrap {
+      margin-left: 0 !important;
+    }
+    .nav-bar .links-wrap li.btn-menu {
+      margin-left: 4px !important;
+    }
+  }
 </style>
 
 <style id="work-scroll-fix">
@@ -422,11 +433,60 @@
     min-height: calc(100vh - 280px) !important;
     padding-bottom: 8vh !important;
   }
-  .small-work-grid {
-    min-height: 450px !important;
+  .small-work-grid.visible {
+    min-height: 360px;
+  }
+  .grid-fade:not(.visible) {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .grid-fade.visible {
+    height: auto !important;
   }
   .work-items {
     padding-bottom: 4vh !important;
+  }
+  @media screen and (max-width: 1024px) {
+    .work-filters .filter-row {
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+    .work-filters .filter-row .grid-row {
+      display: flex !important;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+  @media screen and (max-width: 640px) {
+    .work-filters .filter-row {
+      flex-wrap: wrap !important;
+      gap: 0.85rem !important;
+      padding: 0 !important;
+    }
+    .work-filters .filter-row .toggle-row {
+      flex-wrap: wrap !important;
+      gap: 0.55rem !important;
+      width: 100%;
+    }
+    .work-filters .filter-row .toggle-row .btn {
+      margin-right: 0 !important;
+      font-size: 0.9em;
+    }
+    .work-filters .filter-row .toggle-row .btn .btn-text {
+      padding: 0 1.65em 0 1.35em !important;
+    }
+    .work-filters .filter-row .grid-row {
+      display: flex !important;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .work-filters .filter-row .grid-row .btn {
+      margin-left: 0 !important;
+    }
   }
 </style>
 </head>
@@ -495,6 +555,13 @@
                         <h5 data-i18n="nav_title">Navegação</h5>
                         <div class="stripe"></div>
                         <ul class="links-wrap">
+        <li class="btn btn-link">
+            <a href="index.html" class="btn-click magnetic" data-strength="24" data-strength-text="12" data-barba-prevent>
+            <span class="btn-text">
+                <span class="btn-text-inner" data-i18n="nav_home">Início</span>
+            </span>
+            </a>
+        </li>
         <li class="btn btn-link active">
             <a href="work.html" class="btn-click magnetic" data-strength="20" data-strength-text="10" data-barba-prevent>
             <span class="btn-text">
@@ -518,10 +585,10 @@
         </li>
         <li class="btn btn-link lang-item">
             <div class="lang-switcher-wrap">
-        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent>
-            <span id="btn-pt" class="lang-btn btn-pt active" class="lang-btn btn-pt active">PT</span>
+        <a href="#" class="lang-switch" data-barba-prevent aria-label="Alterar idioma">
+            <span class="lang-btn btn-pt active">PT</span>
             <span class="lang-divider">|</span>
-            <span id="btn-en" class="lang-btn btn-en" class="lang-btn btn-en">EN</span>
+            <span class="lang-btn btn-en">EN</span>
         </a>
     </div>
         </li>
@@ -594,12 +661,19 @@
         </li>
         <li class="btn btn-link lang-item">
             <div class="lang-switcher-wrap">
-        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent>
-            <span id="btn-pt" class="lang-btn btn-pt active" class="lang-btn btn-pt active">PT</span>
+        <a href="#" id="lang-switch-btn" class="lang-switch" data-barba-prevent aria-label="Alterar idioma">
+            <span id="btn-pt" class="lang-btn btn-pt active">PT</span>
             <span class="lang-divider">|</span>
-            <span id="btn-en" class="lang-btn btn-en" class="lang-btn btn-en">EN</span>
+            <span id="btn-en" class="lang-btn btn-en">EN</span>
         </a>
     </div>
+        </li>
+        <li class="btn btn-link btn-menu">
+            <div class="btn-click magnetic" data-strength="20" data-strength-text="10">
+                <div class="btn-text">
+                    <span class="btn-text-inner" data-i18n="menu_label">Menu</span>
+                </div>
+            </div>
         </li>
     </ul>
 </div>   <div class="container medium">
@@ -683,7 +757,7 @@
          <ul class="work-items mouse-pos-list-image-wrap all-active">
             <li class="design development interaction visible">
                <div class="stripe animate"></div>
-               <a href="#" onclick="return false;" class="row">
+               <a href="cassiano-imoveis.html" data-barba-prevent class="row">
                   <div class="flex-col">
                      <h4><span>Cassiano Imóveis</span></h4>
                   </div>
@@ -707,7 +781,7 @@
          <ul>
             <li class="design development interaction visible">
                <div class="single-tile-wrap">
-                  <a href="#" onclick="return false;" class="row">
+                  <a href="cassiano-imoveis.html" data-barba-prevent class="row">
                      <div class="flex-col">
                         <div class="tile-image">
                            <div class="overlay overlay-color" style="background-color: #0B1220;"></div>
@@ -762,7 +836,7 @@
                                     <div class="stripe"></div>
                                     <div class="btn-fixed">
                                         <div class="btn btn-round" data-scroll data-scroll-speed="-1" data-scroll-direction="horizontal" data-scroll-position="bottom" data-scroll-offset="-50%, 0">
-                                            <a href="mailto:andrecarvalho2@gmail.com" class="btn-click magnetic " data-strength="100" data-strength-text="50">
+                                            <a href="contact.html" data-barba-prevent class="btn-click magnetic " data-strength="100" data-strength-text="50">
                                                 <div class="btn-fill"></div>
                                                 <div class="liquid-wave-container">
                   <div class="liquid-wave-inner">
@@ -857,7 +931,8 @@
         <script src="https://cdn.jsdelivr.net/npm/@barba/core@2.10.3"></script>
         <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.6.1/dist/lazyload.min.js"></script>
         
-        <script src="https://dennissnellenberg.com/assets/js/locomotive-scroll.min.js"></script>        <script defer src="assets/js/index-new.js"></script>    <script>
+        <script src="assets/js/locomotive-scroll.min.js"></script>
+        <script defer src="assets/js/index-new.js"></script>    <script>
   (function() {
     let currentLang = 'pt';
     const dict = {
@@ -872,6 +947,7 @@
         work: 'Projetos',
         about: 'Sobre',
         contact: 'Contato',
+        menu_label: 'Menu',
         nav_title: 'Navegação',
         socials_title: 'Redes Sociais',
 
@@ -941,6 +1017,7 @@
         work: 'Work',
         about: 'About',
         contact: 'Contact',
+        menu_label: 'Menu',
         nav_title: 'Navigation',
         socials_title: 'Socials',
 
@@ -1028,6 +1105,7 @@
       if (!href) return;
       let targetPage = null;
       if (href.includes('work.html')) targetPage = 'work';
+      else if (href.includes('cassiano-imoveis.html')) targetPage = 'cassiano';
       else if (href.includes('about.html')) targetPage = 'about';
       else if (href.includes('contact.html')) targetPage = 'contact';
       else if (href.includes('index.html') || href === '/' || href.endsWith('/')) targetPage = 'home';
