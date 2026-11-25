@@ -1,4 +1,4 @@
-/* ------------------------- Components ® Code by Dennis -------------------------------------------------- */
+/* ------------------------- Components — André Carvalho -------------------------------------------------- */
 
 /* ------------------------- Span Lines H4 -------------------------------------------------- */
 
@@ -115,5 +115,96 @@
    .default-header h1 {
       font-size: 10vw;
       font-size: calc(clamp(3.25em, 7vw, 8em) * .875);
+   }
+}
+
+/* ------------------------- Floating Adaptive WhatsApp Button -------------------------------------------------- */
+
+.floating-whatsapp-btn {
+   position: fixed;
+   right: clamp(18px, 2.5vw, 28px);
+   bottom: clamp(18px, 2.5vw, 28px);
+   z-index: 450;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   width: clamp(44px, 3.4vw, 52px);
+   height: clamp(44px, 3.4vw, 52px);
+   padding: 4px;
+   margin: 0;
+   border: none;
+   background: transparent;
+   text-decoration: none;
+   cursor: pointer;
+   -webkit-tap-highlight-color: transparent;
+   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+   will-change: transform, opacity;
+}
+
+.floating-whatsapp-btn:hover {
+   transform: scale(1.08);
+}
+
+.floating-whatsapp-btn:active {
+   transform: scale(0.95);
+}
+
+.floating-whatsapp-btn:focus-visible {
+   outline: 2px solid #38BDF8;
+   outline-offset: 4px;
+   border-radius: 14px;
+}
+
+.floating-whatsapp-layers {
+   position: relative;
+   display: block;
+   width: 100%;
+   height: 100%;
+   pointer-events: none;
+}
+
+.floating-whatsapp-layer {
+   position: absolute;
+   inset: 0;
+   display: block;
+   width: 100%;
+   height: 100%;
+   pointer-events: none;
+}
+
+.floating-whatsapp-layer svg {
+   display: block;
+   width: 100%;
+   height: 100%;
+}
+
+.floating-whatsapp-layer-navy {
+   color: #0B1220;
+   z-index: 1;
+}
+
+.floating-whatsapp-layer-white {
+   color: #FFFFFF;
+   z-index: 2;
+   clip-path: inset(100% 0 0 0);
+   -webkit-clip-path: inset(100% 0 0 0);
+}
+
+main.nav-active ~ .floating-whatsapp-btn,
+.nav-active .floating-whatsapp-btn,
+body.nav-active .floating-whatsapp-btn,
+.floating-whatsapp-btn.is-nav-hidden {
+   opacity: 0;
+   transform: scale(0.84);
+   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .floating-whatsapp-btn {
+      transition: opacity 0.15s ease;
+   }
+   .floating-whatsapp-btn:hover,
+   .floating-whatsapp-btn:active {
+      transform: none;
    }
 }

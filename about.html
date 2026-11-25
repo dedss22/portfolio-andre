@@ -17,10 +17,53 @@
       <meta name="twitter:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
+      <meta name="robots" content="index, follow, max-image-preview:large"/>
+      <meta name="author" content="André Carvalho"/>
+      <meta name="theme-color" content="#0B1220"/>
       <link rel="canonical" href="https://andrecarvalhodev.com.br/about.html"/>
       <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 
       <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
+      <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Bold.otf" type="font/otf" crossorigin="anonymous">
+
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://andrecarvalhodev.com.br/#person",
+            "name": "André Carvalho",
+            "url": "https://andrecarvalhodev.com.br/",
+            "email": "andrecarvalho2@gmail.com",
+            "jobTitle": "Desenvolvedor Web & Otimizador de Processos",
+            "image": "https://andrecarvalhodev.com.br/andre_workspace.jpg",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Porto Seguro",
+              "addressRegion": "BA",
+              "addressCountry": "BR"
+            },
+            "sameAs": [
+              "https://www.instagram.com/andrebcmoreir/",
+              "https://www.linkedin.com/in/andre-carvalho-developer/",
+              "https://x.com/dedss22"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://andrecarvalhodev.com.br/#website",
+            "url": "https://andrecarvalhodev.com.br/",
+            "name": "André Carvalho",
+            "description": "Conheça André Carvalho, Desenvolvedor Web (Astro) e Otimizador de Processos (Python) no Brasil (Porto Seguro, BA). Engenharia digital de alta performance e automação operacional.",
+            "inLanguage": "pt-BR",
+            "publisher": {
+              "@id": "https://andrecarvalhodev.com.br/#person"
+            }
+          }
+        ]
+      }
+      </script>
 
       <link href="assets/css/normalize.css" rel="stylesheet">
       <link href="assets/css/locomotive-scroll.css" rel="stylesheet">
@@ -105,10 +148,10 @@
   .btn-link.btn-left-top .credit {
     padding-right: 0.28em !important;
   }
-  .btn-link.btn-left-top .dennis {
+  .btn-link.btn-left-top .brand-first {
     padding-right: 0 !important;
   }
-  .btn-link.btn-left-top .snellenberg {
+  .btn-link.btn-left-top .brand-last {
     transform: translateX(3.08em) !important;
     padding-left: 0 !important;
     opacity: 0 !important;
@@ -117,11 +160,11 @@
   .btn-link.btn-left-top:hover .code-by {
     transform: translateX(-4.05em) rotate(0.001deg) !important;
   }
-  .btn-link.btn-left-top:hover .dennis {
+  .btn-link.btn-left-top:hover .brand-first {
     transform: translateX(-4.05em) rotate(0.001deg) !important;
     padding-right: 4.8em !important;
   }
-  .btn-link.btn-left-top:hover .snellenberg {
+  .btn-link.btn-left-top:hover .brand-last {
     opacity: 1 !important;
   }
 </style>
@@ -164,7 +207,7 @@
     border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
   }
 
-  /* Circular Profile Picture in Footer - Dennis Snellenberg Precision Alignment */
+  /* Circular Profile Picture in Footer - Precision Alignment */
   footer h2 span:first-child {
     display: flex !important;
     align-items: center !important;
@@ -180,6 +223,7 @@
     flex-shrink: 0 !important;
     border-radius: 50% !important;
     background: url("andre_avatar.jpg") center center no-repeat !important;
+    background-image: image-set(url("andre_avatar.webp") type("image/webp"), url("andre_avatar.jpg") type("image/jpeg")) !important;
     background-size: cover !important;
     width: 0.82em !important;
     height: 0.82em !important;
@@ -302,8 +346,8 @@
   .about-header .nav-bar a,
   .about-header .nav-bar .btn-text-inner,
   .about-header .nav-bar .code-by,
-  .about-header .nav-bar .dennis-span,
-  .about-header .nav-bar .snellenberg,
+  .about-header .nav-bar .brand-first-inner,
+  .about-header .nav-bar .brand-last,
   .about-header .nav-bar .credit span {
     color: #FFFFFF !important;
     opacity: 1 !important;
@@ -593,7 +637,7 @@
         <div class="btn btn-link btn-left-top">
             <a href="index.html" class="btn-click magnetic" data-strength="20" data-strength-text="10" data-barba-prevent>
             <span class="btn-text">
-                <span class="credit"><span>©</span></span><span class="cbd"><span class="code-by" data-i18n="code_by">Feito por </span><span class="dennis"><span class="dennis-span">André</span> <span class="snellenberg">Carvalho</span></span></span>
+                <span class="credit"><span>©</span></span><span class="cbd"><span class="code-by" data-i18n="code_by">Feito por </span><span class="brand-first"><span class="brand-first-inner">André</span> <span class="brand-last">Carvalho</span></span></span>
             </span>
             </a>
         </div>
@@ -688,7 +732,10 @@
          </div>
          <div class="flex-col">
             <div class="single-about-image">
-               <img src="andre_workspace.jpg" width="1536" height="1024" alt="André Carvalho — Desenvolvedor Web & Otimizador de Processos" data-i18n-alt="about_img_alt" />
+               <picture style="display: contents;">
+                  <source srcset="andre_workspace.webp" type="image/webp">
+                  <img src="andre_workspace.jpg" width="1536" height="1024" alt="André Carvalho — Desenvolvedor Web & Otimizador de Processos" data-i18n-alt="about_img_alt" />
+               </picture>
             </div>
          </div>
       </div>

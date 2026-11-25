@@ -17,10 +17,44 @@
       <meta name="twitter:image" content="https://andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
+      <meta name="robots" content="index, follow, max-image-preview:large"/>
+      <meta name="author" content="André Carvalho"/>
+      <meta name="theme-color" content="#0B1220"/>
       <link rel="canonical" href="https://andrecarvalhodev.com.br/contact.html"/>
       <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 
       <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Regular.otf" type="font/otf" crossorigin="anonymous">
+      <link rel="preload" as="font" href="assets/fonts/NeueMontreal-Bold.otf" type="font/otf" crossorigin="anonymous">
+
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "@id": "https://andrecarvalhodev.com.br/contact.html#webpage",
+        "url": "https://andrecarvalhodev.com.br/contact.html",
+        "name": "Contato — André Carvalho",
+        "description": "Vamos iniciar um projeto juntos. Entre em contato com André Carvalho — Desenvolvedor Web (Astro) e Otimizador de Processos (Python) em Porto Seguro, BA, Brasil.",
+        "inLanguage": "pt-BR",
+        "mainEntity": {
+          "@type": "Person",
+          "name": "André Carvalho",
+          "email": "andrecarvalho2@gmail.com",
+          "url": "https://andrecarvalhodev.com.br/",
+          "jobTitle": "Desenvolvedor Web & Otimizador de Processos",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Porto Seguro",
+            "addressRegion": "BA",
+            "addressCountry": "BR"
+          },
+          "sameAs": [
+            "https://www.instagram.com/andrebcmoreir/",
+            "https://www.linkedin.com/in/andre-carvalho-developer/",
+            "https://x.com/dedss22"
+          ]
+        }
+      }
+      </script>
 
       <link href="assets/css/normalize.css" rel="stylesheet">
       <link href="assets/css/locomotive-scroll.css" rel="stylesheet">
@@ -105,10 +139,10 @@
   .btn-link.btn-left-top .credit {
     padding-right: 0.28em !important;
   }
-  .btn-link.btn-left-top .dennis {
+  .btn-link.btn-left-top .brand-first {
     padding-right: 0 !important;
   }
-  .btn-link.btn-left-top .snellenberg {
+  .btn-link.btn-left-top .brand-last {
     transform: translateX(3.08em) !important;
     padding-left: 0 !important;
     opacity: 0 !important;
@@ -117,11 +151,11 @@
   .btn-link.btn-left-top:hover .code-by {
     transform: translateX(-4.05em) rotate(0.001deg) !important;
   }
-  .btn-link.btn-left-top:hover .dennis {
+  .btn-link.btn-left-top:hover .brand-first {
     transform: translateX(-4.05em) rotate(0.001deg) !important;
     padding-right: 4.8em !important;
   }
-  .btn-link.btn-left-top:hover .snellenberg {
+  .btn-link.btn-left-top:hover .brand-last {
     opacity: 1 !important;
   }
 </style>
@@ -164,7 +198,7 @@
     border-top: 1px solid rgba(56, 189, 248, 0.12) !important;
   }
 
-  /* Circular Profile Picture in Footer - Dennis Snellenberg Precision Alignment */
+  /* Circular Profile Picture in Footer - Precision Alignment */
   footer h2 span:first-child {
     display: flex !important;
     align-items: center !important;
@@ -180,6 +214,7 @@
     flex-shrink: 0 !important;
     border-radius: 50% !important;
     background: url("andre_avatar.jpg") center center no-repeat !important;
+    background-image: image-set(url("andre_avatar.webp") type("image/webp"), url("andre_avatar.jpg") type("image/jpeg")) !important;
     background-size: cover !important;
     width: 0.82em !important;
     height: 0.82em !important;
@@ -231,6 +266,7 @@
     height: clamp(5.5em, 7.5vw, 8.5em) !important;
     border-radius: 50% !important;
     background: url("andre_avatar.jpg") center center no-repeat !important;
+    background-image: image-set(url("andre_avatar.webp") type("image/webp"), url("andre_avatar.jpg") type("image/jpeg")) !important;
     background-size: cover !important;
     border: 2.5px solid rgba(56, 189, 248, 0.45) !important;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.25) !important;
@@ -282,6 +318,7 @@
       border: 1.5px solid rgba(56, 189, 248, 0.4) !important;
       border-radius: 50% !important;
       background: url("andre_avatar.jpg") center center no-repeat !important;
+    background-image: image-set(url("andre_avatar.webp") type("image/webp"), url("andre_avatar.jpg") type("image/jpeg")) !important;
       background-size: cover !important;
     }
   }
@@ -687,7 +724,7 @@
         <div class="btn btn-link btn-left-top">
             <a href="index.html" class="btn-click magnetic" data-strength="20" data-strength-text="10" data-barba-prevent>
             <span class="btn-text">
-                <span class="credit"><span>©</span></span><span class="cbd"><span class="code-by" data-i18n="code_by">Feito por </span><span class="dennis"><span class="dennis-span">André</span> <span class="snellenberg">Carvalho</span></span></span>
+                <span class="credit"><span>©</span></span><span class="cbd"><span class="code-by" data-i18n="code_by">Feito por </span><span class="brand-first"><span class="brand-first-inner">André</span> <span class="brand-last">Carvalho</span></span></span>
             </span>
             </a>
         </div>
@@ -767,22 +804,22 @@
                <div class="form-col">
                   <h5>01</h5>
                   <label class="label" for="form-name" data-i18n="contact_label_name">Qual é o seu nome?</label>
-                  <input class="field" type="text" id="form-name" name="name" value="" required placeholder="John Doe *" data-i18n-placeholder="ph_name">
+                  <input class="field" type="text" id="form-name" name="name" value="" required placeholder="João Silva *" data-i18n-placeholder="ph_name">
                </div>
                <div class="form-col">
                   <h5>02</h5>
                   <label class="label" for="form-email" data-i18n="contact_label_email">Qual é o seu e-mail?</label>
-                  <input class="field" type="email" id="form-email" name="email" value="" required placeholder="john@doe.com *" data-i18n-placeholder="ph_email">
+                  <input class="field" type="email" id="form-email" name="email" value="" required placeholder="joao@empresa.com *" data-i18n-placeholder="ph_email">
                </div>
                <div class="form-col">
                   <h5>03</h5>
                   <label class="label" for="form-company" data-i18n="contact_label_org">Qual é a sua empresa ou organização?</label>
-                  <input class="field" type="text" id="form-company" name="company" value="" required placeholder="John & Doe ®" data-i18n-placeholder="ph_company">
+                  <input class="field" type="text" id="form-company" name="company" value="" required placeholder="Empresa Ltda ®" data-i18n-placeholder="ph_company">
                </div>
                <div class="form-col">
                   <h5>04</h5>
                   <label class="label" for="form-service" data-i18n="contact_label_services">Quais serviços você procura?</label>
-                  <input class="field" type="text" id="form-service" name="service" value="" required placeholder="Web Design, Web Development ..." data-i18n-placeholder="ph_service">
+                  <input class="field" type="text" id="form-service" name="service" value="" required placeholder="Web Design, Desenvolvimento Astro, Automações..." data-i18n-placeholder="ph_service">
                </div>
                <div class="form-col">
                   <h5>05</h5>

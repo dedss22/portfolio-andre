@@ -1,4 +1,4 @@
-/* ------------------------- Style ® Code by Dennis -------------------------------------------------- */
+/* ------------------------- Style — André Carvalho -------------------------------------------------- */
 
 main {
    box-sizing: border-box;
@@ -2320,26 +2320,12 @@ main.touch .main-wrap {
 }
 
 .about-awwwards .single-image  .overlay:nth-child(1) {
-   /* background: url("../img/DSC07292.jpg") center center no-repeat;
-   background-size: cover;
-   height: 130%;
-   top: -25%;
-   width: 105%;
-   left: -5%; */
-
    background: url("../../andre_workspace.jpg") center center no-repeat;
    background-size: cover;
    top: -3%;
    height: 106%;
    width: 140%;
    left: -40%;
-
-   /* background: url("../img/Kien_Team-16.jpg") center center no-repeat;
-   background-size: cover;
-   top: -3%;
-   height: 106%;
-   width: 140%;
-   left: -14%; */
 }
 
 .about-awwwards .single-image  .overlay:nth-child(2) {
