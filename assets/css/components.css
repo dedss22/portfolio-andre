@@ -90,8 +90,13 @@
    background: var(--color-dark);
 }
 
-.default-header h1 span {
+.default-header h1 > span {
    display: block;
+}
+
+.default-header h1 .span-line,
+.default-header h1 .span-line-inner {
+   display: inline-block;
 }
 
 @media screen and (max-width: 720px){ 
