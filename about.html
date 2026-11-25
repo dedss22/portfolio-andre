@@ -267,14 +267,35 @@
   .footer-rounded-div .rounded-div {
     background: #0B1220 !important;
   }
+  .about-header {
+    padding-top: clamp(5.5rem, 11vh, 8.5rem) !important;
+    padding-bottom: clamp(3.75rem, 9.5vh, 5.75rem) !important;
+  }
+  .about-header .container.medium,
+  .line-globe .container.medium {
+    padding-left: clamp(1.5rem, 8vw, 9rem) !important;
+    padding-right: clamp(1.5rem, 8vw, 9rem) !important;
+  }
   .about-header h1 {
     color: #FFFFFF !important;
+    font-size: clamp(2rem, min(4.3vw, 7vh), 4.65rem) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.025em !important;
+    max-width: 100% !important;
+  }
+  .line-globe .digital-ball {
+    width: clamp(4.8rem, min(7.5vw, 14vh), 7.5rem) !important;
+    height: clamp(4.8rem, min(7.5vw, 14vh), 7.5rem) !important;
   }
   .about-header h1 > span {
     display: block !important;
     transform: none !important;
     opacity: 1 !important;
     visibility: visible !important;
+  }
+  .about-header h1 .span-line,
+  .about-header h1 .span-line-inner {
+    display: inline-block !important;
   }
   /* Cores nítidas da Navbar no Sobre */
   .about-header .nav-bar,
@@ -327,7 +348,7 @@
     content: none !important;
   }
   .about-image {
-    padding-top: clamp(6.5rem, 8.5vw, 9.5rem) !important;
+    padding-top: clamp(3.5rem, 5.5vw, 6.5rem) !important;
     padding-bottom: clamp(4rem, 6vw, 7rem) !important;
   }
   .about-image .row {
