@@ -1,13 +1,18 @@
 /* ==========================================================================
    Portfolio Core — André Carvalho
    Unified i18n (PT | EN), BRT Clock, InteractiveFluidSphere, Scroll Rescue,
-   Preloader Fallback & FormSubmit AJAX Handler
+   Preloader Fallback, FormSubmit AJAX Handler & Adaptive WhatsApp Button
    ========================================================================== */
 (function () {
   'use strict';
 
   if (window.__portfolioCoreInit) return;
   window.__portfolioCoreInit = true;
+
+  /**
+   * Número público oficial de WhatsApp (DDI+DDD+número, apenas dígitos).
+   */
+  const WHATSAPP_NUMBER = '5531984996219';
 
   const STORAGE_KEY = 'portfolio_lang';
   let currentLang = 'pt';
@@ -160,7 +165,12 @@
       cta_title: 'Precisa de uma plataforma rápida e sob medida?',
       cta_desc: 'Se você busca unir desenvolvimento web em Astro com integrações de dados e automações em Python, vamos conversar sobre o seu próximo projeto.',
       cta_btn_start: 'Iniciar um projeto',
-      cta_btn_work: 'Ver todos os projetos'
+      cta_btn_work: 'Ver todos os projetos',
+
+      // Adaptive WhatsApp Button
+      wa_aria: 'Conversar pelo WhatsApp',
+      wa_title: 'Falar no WhatsApp',
+      wa_prefill: 'Olá André! Vi seu portfólio e gostaria de conversar sobre um projeto.'
     },
     en: {
       // Common / Navigation / Footer
@@ -285,7 +295,12 @@
       cta_title: 'Need a fast, tailor-made web platform?',
       cta_desc: 'If you want to pair Astro web development with structured data integrations and Python automation, let’s talk about your next project.',
       cta_btn_start: 'Start a project',
-      cta_btn_work: 'View all projects'
+      cta_btn_work: 'View all projects',
+
+      // Adaptive WhatsApp Button
+      wa_aria: 'Chat on WhatsApp',
+      wa_title: 'Message on WhatsApp',
+      wa_prefill: 'Hi André! I saw your portfolio and would like to discuss a project.'
     }
   };
 
@@ -438,6 +453,7 @@
     } catch (e) {}
 
     updateBrazilClock();
+    syncWhatsAppButtonAttrs();
 
     if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
       setTimeout(function () {
@@ -545,6 +561,8 @@
     if (typeof ScrollTrigger !== 'undefined') {
       ScrollTrigger.refresh();
     }
+    bindLocomotiveScrollForWhatsApp();
+    scheduleWhatsAppAdaptiveUpdate();
   }
 
   function schedulePreloaderFallback() {
@@ -1186,6 +1204,467 @@
   }
 
   /* ------------------------------------------------------------------------
+     Floating Adaptive WhatsApp Button (Dual-Layer Pixel-Exact Clip Mask)
+     ------------------------------------------------------------------------ */
+  const WA_SVG_PATH =
+    'M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38' +
+    'c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01' +
+    'A9.816 9.816 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83' +
+    'c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.2-.32' +
+    'a8.188 8.188 0 0 1-1.26-4.38c.01-4.54 3.7-8.24 8.25-8.24zm-3.53 4.75c-.19 0-.5.07-.76.35' +
+    '-.26.29-1 .98-1 2.39s1.02 2.77 1.17 2.96c.14.19 2.01 3.07 4.87 4.3.68.29 1.21.47 1.62.6' +
+    '.68.22 1.3.19 1.79.11.55-.08 1.68-.69 1.92-1.35.24-.66.24-1.23.17-1.35-.07-.12-.26-.19' +
+    '-.55-.33-.29-.14-1.68-.83-1.94-.92-.26-.1-.45-.14-.64.14-.19.29-.74.92-.9 1.11-.17.19' +
+    '-.33.21-.62.07-.29-.14-1.21-.45-2.31-1.43-.85-.76-1.43-1.7-1.6-1.99-.17-.29-.02-.44.13-.58' +
+    '.13-.13.29-.33.43-.5.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.07-.14-.64-1.54-.88-2.11z';
+
+  const DARK_BG_SELECTOR =
+    '.theme-dark, .home-header, .hero-navy-section, #about-navy-theme .about-header, ' +
+    '#about-navy-theme .about-image, .about-header, .about-image, .line-globe, ' +
+    '.about-services, .about-awwwards, .footer, .footer-wrap, .work-navy-section, ' +
+    '.case-hero-section, .case-section, .case-cta-section, .dark-section, ' +
+    '.contact-header, .fixed-nav, .nav-container';
+
+  let waButtonEl = null;
+  let waLayersEl = null;
+  let waWhiteLayerEl = null;
+  let waLastClipPath = '';
+  let waRafId = null;
+  let waGlobalHooksBound = false;
+
+  function createWaSvgElement() {
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('fill', 'currentColor');
+    path.setAttribute('fill-rule', 'evenodd');
+    path.setAttribute('clip-rule', 'evenodd');
+    path.setAttribute('d', WA_SVG_PATH);
+    svg.appendChild(path);
+    return svg;
+  }
+
+  function getCleanWhatsAppNumber() {
+    return String(WHATSAPP_NUMBER || '').replace(/\D/g, '');
+  }
+
+  function syncWhatsAppButtonAttrs() {
+    if (!waButtonEl) return;
+    const t = DICT[currentLang] || DICT.pt;
+    const cleanNum = getCleanWhatsAppNumber();
+
+    waButtonEl.setAttribute('aria-label', t.wa_aria);
+    waButtonEl.setAttribute('title', t.wa_title);
+
+    if (cleanNum) {
+      const encodedMsg = encodeURIComponent(t.wa_prefill);
+      waButtonEl.setAttribute('href', 'https://wa.me/' + cleanNum + '?text=' + encodedMsg);
+      waButtonEl.setAttribute('target', '_blank');
+      waButtonEl.setAttribute('rel', 'noopener noreferrer');
+      waButtonEl.removeAttribute('data-wa-pending');
+    } else {
+      waButtonEl.setAttribute('href', 'contact.html#whatsapp');
+      waButtonEl.setAttribute('data-wa-pending', 'true');
+      waButtonEl.removeAttribute('target');
+      waButtonEl.removeAttribute('rel');
+    }
+  }
+
+  function parseRgbaColor(colorStr) {
+    if (!colorStr || colorStr === 'transparent') return null;
+    const match = colorStr.match(/rgba?\(\s*([\d.]+)\s*[,\s]\s*([\d.]+)\s*[,\s]\s*([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i);
+    if (!match) return null;
+    return {
+      r: Number(match[1]),
+      g: Number(match[2]),
+      b: Number(match[3]),
+      a: match[4] !== undefined ? Number(match[4]) : 1
+    };
+  }
+
+  function relativeLuminance(r, g, b) {
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  }
+
+  function detectGradientDarkness(bgImage) {
+    if (!bgImage || bgImage === 'none' || bgImage.indexOf('gradient(') === -1) {
+      return null;
+    }
+    const regex = /rgba?\(\s*([\d.]+)\s*[,\s]\s*([\d.]+)\s*[,\s]\s*([\d.]+)(?:\s*[,/]\s*([\d.]+))?\s*\)/gi;
+    let match;
+    let sumLum = 0;
+    let count = 0;
+    while ((match = regex.exec(bgImage)) !== null) {
+      const a = match[4] !== undefined ? Number(match[4]) : 1;
+      if (a >= 0.45) {
+        sumLum += relativeLuminance(Number(match[1]), Number(match[2]), Number(match[3]));
+        count += 1;
+      }
+    }
+    if (count === 0) return null;
+    return (sumLum / count) < 0.35;
+  }
+
+  function isIgnoredStackElement(el) {
+    if (!el || el.nodeType !== 1) return true;
+    if (el.closest('.floating-whatsapp-btn')) return true;
+    if (el.closest('.loading-container')) return true;
+    if (el.matches('.custom-cursor, .mouse-pos-list-image, .mouse-pos-list-image-bounce, .mouse-pos-list-btn, .mouse-pos-list-span')) {
+      return true;
+    }
+    return false;
+  }
+
+  function isViewportPointDark(vx, vy) {
+    const maxX = Math.max(0, (window.innerWidth || document.documentElement.clientWidth || 1) - 1);
+    const maxY = Math.max(0, (window.innerHeight || document.documentElement.clientHeight || 1) - 1);
+    const cx = Math.max(0, Math.min(maxX, vx));
+    const cy = Math.max(0, Math.min(maxY, vy));
+
+    const stack = document.elementsFromPoint ? document.elementsFromPoint(cx, cy) : [];
+    for (let i = 0; i < stack.length; i++) {
+      const el = stack[i];
+      if (isIgnoredStackElement(el)) continue;
+
+      const cs = window.getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) < 0.05) {
+        continue;
+      }
+
+      const gradDark = detectGradientDarkness(cs.backgroundImage);
+      if (gradDark !== null) {
+        return gradDark;
+      }
+
+      const bg = parseRgbaColor(cs.backgroundColor);
+      if (bg && bg.a >= 0.45) {
+        return relativeLuminance(bg.r, bg.g, bg.b) < 0.35;
+      }
+
+      if (el.matches && el.matches(DARK_BG_SELECTOR)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function binarySearchVerticalEdge(vx, yTop, yBottom, topIsDark) {
+    let lo = yTop;
+    let hi = yBottom;
+    for (let iter = 0; iter < 7; iter++) {
+      const mid = (lo + hi) * 0.5;
+      if (isViewportPointDark(vx, mid) === topIsDark) {
+        lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    return (lo + hi) * 0.5;
+  }
+
+  function binarySearchHorizontalEdge(vy, xLeft, xRight, leftIsDark) {
+    let lo = xLeft;
+    let hi = xRight;
+    for (let iter = 0; iter < 7; iter++) {
+      const mid = (lo + hi) * 0.5;
+      if (isViewportPointDark(mid, vy) === leftIsDark) {
+        lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    return (lo + hi) * 0.5;
+  }
+
+  function fmtPx(val) {
+    return val.toFixed(1) + 'px';
+  }
+
+  function computeAdaptiveClipPath(rect) {
+    const w = rect.width;
+    const h = rect.height;
+    if (w <= 0 || h <= 0) return 'inset(100% 0 0 0)';
+
+    const sampleFracs = [0.02, 0.5, 0.98];
+    let allDark = true;
+    let allLight = true;
+
+    for (let ix = 0; ix < sampleFracs.length; ix++) {
+      const vx = rect.left + sampleFracs[ix] * w;
+      for (let iy = 0; iy < sampleFracs.length; iy++) {
+        const vy = rect.top + sampleFracs[iy] * h;
+        const dark = isViewportPointDark(vx, vy);
+        if (dark) allLight = false;
+        else allDark = false;
+      }
+    }
+
+    if (allDark) return 'inset(0px)';
+    if (allLight) return 'inset(100% 0 0 0)';
+
+    const cols = [0, 0.25, 0.5, 0.75, 1];
+    const colInfo = [];
+    let maxTransitions = 0;
+    let hasTopDark = false;
+    let hasTopLight = false;
+
+    for (let j = 0; j < cols.length; j++) {
+      const u = cols[j];
+      const localX = u * w;
+      const vx = rect.left + Math.min(w - 0.35, Math.max(0.35, localX));
+      const steps = 8;
+      const flags = [];
+      for (let s = 0; s <= steps; s++) {
+        const vy = rect.top + Math.min(h - 0.25, Math.max(0.25, (s / steps) * h));
+        flags.push(isViewportPointDark(vx, vy));
+      }
+
+      const splits = [];
+      for (let s = 0; s < steps; s++) {
+        if (flags[s] !== flags[s + 1]) {
+          const yA = rect.top + (s / steps) * h;
+          const yB = rect.top + ((s + 1) / steps) * h;
+          const exactY = binarySearchVerticalEdge(vx, yA, yB, flags[s]);
+          splits.push(Math.max(0, Math.min(h, exactY - rect.top)));
+        }
+      }
+
+      if (flags[0]) hasTopDark = true;
+      else hasTopLight = true;
+
+      if (splits.length > maxTransitions) maxTransitions = splits.length;
+      colInfo.push({
+        x: localX,
+        topDark: flags[0],
+        bottomDark: flags[steps],
+        splits: splits
+      });
+    }
+
+    // Purely vertical split (left vs right) with no vertical transitions in columns
+    if (maxTransitions === 0 && hasTopDark && hasTopLight) {
+      const rows = [0, 0.25, 0.5, 0.75, 1];
+      const leftDark = colInfo[0].topDark;
+      const edgePts = [];
+      for (let r = 0; r < rows.length; r++) {
+        const localY = rows[r] * h;
+        const vy = rect.top + Math.min(h - 0.35, Math.max(0.35, localY));
+        const exactX = binarySearchHorizontalEdge(vy, rect.left + 0.35, rect.right - 0.35, leftDark);
+        edgePts.push({ x: Math.max(0, Math.min(w, exactX - rect.left)), y: localY });
+      }
+      if (leftDark) {
+        const poly = ['0px 0px'];
+        for (let i = 0; i < edgePts.length; i++) poly.push(fmtPx(edgePts[i].x) + ' ' + fmtPx(edgePts[i].y));
+        poly.push('0px ' + fmtPx(h));
+        return 'polygon(' + poly.join(', ') + ')';
+      } else {
+        const poly = [fmtPx(w) + ' 0px', fmtPx(w) + ' ' + fmtPx(h)];
+        for (let i = edgePts.length - 1; i >= 0; i--) poly.push(fmtPx(edgePts[i].x) + ' ' + fmtPx(edgePts[i].y));
+        return 'polygon(' + poly.join(', ') + ')';
+      }
+    }
+
+    // Standard horizontal or curved section boundary (<= 1 transition per column)
+    if (maxTransitions <= 1) {
+      const topIsDark = colInfo.some(function (c) {
+        return c.splits.length === 1 && c.topDark;
+      }) || (!colInfo.some(function (c) { return c.splits.length === 1; }) && hasTopDark);
+
+      if (topIsDark) {
+        // Dark above boundary -> polygon from top edge down to splitY[j]
+        const poly = ['0px 0px', fmtPx(w) + ' 0px'];
+        for (let j = colInfo.length - 1; j >= 0; j--) {
+          const c = colInfo[j];
+          const yVal = c.splits.length === 1 ? c.splits[0] : (c.topDark ? h : 0);
+          poly.push(fmtPx(c.x) + ' ' + fmtPx(yVal));
+        }
+        return 'polygon(' + poly.join(', ') + ')';
+      } else {
+        // Dark below boundary -> polygon from splitY[j] down to bottom edge
+        const poly = [];
+        for (let j = 0; j < colInfo.length; j++) {
+          const c = colInfo[j];
+          const yVal = c.splits.length === 1 ? c.splits[0] : (c.bottomDark ? 0 : h);
+          poly.push(fmtPx(c.x) + ' ' + fmtPx(yVal));
+        }
+        poly.push(fmtPx(w) + ' ' + fmtPx(h));
+        poly.push('0px ' + fmtPx(h));
+        return 'polygon(' + poly.join(', ') + ')';
+      }
+    }
+
+    // Band inside button (2 transitions: top & bottom of dark strip)
+    const upper = [];
+    const lower = [];
+    for (let j = 0; j < colInfo.length; j++) {
+      const c = colInfo[j];
+      if (c.splits.length >= 2 && !c.topDark) {
+        upper.push(fmtPx(c.x) + ' ' + fmtPx(c.splits[0]));
+        lower.unshift(fmtPx(c.x) + ' ' + fmtPx(c.splits[1]));
+      } else if (c.topDark && c.bottomDark) {
+        upper.push(fmtPx(c.x) + ' 0px');
+        lower.unshift(fmtPx(c.x) + ' ' + fmtPx(h));
+      } else {
+        const fallbackY = c.splits.length === 1 ? c.splits[0] : (c.topDark ? 0 : h);
+        upper.push(fmtPx(c.x) + ' ' + fmtPx(fallbackY));
+        lower.unshift(fmtPx(c.x) + ' ' + fmtPx(fallbackY));
+      }
+    }
+    return 'polygon(' + upper.concat(lower).join(', ') + ')';
+  }
+
+  function updateWhatsAppAdaptiveState() {
+    if (!waButtonEl || !waLayersEl || !waWhiteLayerEl) return;
+
+    const navOpen = isNavOpen();
+    waButtonEl.classList.toggle('is-nav-hidden', navOpen);
+    waButtonEl.setAttribute('aria-hidden', navOpen ? 'true' : 'false');
+    waButtonEl.tabIndex = navOpen ? -1 : 0;
+
+    if (navOpen) return;
+
+    const rect = waLayersEl.getBoundingClientRect();
+    const nextClip = computeAdaptiveClipPath(rect);
+    if (nextClip !== waLastClipPath) {
+      waLastClipPath = nextClip;
+      waWhiteLayerEl.style.clipPath = nextClip;
+      waWhiteLayerEl.style.webkitClipPath = nextClip;
+    }
+  }
+
+  function scheduleWhatsAppAdaptiveUpdate() {
+    if (waRafId !== null) return;
+    waRafId = requestAnimationFrame(function () {
+      waRafId = null;
+      updateWhatsAppAdaptiveState();
+    });
+  }
+
+  function bindLocomotiveScrollForWhatsApp() {
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.on === 'function' && !scroll._waScrollBound) {
+      scroll._waScrollBound = true;
+      scroll.on('scroll', function () {
+        if (waRafId !== null) {
+          cancelAnimationFrame(waRafId);
+          waRafId = null;
+        }
+        updateWhatsAppAdaptiveState();
+      });
+    }
+  }
+
+  function bindWhatsAppGlobalListeners() {
+    if (waGlobalHooksBound) return;
+    waGlobalHooksBound = true;
+
+    window.addEventListener('scroll', scheduleWhatsAppAdaptiveUpdate, { passive: true });
+    document.addEventListener('scroll', scheduleWhatsAppAdaptiveUpdate, { passive: true, capture: true });
+    window.addEventListener('resize', scheduleWhatsAppAdaptiveUpdate, { passive: true });
+    window.addEventListener('wheel', function () {
+      bindLocomotiveScrollForWhatsApp();
+      scheduleWhatsAppAdaptiveUpdate();
+    }, { passive: true });
+    window.addEventListener('touchmove', function () {
+      bindLocomotiveScrollForWhatsApp();
+      scheduleWhatsAppAdaptiveUpdate();
+    }, { passive: true });
+
+    if (typeof MutationObserver !== 'undefined' && document.body) {
+      const observer = new MutationObserver(function (mutations) {
+        let shouldUpdate = false;
+        for (let i = 0; i < mutations.length; i++) {
+          const m = mutations[i];
+          if (m.target && m.target.closest && m.target.closest('.floating-whatsapp-btn')) {
+            continue;
+          }
+          shouldUpdate = true;
+          break;
+        }
+        if (shouldUpdate) {
+          bindLocomotiveScrollForWhatsApp();
+          scheduleWhatsAppAdaptiveUpdate();
+        }
+      });
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+      });
+    }
+  }
+
+  function initFloatingWhatsApp() {
+    const existing = document.getElementById('floating-whatsapp-btn');
+    if (existing) {
+      waButtonEl = existing;
+      waLayersEl = existing.querySelector('.floating-whatsapp-layers');
+      waWhiteLayerEl = existing.querySelector('.floating-whatsapp-layer-white');
+      syncWhatsAppButtonAttrs();
+      bindLocomotiveScrollForWhatsApp();
+      scheduleWhatsAppAdaptiveUpdate();
+      return;
+    }
+
+    if (!document.body) return;
+
+    const btn = document.createElement('a');
+    btn.id = 'floating-whatsapp-btn';
+    btn.className = 'floating-whatsapp-btn';
+    btn.setAttribute('data-barba-prevent', '');
+
+    const layers = document.createElement('span');
+    layers.className = 'floating-whatsapp-layers';
+    layers.setAttribute('aria-hidden', 'true');
+
+    const navyLayer = document.createElement('span');
+    navyLayer.className = 'floating-whatsapp-layer floating-whatsapp-layer-navy';
+    navyLayer.appendChild(createWaSvgElement());
+
+    const whiteLayer = document.createElement('span');
+    whiteLayer.className = 'floating-whatsapp-layer floating-whatsapp-layer-white';
+    whiteLayer.appendChild(createWaSvgElement());
+
+    layers.appendChild(navyLayer);
+    layers.appendChild(whiteLayer);
+    btn.appendChild(layers);
+    document.body.appendChild(btn);
+
+    btn.addEventListener('click', function (e) {
+      if (btn.getAttribute('data-wa-pending') === 'true' && detectPageKey() === 'contact') {
+        e.preventDefault();
+        const nameField = document.getElementById('form-name') || document.querySelector('.contact-header [name="name"]');
+        const formEl = document.getElementById('contact-form') || document.querySelector('.contact-header form');
+        if (typeof scroll !== 'undefined' && scroll && typeof scroll.scrollTo === 'function' && formEl) {
+          scroll.scrollTo(formEl, { offset: -100 });
+        } else if (formEl && typeof formEl.scrollIntoView === 'function') {
+          formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (nameField) {
+          setTimeout(function () { focusFieldSafely(nameField); }, 250);
+        }
+      }
+    });
+
+    btn.addEventListener('mouseenter', scheduleWhatsAppAdaptiveUpdate);
+    btn.addEventListener('mouseleave', scheduleWhatsAppAdaptiveUpdate);
+    btn.addEventListener('transitionend', scheduleWhatsAppAdaptiveUpdate);
+
+    waButtonEl = btn;
+    waLayersEl = layers;
+    waWhiteLayerEl = whiteLayer;
+
+    syncWhatsAppButtonAttrs();
+    bindWhatsAppGlobalListeners();
+    bindLocomotiveScrollForWhatsApp();
+    updateWhatsAppAdaptiveState();
+  }
+
+  /* ------------------------------------------------------------------------
      Bootstrap & Global Event Hooks
      ------------------------------------------------------------------------ */
   function bootstrap() {
@@ -1193,6 +1672,7 @@
     startBrazilClock();
     initAllFluidSpheres();
     initContactAjaxForm();
+    initFloatingWhatsApp();
   }
 
   document.addEventListener('click', function (e) {
