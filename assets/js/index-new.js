@@ -61,7 +61,9 @@ function initLoaderHome() {
 	});
 
   tl.call(function() {
-    scroll.stop();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.stop === 'function') {
+      scroll.stop();
+    }
   });
 
   tl.to(".loading-words", {
@@ -136,7 +138,9 @@ function initLoaderHome() {
 	},"=-1.2");
 
   tl.call(function() {
-    scroll.start();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') {
+      scroll.start();
+    }
   });
   
 }
@@ -234,7 +238,9 @@ function pageTransitionIn() {
 	var tl = gsap.timeline();
 
   tl.call(function() {
-    scroll.stop();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.stop === 'function') {
+      scroll.stop();
+    }
   });
 
   tl.set(".loading-screen", { 
@@ -350,7 +356,9 @@ function pageTransitionOut() {
   }
   
   tl.call(function() {
-    scroll.start();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') {
+      scroll.start();
+    }
   });
 
   tl.to("main .once-in", {
@@ -378,7 +386,7 @@ function initPageTransitions() {
     select('html').classList.remove('is-transitioning');
     // reinit locomotive scroll
     if (typeof scroll !== 'undefined' && scroll) {
-      scroll.init();
+      if (typeof scroll.init === 'function') scroll.init();
       if (typeof scroll.start === 'function') scroll.start();
       if (typeof scroll.update === 'function') scroll.update();
     }
@@ -387,7 +395,9 @@ function initPageTransitions() {
 
   // scroll to the top of the page
   barba.hooks.enter(() => {
-    scroll.destroy();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.destroy === 'function') {
+      scroll.destroy();
+    }
   });
 
   // scroll to the top of the page
@@ -429,8 +439,8 @@ function initPageTransitions() {
         initNextWord(data);
       },
       async beforeEnter(data) {
-        ScrollTrigger.getAll().forEach(t => t.kill());
-        scroll.destroy();
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.getAll().forEach(t => t.kill());
+        if (typeof scroll !== 'undefined' && scroll && typeof scroll.destroy === 'function') scroll.destroy();
         initSmoothScroll(data.next.container);
         initScript(); 
       },
@@ -453,30 +463,49 @@ function initPageTransitions() {
   });
 
   function initSmoothScroll(container) {
+    const scrollEl = container ? container.querySelector('[data-scroll-container]') : document.querySelector('[data-scroll-container]');
+    if (!scrollEl || typeof LocomotiveScroll === 'undefined') return;
 
     scroll = new LocomotiveScroll({
-      el: container.querySelector('[data-scroll-container]'),
+      el: scrollEl,
       smooth: true,
     });
 
-    window.onresize = scroll.update();
+    if (!window._locoResizeBound) {
+      window._locoResizeBound = true;
+      window.addEventListener('resize', () => {
+        if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
+          scroll.update();
+        }
+      });
+    }
 
-    scroll.on("scroll", () => ScrollTrigger.update());
+    if (typeof scroll.on === 'function') {
+      scroll.on("scroll", () => {
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.update();
+      });
+    }
 
-    ScrollTrigger.scrollerProxy('[data-scroll-container]', {
-      scrollTop(value) {
-        return arguments.length ? scroll.scrollTo(value, 0, 0) : scroll.scroll.instance.scroll.y;
-      }, // we don't have to define a scrollLeft because we're only scrolling vertically.
-      getBoundingClientRect() {
-        return {top: 0, left: 0, width: window.innerWidth, height: window.innerHeight};
-      },
-      // LocomotiveScroll handles things completely differently on mobile devices - it doesn't even transform the container at all! So to get the correct behavior and avoid jitters, we should pin things with position: fixed on mobile. We sense it by checking to see if there's a transform applied to the container (the LocomotiveScroll-controlled element).
-      pinType: container.querySelector('[data-scroll-container]').style.transform ? "transform" : "fixed"
-    });
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.scrollerProxy('[data-scroll-container]', {
+        scrollTop(value) {
+          if (typeof scroll === 'undefined' || !scroll) return 0;
+          if (arguments.length) {
+            return typeof scroll.scrollTo === 'function' ? scroll.scrollTo(value, 0, 0) : undefined;
+          }
+          return scroll.scroll && scroll.scroll.instance ? scroll.scroll.instance.scroll.y : 0;
+        }, // we don't have to define a scrollLeft because we're only scrolling vertically.
+        getBoundingClientRect() {
+          return {top: 0, left: 0, width: window.innerWidth, height: window.innerHeight};
+        },
+        // LocomotiveScroll handles things completely differently on mobile devices - it doesn't even transform the container at all! So to get the correct behavior and avoid jitters, we should pin things with position: fixed on mobile. We sense it by checking to see if there's a transform applied to the container (the LocomotiveScroll-controlled element).
+        pinType: scrollEl.style.transform ? "transform" : "fixed"
+      });
 
-    ScrollTrigger.defaults({
-      scroller: document.querySelector('[data-scroll-container]'),
-    });
+      ScrollTrigger.defaults({
+        scroller: document.querySelector('[data-scroll-container]'),
+      });
+    }
 
     /**
      * Remove Old Locomotive Scrollbar
@@ -488,11 +517,20 @@ function initPageTransitions() {
       scrollbar[0].remove();
     }
 
-    // each time the window updates, we should refresh ScrollTrigger and then update LocomotiveScroll. 
-    ScrollTrigger.addEventListener('refresh', () => scroll.update());
+    // each time the window updates, we should refresh ScrollTrigger and then update LocomotiveScroll.
+    if (typeof ScrollTrigger !== 'undefined') {
+      if (!window._locoRefreshBound) {
+        window._locoRefreshBound = true;
+        ScrollTrigger.addEventListener('refresh', () => {
+          if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
+            scroll.update();
+          }
+        });
+      }
 
-    // after everything is set up, refresh() ScrollTrigger and update LocomotiveScroll because padding may have been added for pinning, etc.
-    ScrollTrigger.refresh();
+      // after everything is set up, refresh() ScrollTrigger and update LocomotiveScroll because padding may have been added for pinning, etc.
+      ScrollTrigger.refresh();
+    }
   }  
 }
 
@@ -588,29 +626,29 @@ function initHamburgerNav() {
   // Open/close navigation when clicked .btn-hamburger
 
   $(document).ready(function(){
-    $(".btn-hamburger, .btn-menu").click(function(){
+    $(".btn-hamburger, .btn-menu").off('click.hamburger').on('click.hamburger', function(){
       if ($(".btn-hamburger, .btn-menu").hasClass('active')) {
           $(".btn-hamburger, .btn-menu").removeClass('active');
           $("main").removeClass('nav-active');
-          scroll.start();
+          if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') scroll.start();
       } else {
           $(".btn-hamburger, .btn-menu").addClass('active');
           $("main").addClass('nav-active');
-          scroll.stop();
+          if (typeof scroll !== 'undefined' && scroll && typeof scroll.stop === 'function') scroll.stop();
       }
     });
-    $('.fixed-nav-back').click(function(){
+    $('.fixed-nav-back').off('click.hamburger').on('click.hamburger', function(){
       $(".btn-hamburger, .btn-menu").removeClass('active');
       $("main").removeClass('nav-active');
-      scroll.start();
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') scroll.start();
     });
   });
-  $(document).keydown(function(e){
+  $(document).off('keydown.hamburger').on('keydown.hamburger', function(e){
     if(e.keyCode == 27) {
       if ($('main').hasClass('nav-active')) {
           $(".btn-hamburger, .btn-menu").removeClass('active');
           $("main").removeClass('nav-active');
-          scroll.start();
+          if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') scroll.start();
       } 
     }
   });
@@ -625,21 +663,25 @@ function initMagneticButtons() {
   // Magnetic Buttons
   // Found via: https://codepen.io/tdesero/pen/RmoxQg
   var magnets = document.querySelectorAll('.magnetic');
-  var strength = 100;
   
   // START : If screen is bigger as 540 px do magnetic
   if(window.innerWidth > 540){
   // Mouse Reset
   magnets.forEach( (magnet) => {
+    if (magnet._magneticBound) return;
+    magnet._magneticBound = true;
     magnet.addEventListener('mousemove', moveMagnet );
-    $(this.parentNode).removeClass('not-active');
+    if (magnet.parentNode) {
+      $(magnet.parentNode).removeClass('not-active');
+    }
     magnet.addEventListener('mouseleave', function(event) {
-        gsap.to( event.currentTarget, 1.5, {
+        var target = event.currentTarget;
+        gsap.to( target, 1.5, {
           x: 0, 
           y: 0, 
           ease: Elastic.easeOut
         });
-        gsap.to( $(this).find(".btn-text"), 1.5, {
+        gsap.to( $(target).find(".btn-text"), 1.5, {
           x: 0, 
           y: 0, 
           ease: Elastic.easeOut
@@ -651,8 +693,9 @@ function initMagneticButtons() {
   function moveMagnet(event) {
     var magnetButton = event.currentTarget;
     var bounding = magnetButton.getBoundingClientRect();
-    var magnetsStrength = magnetButton.getAttribute("data-strength");
-    var magnetsStrengthText = magnetButton.getAttribute("data-strength-text");
+    var magnetsStrength = parseFloat(magnetButton.getAttribute("data-strength")) || 0;
+    var magnetsStrengthText = parseFloat(magnetButton.getAttribute("data-strength-text")) || 0;
+    if (!magnetButton.offsetWidth || !magnetButton.offsetHeight) return;
       
     gsap.to( magnetButton, 1.5, {
         x: ((( event.clientX - bounding.left)/magnetButton.offsetWidth) - 0.5) * magnetsStrength,
@@ -660,7 +703,7 @@ function initMagneticButtons() {
         rotate: "0.001deg",
         ease: Power4.easeOut
     });
-    gsap.to( $(this).find(".btn-text"), 1.5, {
+    gsap.to( $(magnetButton).find(".btn-text"), 1.5, {
         x: ((( event.clientX - bounding.left)/magnetButton.offsetWidth) - 0.5) * magnetsStrengthText,
         y: ((( event.clientY - bounding.top)/magnetButton.offsetHeight) - 0.5) * magnetsStrengthText,
         rotate: "0.001deg",
@@ -671,7 +714,7 @@ function initMagneticButtons() {
   }; // END : If screen is bigger as 540 px do magnetic
 
   // Mouse Enter
-  $('.btn-click.magnetic').on('mouseenter', function() {
+  $('.btn-click.magnetic').off('mouseenter.magnetic').on('mouseenter.magnetic', function() {
     if($(this).find(".btn-fill").length) {
     gsap.to($(this).find(".btn-fill"), .6, {
         startAt: {y: "76%"},
@@ -686,11 +729,11 @@ function initMagneticButtons() {
         ease: Power3.easeIn,
     });
     }
-    $(this.parentNode).removeClass('not-active');
+    if (this.parentNode) $(this.parentNode).removeClass('not-active');
   });
 
   // Mouse Leave
-  $('.btn-click.magnetic').on('mouseleave', function() {
+  $('.btn-click.magnetic').off('mouseleave.magnetic').on('mouseleave.magnetic', function() {
     if($(this).find(".btn-fill").length) {
     gsap.to($(this).find(".btn-fill"), .6, {
         y: "-76%",
@@ -704,7 +747,7 @@ function initMagneticButtons() {
         delay: .3
     });
     }
-    $(this.parentNode).removeClass('not-active');
+    if (this.parentNode) $(this.parentNode).removeClass('not-active');
   });
 }
 
@@ -716,25 +759,38 @@ function initStickyCursorWithDelay() {
     
   // Sticky Cursor with delay
   // https://greensock.com/forums/topic/21161-animated-mouse-cursor/
-  var cursorImage = $(".mouse-pos-list-image")
+  var cursorImage = $(".mouse-pos-list-image");
   var cursorBtn = $(".mouse-pos-list-btn");
   var cursorSpan = $(".mouse-pos-list-span");
 
-  var posXImage = 0
-  var posYImage = 0
-  var posXBtn = 0
-  var posYBtn = 0
-  var posXSpan = 0
-  var posYSpan = 0
-  var mouseX = 0
-  var mouseY = 0
+  function isVisibleCursorEl(el) {
+    return !!(el && window.getComputedStyle(el).display !== 'none');
+  }
 
-  if(document.querySelector(".mouse-pos-list-image, .mouse-pos-list-btn, .mouse-post-list-span")) {
-  gsap.to({}, 0.0083333333, {
+  var hasImage = isVisibleCursorEl(document.querySelector(".mouse-pos-list-image"));
+  var hasBtn = isVisibleCursorEl(document.querySelector(".mouse-pos-list-btn"));
+  var hasSpan = isVisibleCursorEl(document.querySelector(".mouse-pos-list-span"));
+
+  if (!hasImage && !hasBtn && !hasSpan) {
+    return;
+  }
+
+  var posXImage = 0;
+  var posYImage = 0;
+  var posXBtn = 0;
+  var posYBtn = 0;
+  var posXSpan = 0;
+  var posYSpan = 0;
+  var mouseX = 0;
+  var mouseY = 0;
+
+  if (window._stickyCursorTween) {
+    window._stickyCursorTween.kill();
+  }
+  window._stickyCursorTween = gsap.to({}, 0.0083333333, {
     repeat: -1,
     onRepeat: function() {
-
-      if(document.querySelector(".mouse-pos-list-image")) {
+      if(hasImage) {
         posXImage += (mouseX - posXImage) / 12;
         posYImage += (mouseY - posYImage) / 12;
         gsap.set(cursorImage, {
@@ -744,7 +800,7 @@ function initStickyCursorWithDelay() {
           }
         });
       }
-      if(document.querySelector(".mouse-pos-list-btn")) {
+      if(hasBtn) {
         posXBtn += (mouseX - posXBtn) / 7;
         posYBtn += (mouseY - posYBtn) / 7;
         gsap.set(cursorBtn, {
@@ -754,7 +810,7 @@ function initStickyCursorWithDelay() {
           }
         });
       }
-      if(document.querySelector(".mouse-pos-list-span")) {
+      if(hasSpan) {
         posXSpan += (mouseX - posXSpan) / 6;
         posYSpan += (mouseY - posYSpan) / 6;   
         gsap.set(cursorSpan, {
@@ -766,9 +822,8 @@ function initStickyCursorWithDelay() {
       }
     }
   });
-  }
 
-  $(document).on("mousemove", function(e) {
+  $(document).off("mousemove.stickyCursor").on("mousemove.stickyCursor", function(e) {
     mouseX = e.clientX;
     mouseY = e.clientY;
   });
@@ -776,32 +831,34 @@ function initStickyCursorWithDelay() {
   // Animated Section Assortiment Single Floating Image
   // Source: http://jsfiddle.net/639Jj/1/ 
 
-  $('.mouse-pos-list-image-wrap a').on('mouseenter', function() {
-    $('.mouse-pos-list-image, .mouse-pos-list-btn, .mouse-pos-list-span, .mouse-pos-list-span-big').addClass('active');
-  });
-  $('.mouse-pos-list-image-wrap a').on('mouseleave', function() {
-    $('.mouse-pos-list-image, .mouse-pos-list-btn, .mouse-pos-list-span, .mouse-pos-list-span-big').removeClass('active');
-  });
-  $('.single-tile-wrap a, .mouse-pos-list-archive a, .next-case-btn').on('mouseenter', function() {
-    $('.mouse-pos-list-btn, .mouse-pos-list-span').addClass('active-big');
-  });
-  $('.single-tile-wrap a, .mouse-pos-list-archive a, .next-case-btn').on('mouseleave', function() {
-    $('.mouse-pos-list-btn, .mouse-pos-list-span').removeClass('active-big');
-  });
-  $('main').on('mousedown', function() {
-    $(".mouse-pos-list-btn, .mouse-pos-list-span").addClass('pressed');
-  });
-  $('main').on('mouseup', function() {
-    $(".mouse-pos-list-btn, .mouse-pos-list-span").removeClass('pressed');
-  });
+  $('.mouse-pos-list-image-wrap a').off('mouseenter.stickyCursor mouseleave.stickyCursor')
+    .on('mouseenter.stickyCursor', function() {
+      $('.mouse-pos-list-image, .mouse-pos-list-btn, .mouse-pos-list-span, .mouse-pos-list-span-big').addClass('active');
+    })
+    .on('mouseleave.stickyCursor', function() {
+      $('.mouse-pos-list-image, .mouse-pos-list-btn, .mouse-pos-list-span, .mouse-pos-list-span-big').removeClass('active');
+    });
+  $('.single-tile-wrap a, .mouse-pos-list-archive a, .next-case-btn').off('mouseenter.stickyCursor mouseleave.stickyCursor')
+    .on('mouseenter.stickyCursor', function() {
+      $('.mouse-pos-list-btn, .mouse-pos-list-span').addClass('active-big');
+    })
+    .on('mouseleave.stickyCursor', function() {
+      $('.mouse-pos-list-btn, .mouse-pos-list-span').removeClass('active-big');
+    });
+  $('main').off('mousedown.stickyCursor mouseup.stickyCursor')
+    .on('mousedown.stickyCursor', function() {
+      $(".mouse-pos-list-btn, .mouse-pos-list-span").addClass('pressed');
+    })
+    .on('mouseup.stickyCursor', function() {
+      $(".mouse-pos-list-btn, .mouse-pos-list-span").removeClass('pressed');
+    });
 
-  $('.mouse-pos-list-image-wrap li.visible').on('mouseenter', function() {
+  $('.mouse-pos-list-image-wrap li.visible').off('mouseenter.stickyCursor').on('mouseenter.stickyCursor', function() {
     
     var $elements = $(".mouse-pos-list-image-wrap li.visible");
     var index =  $elements.index($(this));
     var count = $(".mouse-pos-list-image li.visible").length;
-    // var index =  $(this).index();
-    if($(".float-image-wrap")) {
+    if($(".float-image-wrap").length && count > 0) {
         gsap.to($(".float-image-wrap"), {
           y: (index*100)/(count*-1) + "%",
           duration: .6,
@@ -815,7 +872,7 @@ function initStickyCursorWithDelay() {
 
   });
 
-  $('.archive-work-grid li').on('mouseenter', function() {
+  $('.archive-work-grid li').off('mouseenter.stickyCursor').on('mouseenter.stickyCursor', function() {
     $(".mouse-pos-list-btn").addClass("hover").delay(100).queue(function(next){
       $(this).removeClass("hover");
       next();
@@ -831,115 +888,119 @@ function initVisualFilter() {
     
   // Visual Filter
   $(document).ready(function(){
+    var filterTimers = [];
+    var gridTimers = [];
 
-    $('.toggle-row .btn').click(function(){
-      if ($(this).hasClass('active')) {
-          } else {
-      $('.work-tiles li, .work-items li').addClass('tile-fade-out');
-      scroll.stop();
-      setTimeout(function() {
-          $('.work-tiles li, .work-items li').removeClass('tile-fade-out');
-          $('.work-tiles li, .work-items li').addClass('tile-fade-in');
-          scroll.scrollTo( 'top', {'offset': 0, 'duration': 700, 'easing': [0.7, 0.00, 0.35, 1.00], 'disableLerp': true});
-      }, 300);
-      setTimeout(function() {
-          $('.work-tiles li, .work-items li').removeClass('tile-fade-in');
-          scroll.update();
-          ScrollTrigger.refresh();
-          scroll.start();
-      }, 700);
-      setTimeout(function() {
-         scroll.update();
-         console.log('scroll- updated');
-     }, 1000);
+    function clearTimerQueue(queue) {
+      while (queue.length) {
+        clearTimeout(queue.pop());
+      }
+    }
+
+    function safeScrollStop() {
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.stop === 'function') scroll.stop();
+    }
+    function safeScrollStart() {
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.start === 'function') scroll.start();
+    }
+    function safeScrollUpdate() {
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') scroll.update();
+    }
+    function safeScrollTop() {
+      if (typeof scroll !== 'undefined' && scroll && typeof scroll.scrollTo === 'function') {
+        scroll.scrollTo('top', {'offset': 0, 'duration': 700, 'easing': [0.7, 0.00, 0.35, 1.00], 'disableLerp': true});
+      }
+    }
+
+    $('.toggle-row .btn').off('click.visualFilter').on('click.visualFilter', function(){
+      if (!$(this).hasClass('active')) {
+        clearTimerQueue(filterTimers);
+        $('.work-tiles li, .work-items li').removeClass('tile-fade-in').addClass('tile-fade-out');
+        safeScrollStop();
+        filterTimers.push(setTimeout(function() {
+            $('.work-tiles li, .work-items li').removeClass('tile-fade-out').addClass('tile-fade-in');
+            safeScrollTop();
+        }, 300));
+        filterTimers.push(setTimeout(function() {
+            $('.work-tiles li, .work-items li').removeClass('tile-fade-in');
+            safeScrollUpdate();
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+            safeScrollStart();
+        }, 700));
+        filterTimers.push(setTimeout(function() {
+            safeScrollUpdate();
+        }, 1000));
       }
     });
-    $('.all-btn').click(function(){
-      if ($(this).hasClass('active')) {
-      } else {
-          $('.toggle-row .btn-normal').removeClass('active');
-          $('.toggle-row .btn-normal').addClass('not-active');
-          $(this).addClass('active');
-          $(this).removeClass('not-active');
-          // Cookies.set("filter", "all", { expires: 1 });
-          setTimeout(function() {
+    $('.all-btn').off('click.visualFilterType').on('click.visualFilterType', function(){
+      if (!$(this).hasClass('active')) {
+          $('.toggle-row .btn-normal').removeClass('active').addClass('not-active');
+          $(this).addClass('active').removeClass('not-active');
+          filterTimers.push(setTimeout(function() {
             $('.mouse-pos-list-image li, .mouse-pos-list-image-wrap li, .work-tiles li').addClass('visible');
-          }, 300);
+          }, 300));
       }
     });
-    $('.design-btn').click(function(){
-      if ($(this).hasClass('active')) {
-      } else {
-          $('.toggle-row .btn-normal').removeClass('active');
-          $('.toggle-row .btn-normal').addClass('not-active');
-          $(this).addClass('active');
-          $(this).removeClass('not-active');
-          // Cookies.set("filter", "design", { expires: 1 });
-          setTimeout(function() {
+    $('.design-btn').off('click.visualFilterType').on('click.visualFilterType', function(){
+      if (!$(this).hasClass('active')) {
+          $('.toggle-row .btn-normal').removeClass('active').addClass('not-active');
+          $(this).addClass('active').removeClass('not-active');
+          filterTimers.push(setTimeout(function() {
             $('.mouse-pos-list-image li, .mouse-pos-list-image-wrap li, .work-tiles li').removeClass('visible');
             $('.mouse-pos-list-image li.design, .mouse-pos-list-image-wrap li.design, .work-tiles li.design').addClass('visible');
-          }, 300);
+          }, 300));
       }
     });
-    $('.development-btn').click(function(){
-      if ($(this).hasClass('active')) {
-      } else {
-          $('.toggle-row .btn-normal').removeClass('active');
-          $('.toggle-row .btn-normal').addClass('not-active');
-          $(this).addClass('active');
-          $(this).removeClass('not-active');
-          // Cookies.set("filter", "development", { expires: 1 });
-          setTimeout(function() {
+    $('.development-btn').off('click.visualFilterType').on('click.visualFilterType', function(){
+      if (!$(this).hasClass('active')) {
+          $('.toggle-row .btn-normal').removeClass('active').addClass('not-active');
+          $(this).addClass('active').removeClass('not-active');
+          filterTimers.push(setTimeout(function() {
             $('.mouse-pos-list-image li, .mouse-pos-list-image-wrap li, .work-tiles li').removeClass('visible');
             $('.mouse-pos-list-image li.development, .mouse-pos-list-image-wrap li.development, .work-tiles li.development').addClass('visible');
-          }, 300);
+          }, 300));
       }
     });
 
-    $('.grid-row .btn').click(function(){
-      if ($(this).hasClass('active')) {
-          } else {
-      $('.grid-fade').addClass('grid-fade-out');
-      scroll.stop();
-      scroll.scrollTo( 'top', {'offset': 0, 'duration': 700, 'easing': [0.7, 0.00, 0.35, 1.00], 'disableLerp': true});
-      setTimeout(function() {
-        $('.grid-fade').removeClass('grid-fade-out');
-        $('.grid-fade').addClass('grid-fade-in');
-      }, 300);
-      setTimeout(function() {
-        $('.grid-fade').removeClass('grid-fade-in');
-        scroll.update();
-        ScrollTrigger.refresh();
-        scroll.start();
-      }, 700);
+    $('.grid-row .btn').off('click.visualGrid').on('click.visualGrid', function(){
+      if (!$(this).hasClass('active')) {
+        clearTimerQueue(gridTimers);
+        $('.grid-fade').removeClass('grid-fade-in').addClass('grid-fade-out');
+        safeScrollStop();
+        safeScrollTop();
+        gridTimers.push(setTimeout(function() {
+          $('.grid-fade').removeClass('grid-fade-out').addClass('grid-fade-in');
+        }, 300));
+        gridTimers.push(setTimeout(function() {
+          $('.grid-fade').removeClass('grid-fade-in');
+          safeScrollUpdate();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+          safeScrollStart();
+        }, 700));
       }
     });
-    $('.grid-row .rows-btn').click(function(){
-      if ($(this).hasClass('active')) {
-      } else {
-          $('.grid-row .btn-normal').removeClass('active');
-          $('.grid-row .btn-normal').addClass('not-active');
-          Cookies.set("view", "rows", { expires: 14 });
-          $(this).addClass('active');
-          $(this).removeClass('not-active');
-          setTimeout(function() {
+    $('.grid-row .rows-btn').off('click.visualGridType').on('click.visualGridType', function(){
+      if (!$(this).hasClass('active')) {
+          $('.grid-row .btn-normal').removeClass('active').addClass('not-active');
+          if (typeof Cookies !== 'undefined') Cookies.set("view", "rows", { expires: 14 });
+          $(this).addClass('active').removeClass('not-active');
+          gridTimers.push(setTimeout(function() {
             $('.grid-columns-part').removeClass('visible');
             $('.grid-rows-part').addClass('visible');
-          }, 300);
+            safeScrollUpdate();
+          }, 300));
       }
     });
-    $('.grid-row .columns-btn').click(function(){
-      if ($(this).hasClass('active')) {
-      } else {
-          $('.grid-row .btn-normal').removeClass('active');
-          $('.grid-row .btn-normal').addClass('not-active');
-          Cookies.set("view", "columns", { expires: 14 });
-          $(this).addClass('active');
-          $(this).removeClass('not-active');
-          setTimeout(function() {
+    $('.grid-row .columns-btn').off('click.visualGridType').on('click.visualGridType', function(){
+      if (!$(this).hasClass('active')) {
+          $('.grid-row .btn-normal').removeClass('active').addClass('not-active');
+          if (typeof Cookies !== 'undefined') Cookies.set("view", "columns", { expires: 14 });
+          $(this).addClass('active').removeClass('not-active');
+          gridTimers.push(setTimeout(function() {
             $('.grid-rows-part').removeClass('visible');
             $('.grid-columns-part').addClass('visible');
-          }, 300);
+            safeScrollUpdate();
+          }, 300));
       }
     });
 
@@ -954,13 +1015,17 @@ function initVisualFilter() {
 function initCookieViews() {
   // Set cookie for columns/rows view
   // https://www.youtube.com/watch?v=rfwiyBoVwdQ&ab_channel=TimothyRicks
-  if (Cookies.get("view") == "columns") {
+  if (typeof Cookies !== 'undefined' && Cookies.get("view") == "columns") {
     $('.grid-row .rows-btn').removeClass('active');
     $('.grid-row .columns-btn').addClass('active');
     $('#work .grid-rows-part').removeClass('visible');
     $('#work .grid-columns-part').addClass('visible');
-    scroll.update();
-    ScrollTrigger.refresh();
+    if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
+      scroll.update();
+    }
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh();
+    }
   }
 }
 
@@ -1041,6 +1106,11 @@ function initScrollLetters() {
 /**
 * Scrolltrigger Nav
 */
+function wrapElementSpanLines(wordWrap) {
+  if (!wordWrap || wordWrap.querySelector('.span-line')) return;
+  wordWrap.innerHTML = wordWrap.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="span-line"><span class="span-line-inner">$2</span></span>');
+}
+
 function initTricksWords() {
     
   // Copyright start
@@ -1048,28 +1118,51 @@ function initTricksWords() {
   // You have the license to use this code in your projects but not redistribute it to others
   // Tutorial: https://www.youtube.com/watch?v=xiAqTu4l3-g&ab_channel=TimothyRicks
 
-  // Find all text with .tricks class and break each letter into a span
+  // Find all text with .span-lines class and break each word into a span (idempotent)
   var spanWord = document.getElementsByClassName("span-lines");
   for (var i = 0; i < spanWord.length; i++) {
-
-  var wordWrap = spanWord.item(i);
-  wordWrap.innerHTML = wordWrap.innerHTML.replace(/(^|<\/?[^>]+>|\s+)([^\s<]+)/g, '$1<span class="span-line"><span class="span-line-inner">$2</span></span>');
-
+    wrapElementSpanLines(spanWord.item(i));
   }
 
 }
+
+window.reinitTextSpans = function(targetEl) {
+  var targets = targetEl ? [targetEl] : Array.prototype.slice.call(document.getElementsByClassName("span-lines"));
+  targets.forEach(function(el) {
+    if (!el) return;
+    if (el.querySelector('.span-line')) {
+      el.querySelectorAll('.span-line').forEach(function(spanLine) {
+        var inner = spanLine.querySelector('.span-line-inner');
+        var txt = document.createTextNode(inner ? inner.textContent : spanLine.textContent);
+        spanLine.parentNode.replaceChild(txt, spanLine);
+      });
+      el.normalize();
+    }
+    wrapElementSpanLines(el);
+    if (typeof gsap !== 'undefined') {
+      var inners = el.querySelectorAll('.span-line-inner');
+      if (inners.length) {
+        gsap.killTweensOf(inners);
+        gsap.set(inners, { y: '0%', opacity: 1, clearProps: 'transform,opacity' });
+      }
+    }
+  });
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.refresh();
+  }
+};
 
 /**
 * Contact Form
 */
 function initContactForm() {
     
-  $('.field').on('input', function() {
+  $('.field').off('input.contactField').on('input.contactField', function() {
     $(this).parent().toggleClass('not-empty', this.value.trim().length > 0);
   });
 
   $(function () {
-      $('.field').focusout(function () {
+      $('.field').off('focusout.contactField').on('focusout.contactField', function () {
           var text_val = $(this).val();
           $(this).parent().toggleClass('not-empty', text_val !== "");
       }).focusout();
@@ -1078,41 +1171,12 @@ function initContactForm() {
 }
 
 /**
-* Footer Time Zone
+* Footer Time Zone (delegated to portfolio-core.js)
 */
 function initTimeZone() {
-    
-   if(document.querySelector("#timeSpan")) {
-   // Time zone
-   // https://stackoverflow.com/questions/39418405/making-a-live-clock-in-javascript/67149791#67149791
-   // https://stackoverflow.com/questions/8207655/get-time-of-specific-timezone
-   // https://stackoverflow.com/questions/63572780/how-to-update-intl-datetimeformat-with-new-date
-
-   const timeSpan = document.querySelector("#timeSpan");
-
-   const optionsTime = {
-      timeZone: 'Europe/Amsterdam',
-      timeZoneName: 'short',
-      // year: 'numeric',
-      // month: 'numeric',
-      // day: 'numeric',
-      hour: '2-digit',
-      hour12: 'true',
-      minute: 'numeric',
-      // second: 'numeric',
-   };
-
-   const formatter = new Intl.DateTimeFormat([], optionsTime);
-   updateTime();
-   setInterval(updateTime, 1000);
-
-   function updateTime() {
-         const dateTime = new Date();
-         const formattedDateTime = formatter.format(dateTime);
-         timeSpan.textContent = formattedDateTime;
-   }
-   }
-
+  if (typeof window.updateBrazilClock === 'function') {
+    window.updateBrazilClock();
+  }
 }
 
 /**
@@ -1121,6 +1185,7 @@ function initTimeZone() {
 function initLazyLoad() {
     // https://github.com/locomotivemtl/locomotive-scroll/issues/225
     // https://github.com/verlok/vanilla-lazyload
+    if (typeof LazyLoad === 'undefined') return;
     var lazyLoadInstance = new LazyLoad({ 
       elements_selector: ".lazy",
     });
@@ -1136,7 +1201,8 @@ function initPlayVideoInview() {
 
   allVideoDivs.forEach((videoDiv, i) => {
 
-    let videoElem = videoDiv.querySelector('video')
+    let videoElem = videoDiv.querySelector('video');
+    if (!videoElem) return;
 
     ScrollTrigger.create({
       scroller: document.querySelector('[data-scroll-container]'),
@@ -1182,23 +1248,24 @@ function initScrolltriggerAnimations() {
   if(document.querySelector(".span-lines.animate")) {
   $(".span-lines.animate").each(function (index) {
     let triggerElement = $(this);
-    let targetElement = $(".span-lines.animate .span-line-inner");
+    let targetElement = triggerElement.find(".span-line-inner");
 
-    let tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: triggerElement,
-        toggleActions:'play none none reset', 
-        start: "0% 100%",
-        end: "100% 0%"
-      }
-    });
-    if(targetElement) {
+    if(targetElement.length) {
+      let tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerElement,
+          toggleActions:'play none none none', 
+          start: "0% 100%",
+          end: "100% 0%"
+        }
+      });
       tl.from(targetElement, {
         y: "100%",
         stagger: .01,
         ease: "power3.out",
         duration: 1,
-        delay: 0
+        delay: 0,
+        clearProps: "transform,opacity"
       });
     }
   });
@@ -1213,18 +1280,19 @@ function initScrolltriggerAnimations() {
     let tl = gsap.timeline({
       scrollTrigger: {
         trigger: triggerElement,
-        toggleActions:'play none none reset',
+        toggleActions:'play none none none',
         start: "0% 110%",
         end: "100% 0%",
       }
     });
-    if(targetElement) {
+    if(targetElement.length) {
       tl.from(targetElement, {
         y: "2em",
         opacity: 0,
         ease: "expo.out",
         duration: 1.75,
-        delay: 0
+        delay: 0,
+        clearProps: "transform,opacity"
       });
     }
   });
@@ -1348,29 +1416,7 @@ function initScrolltriggerAnimations() {
       }
       
       
-      if(document.querySelector(".about-services")) {
-      // Scrolltrigger Animation : About Services BG
-      $(".about-services").each(function (index) {
-        let triggerElement = $(this);
-        let targetElement = $(".about-header, .line-globe, .about-image, .about-services");
-      
-        let tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: triggerElement,
-            start: "-25% 100%",
-            end: "100% 100%",
-            scrub: 0,
-          }
-        });
-        tl.set(targetElement, {
-          backgroundColor: "#FFFFFF",
-        })
-        tl.to(targetElement, {
-          backgroundColor: "#E9EAEB",
-          ease: "none",
-        });
-      });
-      }
+      // Light-theme background transition removed to preserve #0B1220 dark theme on about.html
       
       if(document.querySelector(".digital-ball .globe")) {
       // Scrolltrigger Animation : Globe

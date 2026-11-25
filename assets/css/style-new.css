@@ -1133,12 +1133,12 @@ main.touch .main-wrap {
    padding: 2em 0 2em 0;
 }
 
-.small-work-grid .work-items li {
+.small-work-grid .work-items li:not(.stripe) {
    max-height: 0;
    overflow: hidden;
 }
 
-.small-work-grid .work-items li.visible {
+.small-work-grid .work-items li:not(.stripe).visible {
    max-height: calc(clamp(1.75em, 2.3vw, 2.5em) + 4.4em);
 }
 
@@ -1326,20 +1326,24 @@ main.touch .main-wrap {
 
 .work-filters .filter-row .toggle-row {
    display: flex;
+   align-items: center;
 }
 
 .work-filters .filter-row .toggle-row .btn {
    display: inline-flex;
    margin-right: .5em;
+   margin-bottom: 0;
 }
 
 .work-filters .filter-row .grid-row {
    display: flex;
+   align-items: center;
 }
 
 .work-filters .filter-row .grid-row .btn {
    display: inline-flex;
    margin-left: .5em;
+   margin-bottom: 0;
 }
 
 @media screen and (max-width: 1024px) {

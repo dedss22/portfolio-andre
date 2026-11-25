@@ -59,8 +59,8 @@
     --color-dark: #1C1D20;
     --color-dark-dark: #141517;
     --color-light: #FFFFFF;
-    --color-blue: #455CE9;
-    --color-blue-dark: #334BD3;
+    --color-blue: #0284C7;
+    --color-blue-dark: #0369A1;
     --color-gray: #999D9E;
     --color-lightgray: #E9EAEB;
     --color-white: #FFFFFF;
@@ -759,10 +759,10 @@ video.overlay {
 
 .btn-hamburger .btn-click {
     border: 0;
-    background-color: var(--color-dark);  
+    background-color: #142038;
     transition: background-color .25s cubic-bezier(0.36, 0, 0.66, 0), box-shadow .25s cubic-bezier(0.36, 0, 0.66, 0);
-    -webkit-box-shadow: inset 0px 0px 0px 1px var(--color-border-light); 
-    box-shadow: inset 0px 0px 0px 1px var(--color-border-light);
+    -webkit-box-shadow: inset 0px 0px 0px 1px rgba(56, 189, 248, 0.4);
+    box-shadow: inset 0px 0px 0px 1px rgba(56, 189, 248, 0.4);
 }
 
 .nav-active .btn-hamburger .btn-click {
@@ -837,8 +837,8 @@ main .btn-hamburger.active {
 }
 
 #contact .btn-hamburger .btn-click {
-    -webkit-box-shadow: inset 0px 0px 0px 1px var(--color-border-light) !important;  
-    box-shadow: inset 0px 0px 0px 1px var(--color-border-light) !important;
+    -webkit-box-shadow: inset 0px 0px 0px 1px rgba(56, 189, 248, 0.4) !important;
+    box-shadow: inset 0px 0px 0px 1px rgba(56, 189, 248, 0.4) !important;
 }
 
 #contact .nav-active .btn-hamburger .btn-click {
