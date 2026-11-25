@@ -559,7 +559,7 @@ main.touch .main-wrap {
 }
 
 .bottom-footer {
-   padding: calc(var(--section-padding) / 1.3) calc(var(--gap-padding) / 1.33) calc(var(--gap-padding) / 1.75) calc(var(--gap-padding) / 1);
+   padding: calc(var(--section-padding) / 1.3) max(calc(var(--gap-padding) / 1.33), clamp(96px, 7.8vw, 122px)) calc(var(--gap-padding) / 1.75) calc(var(--gap-padding) / 1);
    flex-direction: row;
    justify-content: space-between;
 }
@@ -655,13 +655,13 @@ main.touch .main-wrap {
    }
 
    .bottom-footer .flex-col:nth-child(2) {
-      padding: 0 calc(var(--container-padding) - calc(var(--gap-padding) * .333)) calc(var(--section-padding) / 3) calc(var(--container-padding) - calc(var(--gap-padding) * .333));
+      padding: 0 max(calc(var(--container-padding) - calc(var(--gap-padding) * .333)), 78px) calc(var(--section-padding) / 3) calc(var(--container-padding) - calc(var(--gap-padding) * .333));
       width: 100%;
    }
 
    .bottom-footer .flex-col:nth-child(1) {
       order: 3;
-      padding: 0 var(--container-padding) calc(var(--gap-padding) * .75) var(--container-padding);
+      padding: 0 max(var(--container-padding), 82px) calc(var(--gap-padding) * .75) var(--container-padding);
    }
 
    .socials li {
@@ -2286,25 +2286,25 @@ main.touch .main-wrap {
 }
 
 
-/* ------------------------- About - Split Awwwards -------------------------------------------------- */
+/* ------------------------- About - Split Standards -------------------------------------------------- */
 
 
-.about-awwwards .row {
+.about-standards .row {
    align-items: center;
 }
 
-.about-awwwards .flex-col:nth-child(1) {
+.about-standards .flex-col:nth-child(1) {
    width: 50%;
    padding-right: calc(var(--container-padding) / 2);
 }
 
-.about-awwwards .flex-col:nth-child(2) {
+.about-standards .flex-col:nth-child(2) {
    width: 50%;
    padding-left: calc(var(--container-padding) / 2);
    padding-bottom: 3em;
 }
 
-.about-awwwards .single-image {
+.about-standards .single-image {
    width: 100%;
    display: block;
    background: var(--color-lightgray);
@@ -2312,14 +2312,14 @@ main.touch .main-wrap {
    position: relative;
 }
 
-.about-awwwards .single-image::before{
+.about-standards .single-image::before{
    content: "";
    display: block;
    padding-top: 135%;
    padding-top: 125%;
 }
 
-.about-awwwards .single-image  .overlay:nth-child(1) {
+.about-standards .single-image  .overlay:nth-child(1) {
    background: url("../../andre_workspace.jpg") center center no-repeat;
    background-size: cover;
    top: -3%;
@@ -2328,24 +2328,24 @@ main.touch .main-wrap {
    left: -40%;
 }
 
-.about-awwwards .single-image  .overlay:nth-child(2) {
+.about-standards .single-image  .overlay:nth-child(2) {
    background: linear-gradient(to bottom,hsla(220, 13%, 5%, .075) 0%, hsla(220, 13%, 5%, 0) 50%);
 }
 
-.about-awwwards .awwwards-badge {
+.about-standards .standards-badge {
    width: 6em;
    position: relative;
    margin-bottom: calc(var(--section-padding) / 4);
    border-radius: 50%;
 }
 
-.about-awwwards .awwwards-badge::before {
+.about-standards .standards-badge::before {
    display: block;
    content: "";
    padding-top: 100%;
 }
 
-.about-awwwards .awwwards-badge svg:nth-child(1) {
+.about-standards .standards-badge svg:nth-child(1) {
    width: 100%;
    position: absolute;
    top: 50%;
@@ -2353,11 +2353,11 @@ main.touch .main-wrap {
    transform: translate(-50%, -50%);
 }
 
-.about-awwwards .awwwards-badge svg:nth-child(1) g {
+.about-standards .standards-badge svg:nth-child(1) g {
    fill: var(--color-gray);
 }
 
-.about-awwwards .awwwards-badge svg:nth-child(2) {
+.about-standards .standards-badge svg:nth-child(2) {
    width: 40%;
    position: absolute;
    top: 50%;
@@ -2365,32 +2365,32 @@ main.touch .main-wrap {
    transform: translate(-50%, -50%);
 }
 
-.about-awwwards .awwwards-badge svg:nth-child(2) path {
+.about-standards .standards-badge svg:nth-child(2) path {
    fill: var(--color-gray);
 }
 
 @media screen and (max-width: 720px) {
 
-   .about-awwwards {
+   .about-standards {
       padding-top: calc(var(--section-padding) / 1.5);
    }
-   .about-awwwards .flex-col:nth-child(1) {
+   .about-standards .flex-col:nth-child(1) {
       width: 100%;
       padding-right: 0;
    }
    
-   .about-awwwards .flex-col:nth-child(2) {
+   .about-standards .flex-col:nth-child(2) {
       width: 100%;
       padding-left: 0;
       padding-bottom: calc(var(--section-padding) / 2);
       order: 1;
    }
 
-   .about-awwwards .single-image::before{
+   .about-standards .single-image::before{
       padding-top: 125%;
    }
    
-   .about-awwwards .single-image  .overlay:nth-child(1) {
+   .about-standards .single-image  .overlay:nth-child(1) {
       background: url("../../andre_workspace.jpg") center center no-repeat;
       background-size: cover;
       top: -8%;
