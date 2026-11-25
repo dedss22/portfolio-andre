@@ -360,50 +360,101 @@
     .nav-bar .links-wrap li.btn-menu {
       margin-left: 4px !important;
     }
+  }
 
-    /* Hero mobile: retrato limpo, badge Localizado no Brasil legível e sem colisões */
+  @media screen and (max-width: 720px) {
+    /* Hero mobile & small tablet (<= 720px): fluxo vertical limpo, sem sobreposição e sem caixa na foto */
     .home-header {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      align-items: stretch !important;
       min-height: 100vh !important;
       min-height: calc(var(--vh, 1vh) * 100) !important;
+      min-height: 100svh !important;
       max-height: none !important;
       padding-top: 5rem !important;
-      padding-bottom: 2rem !important;
-    }
-    .home-header .personal-image {
-      top: 4.5rem !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 50vh !important;
-      bottom: auto !important;
+      padding-bottom: max(1.35rem, env(safe-area-inset-bottom, 0px)) !important;
       overflow: hidden !important;
     }
+    .home-header .personal-image {
+      order: 1 !important;
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      width: 100% !important;
+      flex: 1 1 0% !important;
+      min-height: 195px !important;
+      max-height: 58svh !important;
+      height: auto !important;
+      overflow: hidden !important;
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%) !important;
+      mask-image: linear-gradient(to bottom, #000 72%, transparent 100%) !important;
+    }
     .home-header .personal-image img.hero-portrait-img {
+      position: absolute !important;
+      top: auto !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
       height: 100% !important;
       max-height: 100% !important;
       width: auto !important;
-      top: 0 !important;
-      bottom: auto !important;
-      -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%) !important;
-      mask-image: linear-gradient(to bottom, #000 74%, transparent 100%) !important;
+      max-width: 100% !important;
+      object-fit: contain !important;
+      object-position: bottom center !important;
+      filter: none !important;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
     }
     .home-header .big-name {
-      bottom: 14.5rem !important;
+      order: 2 !important;
+      position: relative !important;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      width: 100% !important;
+      margin-top: -1.15rem !important;
+      margin-bottom: 0.85rem !important;
       padding-bottom: 0 !important;
+      overflow: hidden !important;
       z-index: 3 !important;
     }
-    .home-header .hanger {
-      width: auto !important;
+    .home-header .big-name h1 {
+      font-size: clamp(4.2rem, 20vw, 6.8rem) !important;
+      line-height: 0.96 !important;
+    }
+    .home-header .get-height {
+      order: 3 !important;
+      position: relative !important;
+      inset: auto !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      width: 100% !important;
       height: auto !important;
-      left: var(--container-padding) !important;
+      padding: 0 var(--container-padding) !important;
+      margin-bottom: 0.9rem !important;
+      z-index: 4 !important;
+    }
+    .home-header .hanger {
+      position: relative !important;
+      width: auto !important;
+      max-width: calc(100% - 4.25rem) !important;
+      height: auto !important;
+      left: auto !important;
       right: auto !important;
       top: auto !important;
-      bottom: 10rem !important;
+      bottom: auto !important;
       transform: none !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: space-between !important;
       gap: 0.7rem !important;
-      background: rgba(16, 25, 43, 0.9) !important;
+      background: rgba(16, 25, 43, 0.92) !important;
       border: 1px solid rgba(56, 189, 248, 0.38) !important;
       border-radius: 9999px !important;
       padding: 0.35rem 0.42rem 0.35rem 0.95rem !important;
@@ -454,18 +505,31 @@
       font-size: 0.55em !important;
     }
     .home-header .container {
-      padding-bottom: 0.5rem !important;
+      order: 4 !important;
+      width: 100% !important;
+      padding-top: 0 !important;
+      padding-bottom: 0.25rem !important;
+      padding-right: calc(var(--container-padding) + 4rem) !important;
       position: relative !important;
       z-index: 4 !important;
+    }
+    .home-header .row {
+      justify-content: flex-start !important;
+    }
+    .home-header .row .flex-col {
+      width: 100% !important;
     }
     .home-header .row .flex-col .header-above-h4 {
       position: static !important;
       top: auto !important;
-      margin-bottom: 0.55rem !important;
+      left: auto !important;
+      margin-bottom: 0.5rem !important;
+      display: block !important;
     }
     .home-header .row .flex-col h4 {
-      font-size: 1.35rem !important;
-      line-height: 1.35 !important;
+      font-size: clamp(1.15rem, 4.4vw, 1.5rem) !important;
+      line-height: 1.32 !important;
+      margin: 0 !important;
     }
   }
 </style>
@@ -609,7 +673,7 @@
    <div class="overlay personal-image no-select once-in" data-scroll data-scroll-speed="-3" data-scroll-position="top">
 <picture style="display: contents;">
 <source srcset="andre_sopro_hd_hero.webp" type="image/webp">
-<img src="andre_sopro_hd_hero.png" class="hero-portrait-img" width="638" height="1400" alt="André Carvalho" style="width: auto; height: 96%; max-height: 98vh; object-fit: contain; position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; filter: drop-shadow(0 25px 50px rgba(0,0,0,0.65));" />
+<img src="andre_sopro_hd_hero.png" class="hero-portrait-img" width="638" height="1400" alt="André Carvalho" style="width: auto; height: 96%; max-height: 98vh; object-fit: contain; position: absolute; left: 50%; transform: translateX(-50%); bottom: 0;" />
 </picture>
 </div>
 <div class="overlay get-height once-in once-in-secondary">
