@@ -81,6 +81,7 @@
       <link href="assets/css/styleguide.css" rel="stylesheet">
       <link href="assets/css/components.css" rel="stylesheet">
       <link href="assets/css/style-new.css" rel="stylesheet">
+      <link href="assets/css/cassiano-sandbox.css" rel="stylesheet">
 
 <style>
   /* Remover cursor azul gigante legado */
@@ -918,6 +919,11 @@
                   <h1 class="case-hero-title">Cassiano Imóveis</h1>
                   <p class="case-hero-lead" data-i18n="case_hero_lead">Site imobiliário com painel administrativo próprio: o dono cadastra, edita e publica os imóveis sozinho, com um botão, sem depender de desenvolvedor e sem risco de derrubar o site.</p>
 
+                  <div class="csb-acoes csb-hero-acoes">
+                     <button type="button" class="csb-btn csb-btn-primario" data-csb-ir><span data-i18n="cassiano_sb_title">Experimente ser o dono</span></button>
+                     <a class="csb-btn csb-btn-sec" href="https://www.cassianoimoveiss.com.br/" target="_blank" rel="noopener"><span data-i18n="cassiano_sb_btn_live">Ver site no ar ↗</span></a>
+                  </div>
+
                   <div class="case-meta-grid">
                      <div class="case-meta-item">
                         <h5 data-i18n="meta_client_label">Cliente / Contexto</h5>
@@ -942,6 +948,177 @@
                   </div>
                </div>
             </header>
+
+            <!-- SANDBOX INTERATIVO: simulacao 100% no navegador (sandbox/cassiano). Nenhuma chamada ao sistema real. -->
+            <section class="section case-section csb-section" data-scroll-section id="experimente" aria-labelledby="csb-titulo">
+               <div class="container medium">
+                  <div id="cassiano-sandbox" class="csb-raiz">
+                     <div class="csb-intro">
+                        <div>
+                           <span class="csb-badge"><span class="csb-dot" aria-hidden="true"></span><span data-i18n="cassiano_sb_badge">Demo interativa • Dados fictícios</span></span>
+                           <h2 class="csb-title" id="csb-titulo" data-i18n="cassiano_sb_title">Experimente ser o dono</h2>
+                           <p class="csb-sub" data-i18n="cassiano_sb_sub">Entre no painel do Cassiano, cadastre um imóvel, publique no site, faça uma pré-reserva como visitante e veja tudo chegar na planilha da agenda. É o mesmo painel do projeto, rodando aqui com dados de exemplo.</p>
+                        </div>
+                        <div class="csb-acoes">
+                           <button type="button" class="csb-btn csb-btn-primario" data-csb-comecar><span data-i18n="cassiano_sb_btn_tour">Começar o tour</span></button>
+                           <a class="csb-btn csb-btn-sec" href="https://www.cassianoimoveiss.com.br/" target="_blank" rel="noopener"><span data-i18n="cassiano_sb_btn_live">Ver site no ar ↗</span></a>
+                        </div>
+                     </div>
+
+                     <p class="csb-safe" role="note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><span data-i18n="cassiano_sb_safe">Você está no lugar do dono: teste à vontade, nada aqui afeta o site real. Os dados são fictícios e ficam só no seu navegador.</span></p>
+
+                     <div class="csb-tour">
+                        <div class="csb-tour-top">
+                           <strong data-i18n="cassiano_sb_tour_title">Tour em 7 passos (opcional)</strong>
+                           <div class="csb-progresso"><div class="csb-barra" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" aria-labelledby="csb-prog-txt"><span></span></div><span id="csb-prog-txt"><span data-csb-feitos>0</span>/7 <span data-i18n="cassiano_sb_done">concluídos</span></span></div>
+                        </div>
+                        <ol class="csb-steps">
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">1</span><span data-i18n="cassiano_sb_s1">Entre no painel</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">2</span><span data-i18n="cassiano_sb_s2">Cadastre um imóvel</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">3</span><span data-i18n="cassiano_sb_s3">Publique no site</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">4</span><span data-i18n="cassiano_sb_s4">Veja no site</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">5</span><span data-i18n="cassiano_sb_s5">Faça uma pré-reserva</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">6</span><span data-i18n="cassiano_sb_s6">Confira na agenda</span></button></li>
+                           <li><button type="button" class="csb-step"><span class="csb-num" aria-hidden="true">7</span><span data-i18n="cassiano_sb_s7">Abra a planilha</span></button></li>
+                        </ol>
+                        <div class="csb-guia" role="status" aria-live="polite" hidden>
+                           <p></p>
+                           <button type="button" class="csb-mini" data-csb-prox data-i18n="cassiano_sb_next">Próximo passo</button>
+                           <button type="button" class="csb-mini sec" data-csb-fim data-i18n="cassiano_sb_end">Encerrar tour</button>
+                        </div>
+                     </div>
+
+                     <div class="csb-tabs" role="tablist" aria-label="Partes da demonstração">
+                        <button type="button" class="csb-tab" role="tab" id="csb-tab-painel" data-aba="painel" aria-controls="csb-palco" aria-selected="true" tabindex="0" data-i18n="cassiano_sb_tab_panel">Painel do Cassiano</button>
+                        <button type="button" class="csb-tab" role="tab" id="csb-tab-casa" data-aba="casa" aria-controls="csb-palco" aria-selected="false" tabindex="-1" data-i18n="cassiano_sb_tab_house">Página da casa (visitante)</button>
+                        <button type="button" class="csb-tab" role="tab" id="csb-tab-planilha" data-aba="planilha" aria-controls="csb-palco" aria-selected="false" tabindex="-1" data-i18n="cassiano_sb_tab_sheet">Planilha da agenda</button>
+                        <button type="button" class="csb-tab" role="tab" id="csb-tab-site" data-aba="site" aria-controls="csb-palco" aria-selected="false" tabindex="-1" data-i18n="cassiano_sb_tab_site">Site (prévia)</button>
+                     </div>
+                     <div class="csb-browser">
+                        <div class="csb-bar">
+                           <span class="csb-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                           <span class="csb-url" aria-hidden="true"><b>demo</b><span data-csb-url>/admin</span></span>
+                           <span class="csb-bar-acoes">
+                              <button type="button" class="csb-bar-btn" data-csb-restaurar data-i18n="cassiano_sb_reset">Restaurar dados</button>
+                              <a class="csb-bar-btn" data-csb-novaaba href="sandbox/cassiano/admin/login.html" target="_blank" rel="noopener" data-i18n="cassiano_sb_newtab">Abrir em nova aba</a>
+                           </span>
+                        </div>
+                        <div class="csb-palco" id="csb-palco" role="tabpanel" aria-labelledby="csb-tab-painel">
+                           <p class="csb-carregando" data-i18n="cassiano_sb_loading">Carregando a demonstração…</p>
+                        </div>
+                     </div>
+                     <p class="csb-nota" data-csb-status role="status" aria-live="polite"></p>
+                     <p class="csb-nota" data-i18n="cassiano_sb_note">O painel e a planilha são os do projeto, com os textos em português. A API foi trocada por uma simulação no navegador: não há login real, banco de dados nem envio de fotos.</p>
+                     <p class="csb-nota csb-nota-cel" data-i18n="cassiano_sb_note_mobile">No celular, o painel aparece como no telefone do dono. Role dentro da moldura para ver tudo.</p>
+                  </div>
+               </div>
+            </section>
+
+            <!-- GALERIA: telas reais do site publico (dados pessoais desfocados) e do painel no sandbox -->
+            <section class="section case-section alt-surface" data-scroll-section id="galeria" aria-labelledby="csb-gal-titulo">
+               <div class="container medium">
+                  <div class="csb-gal-head">
+                     <span class="case-section-label" data-i18n="cassiano_sb_gal_label">Galeria • O site no ar</span>
+                     <h2 class="case-section-title" id="csb-gal-titulo" data-i18n="cassiano_sb_gal_title">Como o site ficou, página por página</h2>
+                     <p data-i18n="cassiano_sb_gal_intro">Telas reais do site público, no computador e no celular, e duas telas do painel na versão de demonstração. Clique em uma imagem para ampliar.</p>
+                  </div>
+                  <ul class="csb-galeria">
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-home.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-home.avif"><img src="assets/img/cassiano/site-home.webp" width="1200" height="750" loading="lazy" decoding="async" alt="Página inicial do site Cassiano Imóveis com o título Propriedades Exclusivas no Sul da Bahia" data-i18n-alt="cassiano_sb_g1_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g1_t">Página inicial</strong><span data-i18n="cassiano_sb_g1_d">A chegada mostra o posicionamento e leva direto aos imóveis à venda, com busca rápida por destino logo abaixo.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-lista.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-lista.avif"><img src="assets/img/cassiano/site-lista.webp" width="1200" height="750" loading="lazy" decoding="async" alt="Catálogo com cartões de imóveis à venda, cada um com foto, referência e valor" data-i18n-alt="cassiano_sb_g2_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g2_t">Lista de imóveis à venda</strong><span data-i18n="cassiano_sb_g2_d">Cartões com foto, referência, preço e características. Tudo vem do painel: quando o dono publica, a lista se atualiza sozinha.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-imovel.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-imovel.avif"><img src="assets/img/cassiano/site-imovel.webp" width="1020" height="900" loading="lazy" decoding="async" alt="Página de um imóvel de alto padrão com título, valor de venda e foto aérea" data-i18n-alt="cassiano_sb_g3_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g3_t">Página do imóvel</strong><span data-i18n="cassiano_sb_g3_d">Título, valor e fotos em destaque. O texto, as fotos e os ícones das características são editados pelo dono no painel.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-temporada.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-temporada.avif"><img src="assets/img/cassiano/site-temporada.webp" width="1200" height="750" loading="lazy" decoding="async" alt="Página de temporada com filtro por destino e cartão de uma casa" data-i18n-alt="cassiano_sb_g4_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g4_t">Temporada</strong><span data-i18n="cassiano_sb_g4_d">Casas para alugar por temporada, com filtro por destino. Cada casa tem uma página com calendário de datas livres e ocupadas.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig is-cel"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-celular-home.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-celular-home.avif"><img src="assets/img/cassiano/site-celular-home.webp" width="480" height="1039" loading="lazy" decoding="async" alt="Página inicial do site vista no celular" data-i18n-alt="cassiano_sb_g5_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g5_t">Celular: página inicial</strong><span data-i18n="cassiano_sb_g5_d">Pensado para quem chega pelo celular: botões grandes e textos legíveis sem zoom.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig is-cel"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/site-celular-imovel.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/site-celular-imovel.avif"><img src="assets/img/cassiano/site-celular-imovel.webp" width="480" height="1039" loading="lazy" decoding="async" alt="Página de um imóvel vista no celular, com título e valor de venda" data-i18n-alt="cassiano_sb_g6_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g6_t">Celular: página do imóvel</strong><span data-i18n="cassiano_sb_g6_d">O valor e a referência aparecem logo no topo, para quem decide rápido pelo telefone.</span></figcaption>
+                     </figure></li>
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/painel-imoveis.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/painel-imoveis.avif"><img src="assets/img/cassiano/painel-imoveis.webp" width="1200" height="750" loading="lazy" decoding="async" alt="Painel administrativo com a lista de imóveis e o botão Publicar no site" data-i18n-alt="cassiano_sb_g7_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g7_t">Painel: gerenciar imóveis</strong><span data-i18n="cassiano_sb_g7_d">Onde o dono cria, edita e publica. O botão “Publicar no site” avisa quantas alterações ainda não foram para o ar.</span><em class="csb-tag-fic" data-i18n="cassiano_sb_gal_fict">Sandbox • dados fictícios</em></figcaption>
+                     </figure></li>
+                     <li class="csb-fig"><figure class="csb-fig-in">
+                        <button type="button" class="csb-fig-btn" data-grande="assets/img/cassiano/painel-agenda.webp">
+                           <picture><source type="image/avif" srcset="assets/img/cassiano/painel-agenda.avif"><img src="assets/img/cassiano/painel-agenda.webp" width="980" height="900" loading="lazy" decoding="async" alt="Agenda geral com uma linha por casa e reservas coloridas por origem" data-i18n-alt="cassiano_sb_g8_a"></picture>
+                        </button>
+                        <figcaption><strong data-i18n="cassiano_sb_g8_t">Painel: agenda geral da temporada</strong><span data-i18n="cassiano_sb_g8_d">Todas as casas no mesmo período, coloridas pela origem da reserva (direta, Airbnb, Booking), com as pré-reservas tracejadas.</span><em class="csb-tag-fic" data-i18n="cassiano_sb_gal_fict">Sandbox • dados fictícios</em></figcaption>
+                     </figure></li>
+                  </ul>
+               </div>
+            </section>
+
+            <!-- INFORMATIVOS: numeros verdadeiros, o que o dono faz sozinho e stack -->
+            <section class="section case-section" data-scroll-section aria-labelledby="csb-info-titulo">
+               <div class="container medium">
+                  <div class="csb-gal-head">
+                     <span class="case-section-label" data-i18n="cassiano_sb_info_label">Em resumo</span>
+                     <h2 class="case-section-title" id="csb-info-titulo" data-i18n="cassiano_sb_info_title">O projeto em números</h2>
+                  </div>
+                  <ul class="csb-numeros">
+                     <li class="csb-numero"><strong>11</strong><span data-i18n="cassiano_sb_n1">imóveis de venda iniciais importados para o painel</span></li>
+                     <li class="csb-numero"><strong>330<small>+</small></strong><span data-i18n="cassiano_sb_n2">testes automatizados (node:test + Playwright)</span></li>
+                     <li class="csb-numero"><strong>1 <small data-i18n="cassiano_sb_n3_v">clique</small></strong><span data-i18n="cassiano_sb_n3">para publicar o site, sem desenvolvedor</span></li>
+                     <li class="csb-numero"><strong>48<small> h</small></strong><span data-i18n="cassiano_sb_n4">de validade de uma pré-reserva antes de as datas voltarem a ficar livres</span></li>
+                     <li class="csb-numero"><strong>4</strong><span data-i18n="cassiano_sb_n5">origens de reserva na agenda: direta, Airbnb, Booking e site</span></li>
+                     <li class="csb-numero"><strong>2</strong><span data-i18n="cassiano_sb_n6">perfis de acesso: administrador e assistente</span></li>
+                  </ul>
+                  <div class="csb-info-grid">
+                     <div>
+                        <h3 data-i18n="cassiano_sb_solo_title">O que o dono faz sozinho</h3>
+                        <ul class="csb-sozinho">
+                           <li data-i18n="cassiano_sb_solo1">Cadastra e edita imóveis de venda e aluguel, com ícones das características</li>
+                           <li data-i18n="cassiano_sb_solo2">Envia fotos pelo celular, já reduzidas e sem dados de localização</li>
+                           <li data-i18n="cassiano_sb_solo3">Publica o site com um botão; se algo falhar, a versão anterior continua no ar</li>
+                           <li data-i18n="cassiano_sb_solo4">Marca reservas, bloqueios e épocas de preço de cada casa de temporada</li>
+                           <li data-i18n="cassiano_sb_solo5">Vê todas as casas na agenda geral e acha os períodos livres</li>
+                           <li data-i18n="cassiano_sb_solo6">Baixa a planilha da agenda no mesmo modelo que já usava</li>
+                        </ul>
+                     </div>
+                     <div>
+                        <h3 data-i18n="cassiano_sb_stack_title">Stack</h3>
+                        <div class="csb-stack">
+                           <span class="case-pill">Astro</span>
+                           <span class="case-pill">Cloudflare Pages</span>
+                           <span class="case-pill">Pages Functions</span>
+                           <span class="case-pill">Supabase (Postgres, Auth, Storage)</span>
+                           <span class="case-pill">HTML, CSS e JS puros no painel</span>
+                           <span class="case-pill">Content Security Policy</span>
+                           <span class="case-pill">node:test</span>
+                           <span class="case-pill">Playwright</span>
+                           <span class="case-pill">GitHub Actions</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
 
             <section class="section case-section" data-scroll-section>
                <div class="container medium">
@@ -1241,5 +1418,6 @@
       <script src="assets/js/locomotive-scroll.min.js"></script>
       <script defer src="assets/js/index-new.js"></script>
       <script defer src="assets/js/portfolio-core.js"></script>
+      <script defer src="assets/js/cassiano-sandbox.js"></script>
    </body>
 </html>

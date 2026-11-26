@@ -1,0 +1,146 @@
+/* ==========================================================================
+   Cassiano Imóveis — sandbox interativo, galeria e informativos do case.
+   Moldura no visual do portfólio (Deep Navy #0B1220 / #38BDF8, pílulas e botões redondos),
+   coerente com o sandbox de Compras. Dentro da moldura, o painel aparece com o visual real dele.
+   ========================================================================== */
+
+.csb-section { padding-top: clamp(2.5rem, 5vw, 5rem) !important; }
+
+/* Barra de introdução */
+.csb-intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.25rem 2rem; align-items: end; margin-bottom: 1.25rem; }
+.csb-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; border-radius: 9999px; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.4); color: #FCD34D; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; }
+.csb-dot { width: 7px; height: 7px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 10px #F59E0B; animation: csbPulse 2s infinite ease-in-out; }
+@keyframes csbPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.85); } }
+.csb-title { color: #FFFFFF !important; font-size: clamp(1.9rem, 3.4vw, 3rem) !important; font-weight: 500 !important; line-height: 1.12 !important; letter-spacing: -0.02em !important; margin: 0 0 0.6rem 0 !important; }
+.csb-sub { color: rgba(255, 255, 255, 0.78) !important; font-size: clamp(1rem, 1.2vw, 1.12rem) !important; line-height: 1.55 !important; margin: 0 !important; max-width: 760px; opacity: 1 !important; transform: none !important; }
+.csb-acoes { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.csb-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 48px; padding: 0.75rem 1.4rem; border-radius: 9999px; font: inherit; font-size: 0.98rem; font-weight: 600; cursor: pointer; text-decoration: none !important; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+.csb-btn-primario { background: #FFFFFF; color: #0B1220 !important; border: 1px solid #FFFFFF; }
+.csb-btn-primario:hover { background: #E0F2FE; border-color: #E0F2FE; }
+.csb-btn-sec { background: transparent; color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.35); }
+.csb-btn-sec:hover { border-color: #38BDF8; background: rgba(56, 189, 248, 0.1); }
+.csb-btn:focus-visible, .csb-tab:focus-visible, .csb-step:focus-visible, .csb-mini:focus-visible, .csb-fig-btn:focus-visible, .csb-lb button:focus-visible { outline: 3px solid #38BDF8; outline-offset: 3px; }
+.csb-safe { display: flex; gap: 0.75rem; align-items: flex-start; margin: 0 0 1.25rem !important; padding: 0.85rem 1rem; border-radius: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); color: #D1FAE5 !important; font-size: 0.95rem !important; line-height: 1.5 !important; }
+.csb-safe svg { flex-shrink: 0; margin-top: 2px; }
+
+/* Passos (tour) */
+.csb-tour { background: #10192B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 1rem 1.1rem 1.1rem; margin-bottom: 1rem; }
+.csb-tour-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-bottom: 0.7rem; }
+.csb-tour-top strong { color: #FFFFFF; font-size: 0.98rem; font-weight: 600; }
+.csb-progresso { display: flex; align-items: center; gap: 0.6rem; color: rgba(255, 255, 255, 0.75); font-size: 0.88rem; }
+.csb-barra { width: 140px; height: 6px; border-radius: 9999px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.csb-barra span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #38BDF8, #10B981); border-radius: inherit; transition: width .4s ease; }
+.csb-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.5rem; }
+.csb-step { appearance: none; width: 100%; height: 100%; min-height: 64px; text-align: left; display: grid; grid-template-columns: 28px 1fr; gap: 0.15rem 0.55rem; align-items: center; padding: 0.55rem 0.65rem; border-radius: 12px; background: rgba(7, 11, 20, 0.55); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.86); font: inherit; font-size: 0.84rem; line-height: 1.3; cursor: pointer; }
+.csb-step:hover { border-color: rgba(56, 189, 248, 0.55); }
+.csb-num { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; background: #131E35; border: 1px solid rgba(56, 189, 248, 0.4); color: #7DD3FC; font-weight: 700; font-size: 0.82rem; }
+.csb-step.is-atual { border-color: #38BDF8; background: rgba(56, 189, 248, 0.12); color: #FFFFFF; }
+.csb-step.is-feito .csb-num { background: #10B981; border-color: #10B981; color: #04241A; font-size: 0; }
+.csb-step.is-feito .csb-num::before { content: "\2713"; font-size: 0.9rem; }
+.csb-guia { margin-top: 0.8rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; padding: 0.8rem 1rem; border-radius: 12px; background: linear-gradient(90deg, rgba(56, 189, 248, 0.14), rgba(56, 189, 248, 0.04)); border: 1px solid rgba(56, 189, 248, 0.35); }
+.csb-guia[hidden] { display: none; }
+.csb-guia p { flex: 1 1 320px; margin: 0 !important; color: #E0F2FE !important; font-size: 0.95rem !important; line-height: 1.5 !important; }
+.csb-guia p strong { color: #FFFFFF; }
+.csb-guia.is-ok { background: rgba(16, 185, 129, 0.14); border-color: rgba(16, 185, 129, 0.45); }
+.csb-mini { appearance: none; min-height: 40px; padding: 0.45rem 1rem; border-radius: 9999px; font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer; background: #FFFFFF; color: #0B1220; border: 1px solid #FFFFFF; }
+.csb-mini.sec { background: transparent; color: #FFFFFF; border-color: rgba(255, 255, 255, 0.35); }
+
+/* Abas + moldura */
+.csb-tabs { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 2px; margin-bottom: 0.6rem; scrollbar-width: thin; }
+.csb-tab { appearance: none; flex-shrink: 0; min-height: 44px; padding: 0.55rem 1.05rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.2); background: #131E35; color: rgba(255, 255, 255, 0.82); font: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.csb-tab:hover { border-color: rgba(56, 189, 248, 0.6); }
+.csb-tab[aria-selected="true"] { background: #FFFFFF; color: #0B1220; border-color: #FFFFFF; }
+.csb-browser { background: #0D1628; border: 1px solid rgba(56, 189, 248, 0.28); border-radius: 18px; overflow: hidden; box-shadow: 0 28px 75px rgba(0, 0, 0, 0.5), 0 0 42px rgba(2, 132, 199, 0.14); }
+.csb-bar { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.8rem; background: #0F1A2E; border-bottom: 1px solid rgba(255, 255, 255, 0.08); flex-wrap: wrap; }
+.csb-dots { display: flex; gap: 6px; }
+.csb-dots i { width: 10px; height: 10px; border-radius: 50%; background: #334155; display: block; }
+.csb-dots i:nth-child(1) { background: #F87171; } .csb-dots i:nth-child(2) { background: #FBBF24; } .csb-dots i:nth-child(3) { background: #34D399; }
+.csb-url { flex: 1 1 180px; min-width: 0; display: flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.75rem; border-radius: 9999px; background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.75); font-size: 0.8rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.csb-url b { color: #FCD34D; font-weight: 600; font-family: inherit; }
+.csb-bar-acoes { display: flex; gap: 0.4rem; }
+.csb-bar-btn { appearance: none; min-height: 34px; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.22); background: transparent; color: rgba(255, 255, 255, 0.85); font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; text-decoration: none !important; display: inline-flex; align-items: center; }
+.csb-bar-btn:hover { border-color: #38BDF8; color: #FFFFFF; }
+.csb-bar-btn:focus-visible { outline: 3px solid #38BDF8; outline-offset: 2px; }
+.csb-palco { position: relative; background: #f3f4f6; height: 760px; }
+.csb-palco iframe { display: block; width: 100%; height: 100%; border: 0; background: #f3f4f6; }
+.csb-palco iframe[hidden] { display: none; }
+.csb-palco.is-planilha, .csb-palco.is-planilha iframe { background: #0d1628; }
+.csb-carregando { position: absolute; inset: 0; display: grid; place-items: center; color: #475569; font-size: 0.95rem; pointer-events: none; }
+.csb-nota { margin: 0.7rem 0 0 !important; color: rgba(255, 255, 255, 0.6) !important; font-size: 0.85rem !important; line-height: 1.45 !important; }
+.csb-nota-cel { display: none; }
+
+/* Galeria */
+.csb-gal-head { max-width: 780px; margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem); }
+.csb-gal-head p { color: rgba(255, 255, 255, 0.78) !important; font-size: clamp(1rem, 1.2vw, 1.15rem) !important; line-height: 1.6 !important; margin: 1rem 0 0 !important; }
+.csb-galeria { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.1rem; }
+.csb-fig { margin: 0; grid-column: span 6; background: #10192B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+.csb-fig.is-cel { grid-column: span 3; }
+.csb-fig-btn { appearance: none; display: block; width: 100%; padding: 0; border: 0; background: #0D1628; cursor: zoom-in; position: relative; }
+.csb-fig-btn img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.csb-fig.is-cel .csb-fig-btn img { aspect-ratio: 9 / 16; }
+.csb-fig-btn::after { content: "\2922"; position: absolute; right: 10px; top: 10px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(11, 18, 32, 0.78); color: #FFFFFF; font-size: 1rem; opacity: 0; transition: opacity .2s ease; }
+.csb-fig-btn:hover::after, .csb-fig-btn:focus-visible::after { opacity: 1; }
+.csb-fig figcaption { padding: 0.9rem 1rem 1.05rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.csb-fig figcaption strong { color: #FFFFFF; font-size: 1rem; font-weight: 600; }
+.csb-fig figcaption span { color: rgba(255, 255, 255, 0.72); font-size: 0.9rem; line-height: 1.5; }
+.csb-fig .csb-tag-fic { align-self: flex-start; margin-top: 0.2rem; padding: 0.15rem 0.55rem; border-radius: 9999px; background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.4); color: #FCD34D; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em; }
+
+/* Lightbox (fica no body, fora do container do Locomotive) */
+.csb-lb { position: fixed; inset: 0; z-index: 10000; background: rgba(5, 9, 18, 0.97); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3.5rem 1rem 1rem; }
+.csb-lb[hidden] { display: none; }
+.csb-lb figure { margin: 0; max-width: min(1200px, 100%); max-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.csb-lb img { max-width: 100%; max-height: calc(100vh - 9rem); width: auto; height: auto; border-radius: 10px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); background: #0D1628; }
+.csb-lb figcaption { color: #E2E8F0; font-size: 0.95rem; text-align: center; max-width: 760px; line-height: 1.5; }
+.csb-lb figcaption strong { color: #FFFFFF; display: block; }
+.csb-lb button { appearance: none; position: absolute; min-width: 48px; min-height: 48px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); color: #FFFFFF; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.csb-lb button:hover { background: rgba(255, 255, 255, 0.2); }
+.csb-lb .csb-lb-fechar { top: 0.75rem; right: 0.75rem; font-size: 1.2rem; }
+.csb-lb .csb-lb-ant { left: 0.75rem; top: 50%; transform: translateY(-50%); }
+.csb-lb .csb-lb-prox { right: 0.75rem; top: 50%; transform: translateY(-50%); }
+.csb-lb-conta { position: absolute; top: 1.1rem; left: 1rem; color: rgba(255, 255, 255, 0.7); font-size: 0.85rem; }
+
+/* Informativos */
+.csb-numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0 0 clamp(2.5rem, 4vw, 3.5rem); padding: 0; list-style: none; }
+.csb-numero { background: #10192B; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 18px; padding: 1.25rem 1.3rem; }
+.csb-numero strong { display: block; color: #FFFFFF; font-size: clamp(2rem, 3.4vw, 2.8rem); font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; }
+.csb-numero strong small { font-size: 0.5em; color: #7DD3FC; margin-left: 0.15em; }
+.csb-numero span { display: block; margin-top: 0.45rem; color: rgba(255, 255, 255, 0.74); font-size: 0.93rem; line-height: 1.45; }
+.csb-info-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+.csb-info-grid h3 { color: #FFFFFF !important; font-size: 1.25rem !important; font-weight: 600 !important; margin: 0 0 1rem !important; }
+.csb-sozinho { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.csb-sozinho li { display: grid; grid-template-columns: 26px 1fr; gap: 0.6rem; color: rgba(255, 255, 255, 0.82); font-size: 0.98rem; line-height: 1.5; }
+.csb-sozinho li::before { content: "\2713"; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(16, 185, 129, 0.16); color: #34D399; font-weight: 700; font-size: 0.8rem; margin-top: 1px; }
+.csb-stack { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+
+/* Responsivo (mobile-first na moldura) */
+@media screen and (max-width: 1100px) {
+  .csb-steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media screen and (max-width: 860px) {
+  .csb-intro { grid-template-columns: 1fr; }
+  .csb-palco { height: 680px; }
+  .csb-fig, .csb-fig.is-cel { grid-column: span 12; }
+  .csb-galeria .csb-fig.is-cel { grid-column: span 6; }
+  .csb-numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .csb-info-grid { grid-template-columns: 1fr; }
+  .csb-nota-cel { display: block; }
+}
+@media screen and (max-width: 560px) {
+  .csb-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .csb-steps li:last-child { grid-column: span 2; }
+  .csb-palco { height: 620px; }
+  .csb-barra { width: 90px; }
+  .csb-url { order: 3; flex-basis: 100%; }
+  .csb-numeros { grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  .csb-numero { padding: 1rem; }
+  .csb-acoes .csb-btn { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .csb-dot { animation: none; }
+  .csb-barra span, .csb-btn, .csb-fig-btn::after { transition: none; }
+}
+
+.csb-hero-acoes { margin: 1.75rem 0 0.5rem; }
+.csb-carregando[hidden] { display: none; }
+.csb-fig-btn { padding: 0 !important; margin: 0 !important; border-radius: 0 !important; }
+.csb-fig-btn picture { display: block; }
