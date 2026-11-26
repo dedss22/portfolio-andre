@@ -163,7 +163,7 @@
   }
 
   var DDI = ['351', '598', '595', '54', '56', '34', '39', '33', '49', '44', '41', '31', '1'];
-  /** "+5573998585844" -> "(73) 99858-5844"; fixo "(73) 3333-4444"; outros paises: "+351 912 345 678". Fora do padrao: devolve como veio. */
+  /** "+5511987654321" -> "(11) 98765-4321"; fixo "(73) 3333-4444"; outros paises: "+351 912 345 678". Fora do padrao: devolve como veio. */
   function formatarTelefone(e164) {
     var t = String(e164 === null || e164 === undefined ? '' : e164).trim();
     var d = t.replace(/\D/g, '');
