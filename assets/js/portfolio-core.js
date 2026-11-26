@@ -42,6 +42,10 @@
     compras: {
       pt: 'Sistema de Gestão de Compras — Paralelo 17 | André Carvalho',
       en: 'Purchasing Management System — Paralelo 17 | André Carvalho'
+    },
+    notfound: {
+      pt: 'Página não encontrada — André Carvalho',
+      en: 'Page not found — André Carvalho'
     }
   };
 
@@ -204,7 +208,12 @@
       // Adaptive WhatsApp Button
       wa_aria: 'Conversar pelo WhatsApp',
       wa_title: 'Falar no WhatsApp',
-      wa_prefill: 'Olá André! Vi seu portfólio e gostaria de conversar sobre um projeto.'
+      wa_prefill: 'Olá André! Vi seu portfólio e gostaria de conversar sobre um projeto.',
+
+      // 404 page
+      nf_title: 'Página não encontrada',
+      nf_desc: 'O endereço que você acessou não existe ou foi movido.',
+      nf_btn_home: 'Voltar ao início'
     },
     en: {
       // Common / Navigation / Footer
@@ -364,7 +373,12 @@
       // Adaptive WhatsApp Button
       wa_aria: 'Chat on WhatsApp',
       wa_title: 'Message on WhatsApp',
-      wa_prefill: 'Hi André! I saw your portfolio and would like to discuss a project.'
+      wa_prefill: 'Hi André! I saw your portfolio and would like to discuss a project.',
+
+      // 404 page
+      nf_title: 'Page not found',
+      nf_desc: 'The address you visited does not exist or has moved.',
+      nf_btn_home: 'Back to home'
     }
   };
 

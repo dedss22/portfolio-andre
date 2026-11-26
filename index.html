@@ -70,6 +70,7 @@
       <link href="assets/css/styleguide.css" rel="stylesheet">
       <link href="assets/css/components.css" rel="stylesheet">
       <link href="assets/css/style-new.css" rel="stylesheet">
+      <noscript><style>.loading-container{display:none !important}</style></noscript>
       
    
 <style>
@@ -676,8 +677,9 @@
             <div class="main-wrap" data-scroll-container><header class="section home-header theme-dark" data-scroll-section>
    <div class="overlay personal-image no-select once-in" data-scroll data-scroll-speed="-3" data-scroll-position="top">
 <picture style="display: contents;">
-<source srcset="andre_sopro_hd_hero.webp" type="image/webp">
-<img src="andre_sopro_hd_hero.png" class="hero-portrait-img" width="638" height="1400" alt="André Carvalho" style="width: auto; height: 96%; max-height: 98vh; object-fit: contain; position: absolute; left: 50%; transform: translateX(-50%); bottom: 0;" />
+<source srcset="andre_sopro_hd_hero-440.avif 440w, andre_sopro_hd_hero-638.avif 638w" sizes="(max-width: 720px) 27vh, 45vh" type="image/avif">
+<source srcset="andre_sopro_hd_hero-440.webp 440w, andre_sopro_hd_hero-638.webp 638w" sizes="(max-width: 720px) 27vh, 45vh" type="image/webp">
+<img src="andre_sopro_hd_hero.png" class="hero-portrait-img" width="638" height="1400" alt="André Carvalho" fetchpriority="high" style="width: auto; height: 96%; max-height: 98vh; object-fit: contain; position: absolute; left: 50%; transform: translateX(-50%); bottom: 0;" />
 </picture>
 </div>
 <div class="overlay get-height once-in once-in-secondary">
