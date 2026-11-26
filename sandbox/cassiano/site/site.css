@@ -1,0 +1,125 @@
+/* Previa do site publico (sandbox do portfolio): mesmo visual do site da imobiliaria (azul #162038, dourado #cbb493, fundo #faf9f6),
+   com dados ficticios. Fontes do sistema (nada e baixado de fora). */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.55 "Proza Libre", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #162038; background: #faf9f6; }
+a { color: #162038; }
+:focus-visible { outline: 3px solid #162038; outline-offset: 2px; box-shadow: 0 0 0 5px #cbb493; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sbx-site-aviso { background: #fff7e0; color: #4a3b12; border-bottom: 1px solid #e9d8a6; font-size: 13.5px; padding: 7px 16px; text-align: center; }
+.cs-topo { background: #162038; color: #fff; }
+.cs-topo-in { max-width: 1200px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.cs-logo { font-family: "Playfair Display", Georgia, "Times New Roman", serif; font-size: 22px; color: #fff; text-decoration: none; letter-spacing: .02em; }
+.cs-logo span { color: #cbb493; }
+.cs-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.cs-nav a { color: #fff; text-decoration: none; padding: 10px 12px; border-radius: 6px; font-size: 15px; min-height: 44px; display: inline-flex; align-items: center; }
+.cs-nav a:hover, .cs-nav a[aria-current="page"] { background: rgba(255, 255, 255, .12); }
+.cs-hero { background: linear-gradient(120deg, #162038, #24345a); color: #fff; }
+.cs-hero-in { max-width: 1200px; margin: 0 auto; padding: 36px 20px 40px; }
+.cs-hero h1 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(26px, 4vw, 40px); margin: 0 0 8px; font-weight: 600; }
+.cs-hero p { margin: 0; color: #e5e7eb; max-width: 640px; }
+.cs-conteudo { max-width: 1200px; margin: 0 auto; padding: 24px 20px 56px; }
+.cs-h2 { font-family: "Playfair Display", Georgia, serif; font-size: 26px; margin: 28px 0 12px; }
+.cs-meta-pub { font-size: 14px; color: #4b5563; margin: 0 0 8px; }
+.cs-pendente { background: #fff; border: 1px dashed #cbb493; border-radius: 8px; padding: 12px 16px; font-size: 14.5px; color: #4b5563; margin: 0 0 16px; }
+.cs-grade { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.cs-card { background: #fff; border: 1px solid #e5e0d6; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%; box-shadow: 0 6px 24px rgba(22, 32, 56, .06); }
+.cs-card a.cs-card-link { color: inherit; text-decoration: none; display: flex; flex-direction: column; height: 100%; }
+.cs-card a.cs-card-link:hover .cs-card-titulo { text-decoration: underline; }
+.cs-card-foto { position: relative; aspect-ratio: 16 / 10; background: #e8dfcf; }
+.cs-card-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cs-card-selo { position: absolute; top: 10px; left: 10px; background: #162038; color: #fff; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; }
+.cs-card-selo.novo { background: #15805c; }
+.cs-card-corpo { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.cs-tag { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #7a5c2e; font-weight: 700; }
+.cs-card-titulo { font-family: "Playfair Display", Georgia, serif; font-size: 19px; margin: 0; line-height: 1.3; }
+.cs-local { font-size: 14px; color: #4b5563; margin: 0; }
+.cs-preco { font-weight: 700; font-size: 17px; margin: 4px 0 0; }
+.cs-det { font-size: 13.5px; color: #374151; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.cs-vazio { background: #fff; border: 1px solid #e5e0d6; border-radius: 12px; padding: 20px; color: #4b5563; }
+.cs-rodape { background: #162038; color: #e5e7eb; font-size: 14px; }
+.cs-rodape-in { max-width: 1200px; margin: 0 auto; padding: 24px 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+.cs-migalhas { max-width: 1200px; margin: 0 auto; padding: 14px 20px 0; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #6b7280; }
+.cs-migalhas a { color: #6b7280; text-decoration: none; }
+.cs-migalhas strong { color: #162038; }
+
+/* pagina do imovel de venda */
+.cs-im-galeria { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+.cs-im-galeria img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 16 / 10; }
+.cs-im-galeria.uma { grid-template-columns: 1fr; }
+.cs-im-titulo { font-family: "Playfair Display", Georgia, serif; font-size: clamp(26px, 3.4vw, 34px); margin: 0 0 6px; }
+.cs-specs { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.cs-specs li { background: #fff; border: 1px solid #e5e0d6; border-radius: 10px; padding: 12px; display: grid; grid-template-columns: 30px 1fr; gap: 2px 10px; align-items: center; }
+.cs-specs .fa { grid-row: 1 / span 2; font-size: 22px; color: #cbb493; text-align: center; }
+.cs-specs small { color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.cs-lista { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 16px; }
+.cs-lista li { display: flex; gap: 8px; align-items: baseline; }
+.cs-lista .fa { color: #15805c; }
+
+/* pagina da casa de temporada: copia das regras de temporada/[slug].astro */
+.cassiano-casa{max-width:1200px;margin:0 auto;padding:16px 20px 60px;color:#162038}
+.cassiano-casa-aviso{background:#fff;border:1px dashed #cbb493;border-radius:8px;padding:12px 16px;margin:0 0 16px;font-size:14px;color:#4b5563}
+.cassiano-casa-galeria{display:grid;gap:8px;border-radius:12px;overflow:hidden;margin-bottom:24px}
+.cassiano-casa-galeria img{width:100%;height:100%;object-fit:cover;display:block;min-height:0}
+.cassiano-casa-galeria--1{grid-template-columns:1fr}
+.cassiano-casa-galeria--1 img{aspect-ratio:16/7;max-height:460px}
+.cassiano-casa-galeria--2,.cassiano-casa-galeria--3{grid-template-columns:2fr 1fr 1fr;grid-template-rows:200px 200px}
+.cassiano-casa-galeria--2 img:first-child,.cassiano-casa-galeria--3 img:first-child{grid-row:1 / span 2}
+.cassiano-casa-layout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:32px;align-items:start}
+.cassiano-casa-local{margin:0 0 4px;color:#4b5563;text-transform:uppercase;letter-spacing:.06em;font-size:13px;font-weight:600}
+.cassiano-casa-titulo{font-family:'Playfair Display',Georgia,serif;font-size:34px;margin:0 0 12px;color:#162038;display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.cassiano-casa-selo{font-family:inherit;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid #162038;border-radius:4px;padding:3px 8px}
+.cassiano-casa-icones{list-style:none;display:flex;flex-wrap:wrap;gap:10px 24px;padding:14px 0;margin:0 0 20px;border-top:1px solid #e5e0d6;border-bottom:1px solid #e5e0d6}
+.cassiano-casa-icones li{display:flex;align-items:center;gap:8px;font-size:15px}
+.cassiano-casa-h2{font-family:'Playfair Display',Georgia,serif;font-size:24px;margin:28px 0 10px;color:#162038}
+.cassiano-casa-lista{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 16px}
+.cassiano-casa-lista li{display:flex;gap:8px;align-items:baseline}
+.cassiano-casa-voltar{display:inline-block;margin-top:28px;color:#162038;font-weight:600;min-height:44px;line-height:44px}
+.cassiano-casa-lateral{position:static}
+@media (max-width:1099px){.cassiano-casa-layout{grid-template-columns:1fr}.cassiano-casa-lateral{order:-1}.cassiano-casa-galeria--2,.cassiano-casa-galeria--3{grid-template-rows:140px 140px}}
+@media (max-width:599px){.cassiano-casa{padding:12px 16px 48px}.cassiano-casa-titulo{font-size:28px}.cassiano-casa-galeria--2,.cassiano-casa-galeria--3{grid-template-columns:1fr 1fr;grid-template-rows:180px 90px}.cassiano-casa-galeria--2 img:first-child,.cassiano-casa-galeria--3 img:first-child{grid-column:1 / span 2;grid-row:1}}
+
+/* motor de reservas: copia das regras de MotorReserva.astro */
+.motor-reserva { background:#fff; border:1px solid #e5e0d6; border-radius:12px; padding:20px; color:#162038; box-shadow:0 6px 24px rgba(22,32,56,.08); font-size:15px; }
+.motor-reserva .mr-titulo { font-family:'Playfair Display',Georgia,serif; font-size:22px; margin:0 0 12px; color:#162038; }
+.motor-reserva .mr-datas { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.motor-reserva .mr-data-caixa { border:1px solid #d1d5db; border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:2px; min-height:44px; }
+.motor-reserva .mr-rotulo { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#4b5563; font-weight:600; }
+.motor-reserva .mr-nav { display:flex; justify-content:space-between; margin-bottom:4px; }
+.motor-reserva .mr-nav-btn { min-width:44px; min-height:44px; border:1px solid #d1d5db; background:#fff; border-radius:8px; font-size:24px; line-height:1; cursor:pointer; color:#162038; }
+.motor-reserva .mr-nav-btn:disabled { opacity:.35; cursor:not-allowed; }
+.motor-reserva .mr-meses { display:grid; grid-template-columns:1fr; gap:16px; }
+.motor-reserva .mr-mes-titulo { text-align:center; font-weight:700; margin:0 0 6px; font-size:16px; }
+.motor-reserva .mr-mes-titulo::first-letter { text-transform:uppercase; }
+.motor-reserva .mr-grade { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.motor-reserva .mr-sem { text-align:center; font-size:11px; color:#4b5563; font-weight:600; padding:4px 0; text-transform:uppercase; }
+.motor-reserva .mr-vazio { min-height:44px; }
+.motor-reserva .mr-dia { width:100%; min-height:44px; min-width:0; border:1px solid transparent; background:#fff; border-radius:8px; font:inherit; font-size:15px; color:#162038; cursor:pointer; padding:0; position:relative; }
+.motor-reserva .mr-dia:hover { border-color:#cbb493; }
+.motor-reserva .mr-dia:focus-visible, .motor-reserva .mr-nav-btn:focus-visible, .motor-reserva .mr-select:focus-visible, .motor-reserva .mr-reservar:focus-visible, .motor-reserva .mr-limpar:focus-visible, .motor-reserva .mr-input:focus-visible { outline:3px solid #162038 !important; outline-offset:2px !important; box-shadow:0 0 0 5px #cbb493 !important; }
+.motor-reserva .mr-dia[data-estado="passado"] { color:#6b7280; cursor:not-allowed; background:#f9fafb; }
+.motor-reserva .mr-dia[data-estado="ocupado"], .motor-reserva .mr-dia[data-estado="indisponivel"] { color:#4b5563; background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 4px,#e5e7eb 4px,#e5e7eb 8px); text-decoration:line-through; cursor:not-allowed; }
+.motor-reserva .mr-dia[data-estado="minima"] { border:1px dashed #6b7280; }
+.motor-reserva .mr-dia[data-hoje="true"] { font-weight:800; border-color:#cbb493; }
+.motor-reserva .mr-dia[data-estado="intervalo"] { background:#e8dfcf; border-radius:0; }
+.motor-reserva .mr-dia[data-estado="entrada"], .motor-reserva .mr-dia[data-estado="saida"] { background:#162038; color:#fff; font-weight:700; text-decoration:none; border-color:#162038; }
+.motor-reserva .mr-legenda { list-style:none; display:flex; flex-wrap:wrap; gap:6px 16px; padding:0; margin:12px 0 0; font-size:13px; color:#374151; }
+.motor-reserva .mr-legenda li { display:flex; align-items:center; gap:6px; }
+.motor-reserva .mr-leg { width:16px; height:16px; border-radius:4px; border:1px solid #9ca3af; display:inline-block; }
+.motor-reserva .mr-leg-livre { background:#fff; }
+.motor-reserva .mr-leg-ocupado { background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 3px,#d1d5db 3px,#d1d5db 6px); }
+.motor-reserva .mr-leg-sel { background:#162038; border-color:#162038; }
+.motor-reserva .mr-aviso { min-height:22px; margin:10px 0 0; color:#7c2d12; font-weight:600; font-size:14px; }
+.motor-reserva .mr-campo { display:flex; flex-direction:column; gap:4px; margin-top:12px; }
+.motor-reserva .mr-select, .motor-reserva .mr-input { min-height:44px; border:1px solid #9ca3af; border-radius:8px; padding:0 10px; font:inherit; background:#fff; color:#162038; }
+.motor-reserva .mr-ajuda { font-size:13px; color:#4b5563; }
+.motor-reserva .mr-resumo { margin:14px 0 10px; font-weight:700; }
+.motor-reserva .mr-reservar { width:100%; min-height:48px; border:0; border-radius:8px; background:#162038; color:#fff; font:inherit; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+.motor-reserva .mr-reservar[aria-disabled="true"] { background:#d1d5db; color:#374151; cursor:not-allowed; }
+.motor-reserva .mr-limpar { margin-top:8px; min-height:44px; background:none; border:0; text-decoration:underline; color:#162038; font:inherit; cursor:pointer; }
+.motor-reserva .mr-nota { margin:10px 0 0; font-size:12.5px; color:#4b5563; }
+.motor-reserva .mr-ok { margin-top:14px; border-radius:10px; background:#e7f5ee; border:1px solid #9fd7bd; padding:14px; color:#14532d; }
+.motor-reserva .mr-ok h3 { margin:0 0 6px; font-size:17px; }
+.motor-reserva .mr-ok p { margin:0 0 10px; font-size:14.5px; }
+.motor-reserva .mr-ok button { min-height:44px; border-radius:8px; border:1px solid #14532d; background:#fff; color:#14532d; font:inherit; font-weight:700; padding:0 14px; cursor:pointer; }
+@media (min-width:600px) and (max-width:1099px) { .motor-reserva .mr-meses { grid-template-columns:1fr 1fr; } }
+@media (prefers-reduced-motion: no-preference) { .motor-reserva .mr-dia, .motor-reserva .mr-reservar { transition:background-color .15s, border-color .15s; } }
