@@ -154,11 +154,12 @@
     var agora = Date.now();
     (db.reservas || []).forEach(function (r) { if (r.estado === 'pre_reserva' && r.expira_em && Date.parse(r.expira_em) < agora) r.estado = 'cancelado'; });
   }
-  function marcar(passo) {
-    var db = carregar();
+  /** dbAtual: quando a chamada ja tem o banco em maos (sera salvo por quem chamou), marca nele para nao sobrescrever. */
+  function marcar(passo, dbAtual) {
+    var db = dbAtual || carregar();
     if (db.progresso[passo]) return;
     db.progresso[passo] = agoraSql();
-    salvar(db);
+    if (!dbAtual) salvar(db);
     try { if (window.parent && window.parent !== window) window.parent.postMessage({ tipo: 'cassiano-sandbox:progresso', passo: passo }, location.origin); } catch (e) { /* sem moldura */ }
   }
 
@@ -213,7 +214,7 @@
         if (!x.slug) { var base = I.slugificar(x.codigo + ' ' + x.titulo), s = base, n = 2; while (db.imoveis.some(function (i) { return i.slug === s; })) s = (base + '-' + n++).slice(0, 80); x.slug = s; }
         x.id = ++db.seq.imovel; x.status = 'rascunho'; x.deleted_at = null; x.published_at = null; x.created_at = x.updated_at = agoraSql();
         db.imoveis.push(x);
-        marcar('criou');
+        marcar('criou', db);
         return resp(201, { ok: true, id: x.id, codigo: x.codigo, slug: x.slug });
       }
       return resp(405, { ok: false });
@@ -239,7 +240,7 @@
         } else y.slug = im.slug;
         I.COLUNAS_EDITAVEIS.forEach(function (c) { if (c !== 'tipo_negocio' && c !== 'codigo' && y[c] !== undefined) im[c] = y[c]; });
         tocar(im);
-        marcar('editou');
+        marcar('editou', db);
         return resp(200, { ok: true });
       }
       if (metodo === 'DELETE') { im.deleted_at = agoraSql(); tocar(im); return resp(200, { ok: true }); }
