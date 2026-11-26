@@ -941,23 +941,17 @@ function initVisualFilter() {
           }, 300));
       }
     });
-    $('.design-btn').off('click.visualFilterType').on('click.visualFilterType', function(){
+    // Category buttons: data-filter="<cat>" shows only the items whose <li> has that class.
+    $('.toggle-row .btn[data-filter]').off('click.visualFilterType').on('click.visualFilterType', function(){
       if (!$(this).hasClass('active')) {
+          var cat = String($(this).attr('data-filter') || '').replace(/[^a-z0-9_-]/gi, '');
           $('.toggle-row .btn-normal').removeClass('active').addClass('not-active');
           $(this).addClass('active').removeClass('not-active');
           filterTimers.push(setTimeout(function() {
             $('.mouse-pos-list-image li, .mouse-pos-list-image-wrap li, .work-tiles li').removeClass('visible');
-            $('.mouse-pos-list-image li.design, .mouse-pos-list-image-wrap li.design, .work-tiles li.design').addClass('visible');
-          }, 300));
-      }
-    });
-    $('.development-btn').off('click.visualFilterType').on('click.visualFilterType', function(){
-      if (!$(this).hasClass('active')) {
-          $('.toggle-row .btn-normal').removeClass('active').addClass('not-active');
-          $(this).addClass('active').removeClass('not-active');
-          filterTimers.push(setTimeout(function() {
-            $('.mouse-pos-list-image li, .mouse-pos-list-image-wrap li, .work-tiles li').removeClass('visible');
-            $('.mouse-pos-list-image li.development, .mouse-pos-list-image-wrap li.development, .work-tiles li.development').addClass('visible');
+            if (cat) {
+              $('.mouse-pos-list-image li.' + cat + ', .mouse-pos-list-image-wrap li.' + cat + ', .work-tiles li.' + cat).addClass('visible');
+            }
           }, 300));
       }
     });
