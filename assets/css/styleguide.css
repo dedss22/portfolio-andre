@@ -1354,3 +1354,21 @@ select:-webkit-autofill:focus {
 input[type=radio] {
    -webkit-appearance: none;
 }
+
+/* ------------------------- Keyboard focus -------------------------------------------------- */
+/* Only keyboard navigation (:focus-visible) shows a ring; mouse/touch focus keeps outline: 0.
+   Text fields are left out on purpose: they already show the caret and their own focus styles. */
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible,
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
+select:focus-visible {
+   outline: 2px solid var(--color-blue);
+   outline-offset: 3px;
+}
