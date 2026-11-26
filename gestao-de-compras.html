@@ -3,18 +3,18 @@
    <head>
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho</title>
-      <meta name="description" content="Estudo de caso técnico e sandbox interativo do Sistema de Gestão de Compras (Concierge): plataforma full-stack em React 19, TypeScript, Tailwind CSS v4, Supabase PostgreSQL + RLS + Storage privado e ExcelJS desenvolvida por André Carvalho."/>
-      <meta property="og:title" content="Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho"/>
-      <meta property="og:description" content="Plataforma operacional para empresa imobiliária com Concierge no Sul da Bahia: conecta o painel administrativo (/admin) à cozinheira na casa via link sem login (/e/:codigo). Teste o fluxo completo no sandbox guiado."/>
+      <title>Sistema de Gestão de Compras — Paralelo 17 | André Carvalho</title>
+      <meta name="description" content="Estudo de caso e sandbox interativo do Sistema de Gestão de Compras — Paralelo 17: como percebi o gargalo na operação Concierge, desenhei o fluxo completo e desenvolvi a plataforma em React 19, TypeScript, Supabase e ExcelJS."/>
+      <meta property="og:title" content="Sistema de Gestão de Compras — Paralelo 17 | André Carvalho"/>
+      <meta property="og:description" content="Na rotina da Paralelo 17, percebi o gargalo das compras via mensagens soltas, desenhei o fluxo completo do /admin ao link sem login da cozinheira (/e/:codigo) e construí o sistema em produção."/>
       <meta property="og:image" content="https://www.andrecarvalhodev.com.br/compras_thumb.jpg"/>
       <meta property="og:url" content="https://www.andrecarvalhodev.com.br/gestao-de-compras.html"/>
       <meta property="og:site_name" content="André Carvalho"/>
       <meta property="og:locale" content="pt_BR"/>
       <meta property="og:type" content="article"/>
       <meta name="twitter:card" content="summary_large_image"/>
-      <meta name="twitter:title" content="Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho"/>
-      <meta name="twitter:description" content="Estudo de caso e sandbox interativo de 7 passos: React 19, TypeScript, Supabase RLS/Storage, ExcelJS e Vitest para operação Concierge imobiliária."/>
+      <meta name="twitter:title" content="Sistema de Gestão de Compras — Paralelo 17 | André Carvalho"/>
+      <meta name="twitter:description" content="Sistema de Gestão de Compras — Paralelo 17: do diagnóstico da dor operacional e desenho do fluxo ao desenvolvimento full-stack com sandbox interativo de 7 passos."/>
       <meta name="twitter:image" content="https://www.andrecarvalhodev.com.br/compras_thumb.jpg"/>
       <meta name="google" content="notranslate"/>
       <meta name="robots" content="index, follow, max-image-preview:large"/>
@@ -33,9 +33,9 @@
           {
             "@type": "CreativeWork",
             "@id": "https://www.andrecarvalhodev.com.br/gestao-de-compras.html#work",
-            "name": "Sistema de Gestão de Compras",
-            "headline": "Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho",
-            "description": "Plataforma web full-stack para operação imobiliária com Concierge no Sul da Bahia, conectando a equipe administrativa (/admin) à cozinheira na residência via link sem login (/e/:codigo), com catálogo de 172 itens, 6 fornecedores, notas fiscais no Supabase Storage e relatórios ExcelJS.",
+            "name": "Sistema de Gestão de Compras — Paralelo 17",
+            "headline": "Sistema de Gestão de Compras — Paralelo 17 | André Carvalho",
+            "description": "Projeto concebido e desenvolvido por André Carvalho para a operação de Concierge da Paralelo 17: após identificar gargalos nas compras via WhatsApp, desenhei todo o fluxo do painel administrativo (/admin) ao cardápio sem login (/e/:codigo), notas fiscais e relatórios ExcelJS.",
             "url": "https://www.andrecarvalhodev.com.br/gestao-de-compras.html",
             "image": "https://www.andrecarvalhodev.com.br/compras_thumb.jpg",
             "datePublished": "2026",
@@ -66,7 +66,7 @@
               {
                 "@type": "ListItem",
                 "position": 3,
-                "name": "Sistema de Gestão de Compras",
+                "name": "Sistema de Gestão de Compras — Paralelo 17",
                 "item": "https://www.andrecarvalhodev.com.br/gestao-de-compras.html"
               }
             ]
@@ -702,7 +702,7 @@
                <h2 data-page="home"><span data-i18n="nav_home">Início</span><span class="dot" aria-hidden="true"></span></h2>
                <h2 data-page="work"><span data-i18n="nav_work">Projetos</span><span class="dot" aria-hidden="true"></span></h2>
                <h2 data-page="cassiano">Cassiano Imóveis<span class="dot" aria-hidden="true"></span></h2>
-               <h2 class="active" data-page="gestao-de-compras"><span data-i18n="nav_compras">Gestão de Compras</span><span class="dot" aria-hidden="true"></span></h2>
+               <h2 class="active" data-page="gestao-de-compras"><span data-i18n="nav_compras">Compras — Paralelo 17</span><span class="dot" aria-hidden="true"></span></h2>
                <h2 data-page="about"><span data-i18n="nav_about">Sobre</span><span class="dot" aria-hidden="true"></span></h2>
                <h2 data-page="contact"><span data-i18n="nav_contact">Contato</span><span class="dot" aria-hidden="true"></span></h2>
                <h2 data-page="success"><span data-i18n="nav_success">Sucesso</span><span class="dot" aria-hidden="true"></span></h2>
@@ -876,17 +876,17 @@
                      </div>
                   </div>
 
-                  <h1 class="case-hero-title" data-gc-i18n="gc_hero_title">Sistema de Gestão de Compras</h1>
-                  <p class="case-hero-lead" data-gc-i18n="gc_hero_lead">Plataforma operacional sob medida para uma empresa imobiliária com operação de Concierge: conecta o painel administrativo (/admin) à cozinheira na casa de temporada via link único sem login (/e/:codigo), unificando pedidos, WhatsApp por fornecedor, notas fiscais e planilha .xlsx.</p>
+                  <h1 class="case-hero-title" data-gc-i18n="gc_hero_title">Sistema de Gestão de Compras — Paralelo 17</h1>
+                  <p class="case-hero-lead" data-gc-i18n="gc_hero_lead">Na rotina diária da Paralelo 17, percebi o gargalo das compras de estadias feitas por áudios e mensagens soltas no WhatsApp. Desenhei todo o fluxo ponta a ponta — do painel da equipe (/admin) ao cardápio sem login para a cozinheira (/e/:codigo) e fechamento com notas fiscais — e construí a plataforma completa em produção.</p>
 
                   <div class="case-meta-grid">
                      <div class="case-meta-item">
                         <h5 data-i18n="meta_client_label">Cliente / Localização</h5>
-                        <p data-gc-i18n="gc_meta_client_val">Imobiliária Concierge • Sul da Bahia</p>
+                        <p data-gc-i18n="gc_meta_client_val">Paralelo 17 (Concierge) • Sul da Bahia</p>
                      </div>
                      <div class="case-meta-item">
                         <h5 data-i18n="meta_services_label">Serviços</h5>
-                        <p data-gc-i18n="gc_meta_services_val">Design &amp; Engenharia Full-Stack</p>
+                        <p data-gc-i18n="gc_meta_services_val">Desenho de Fluxo &amp; Engenharia Full-Stack</p>
                      </div>
                      <div class="case-meta-item">
                         <h5 data-i18n="meta_stack_label">Stack</h5>
@@ -920,12 +920,12 @@
                <div class="container medium">
                   <div class="case-two-col">
                      <div>
-                        <span class="case-section-label" data-gc-i18n="gc_overview_label">01 • Visão Geral &amp; Desafio</span>
-                        <h2 class="case-section-title" data-gc-i18n="gc_overview_title">Conectando o Concierge imobiliário à cozinha da casa sem atrito</h2>
+                        <span class="case-section-label" data-gc-i18n="gc_overview_label">01 • Origem, Fluxo &amp; Entrega</span>
+                        <h2 class="case-section-title" data-gc-i18n="gc_overview_title">Como identifiquei o gargalo na Paralelo 17, desenhei o fluxo e construí o sistema</h2>
                      </div>
                      <div class="case-prose">
-                        <p data-gc-i18n="gc_overview_p1">Em operações imobiliárias de alto padrão com serviço de Concierge no Sul da Bahia (região de Trancoso), cada estadia envolve coordenar listas de compras entre hóspedes, a cozinheira contratada para a residência e múltiplos fornecedores locais (peixaria, açougue, hortifruti, frios, bebidas e mercado).</p>
-                        <p data-gc-i18n="gc_overview_p2">O processo anterior dependia de áudios e listas soltas em mensagens, gerando esquecimentos de unidades, falta de rastreabilidade nas notas fiscais e horas gastas fechando prestações de contas manuais. A solução eliminou esse gargalo separando duas experiências na mesma base de dados: o painel completo da equipe (/admin) e um cardápio mobile-first sem senha (/e/:codigo) para a cozinheira montar o pedido direto do celular.</p>
+                        <p data-gc-i18n="gc_overview_p1">Acompanhando de perto a rotina de Concierge das casas de temporada na Paralelo 17 (Sul da Bahia), percebi a necessidade real por trás de cada hospedagem: as listas de compras dependiam de áudios e mensagens soltas no WhatsApp entre hóspedes, cozinheira e equipe, gerando esquecimentos de unidades, retrabalho ao separar 6 fornecedores locais e horas fechando notas fiscais na mão.</p>
+                        <p data-gc-i18n="gc_overview_p2">Antes de escrever a primeira linha de código, desenhei toda a arquitetura de fluxo para unir ponta a ponta sem atrito: o Concierge cria a estadia em /admin e libera um link único sem senha (/e/:codigo); a cozinheira escolhe itens ou kits proporcionais pelo celular e envia o pedido; a equipe aprova, dispara listas formatadas por fornecedor no WhatsApp, gerencia as notas de compra separando quem pagou e fecha o pedido gerando automaticamente a planilha .xlsx consolidada.</p>
                         <div class="case-pill-list">
                            <span class="case-pill" data-gc-i18n="gc_pill_1">172 Itens / 6 Fornecedores</span>
                            <span class="case-pill" data-gc-i18n="gc_pill_2">5 Kits Proporcionais</span>
