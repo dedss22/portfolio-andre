@@ -1,0 +1,29 @@
+/* Sandbox do portfolio: so o que a demonstracao acrescenta ao painel (faixa de aviso e simulacao da publicacao). */
+.sbx-faixa { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; padding: 8px 16px; background: #fff7e0; color: #4a3b12; border-bottom: 1px solid #e9d8a6; font-size: 14px; line-height: 1.4; }
+.sbx-faixa span::before { content: "\2726  "; color: #a07a1f; }
+.sbx-restaurar { min-height: 36px; padding: 4px 12px; border-radius: 18px; border: 1px solid #a07a1f; background: #fff; color: #4a3b12; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.sbx-restaurar:hover { background: #fdf0c8; }
+.sbx-restaurar:focus-visible { outline: 3px solid #162038; outline-offset: 2px; }
+
+.sbx-falha { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 14px; color: var(--suave, #4b5563); font-weight: 400; }
+.sbx-falha input { width: 20px; height: 20px; }
+
+.sbx-build { position: fixed; inset: 0; z-index: 1000; background: rgba(11, 18, 32, .62); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.sbx-build-caixa { width: 100%; max-width: 480px; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, .35); color: #111827; }
+.sbx-build-caixa h2 { margin: 0 0 4px; font-size: 20px; color: #162038; }
+.sbx-build-sub { margin: 0 0 14px; color: #4b5563; font-size: 14px; }
+.sbx-etapas { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+.sbx-etapas li { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: center; font-size: 15px; color: #6b7280; }
+.sbx-etapas li::before { content: ""; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #d1d5db; box-sizing: border-box; }
+.sbx-etapas li.rodando { color: #162038; font-weight: 600; }
+.sbx-etapas li.rodando::before { border-color: #162038; border-right-color: transparent; animation: sbxGira .8s linear infinite; }
+.sbx-etapas li.feito { color: #14532d; }
+.sbx-etapas li.feito::before { content: "\2713"; border: 0; background: #15805c; color: #fff; font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+.sbx-etapas li.falhou { color: #991b1b; font-weight: 600; }
+.sbx-etapas li.falhou::before { content: "!"; border: 0; background: #a61b1b; color: #fff; font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+.sbx-nota { margin: 0 0 14px; padding: 10px 12px; border-radius: 8px; background: #f3f4f6; font-size: 14px; color: #374151; }
+.sbx-nota.ok { background: #e7f5ee; color: #14532d; }
+.sbx-nota.erro { background: #fdecec; color: #7f1d1d; }
+.sbx-build-acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+@keyframes sbxGira { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .sbx-etapas li.rodando::before { animation: none; border-right-color: #162038; } }

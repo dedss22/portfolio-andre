@@ -1,0 +1,169 @@
+/* Painel: Temporada (calendario da casa). Carregado depois de painel.css; so a tela /admin/calendario usa. Sem estilos inline (CSP style-src 'self').
+   Contraste AA, alvos >= 44px, nada so por cor (letra, padrao, forma, texto), foco visivel. */
+:root {
+  --t-azul: #162038; --t-ouro: #b38e44; --t-ouro-claro: #fdf3d0; --t-ouro-texto: #5b4511;
+  --t-alugado-bg: #e1e8f6; --t-alugado-borda: #9fb0d6;
+  --t-pre-bg: #fef3c7; --t-pre-borda: #b45309; --t-pre-texto: #78350f;
+  --t-bloq-bg: #e5e7eb; --t-bloq-texto: #111827; --t-fds: #f5f6f8; --t-fora: #eef0f3;
+}
+html { scroll-padding-top: 76px; }
+.so-leitor-t { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* topo do painel mais baixo no celular (menos rolagem ate o calendario) */
+@media (max-width: 700px) {
+  .topo { gap: 0 8px; padding: 6px 10px; }
+  .topo .marca { flex: 1 1 auto; }
+  .topo .quem { display: none; }
+  .topo nav { order: 3; flex: 1 1 100%; gap: 0 4px; }
+  .topo nav a { padding: 8px 10px; font-size: 15px; }
+  main { padding: 10px; }
+}
+
+/* lista de casas: duas colunas em tela larga */
+@media (min-width: 800px) { .casas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* cabecalho fixo da casa */
+.casa-topo { position: sticky; top: 0; z-index: 8; background: var(--fundo); margin: 0 -10px 8px; padding: 8px 10px; flex-wrap: nowrap; gap: 8px; border-bottom: 1px solid var(--borda); }
+@media (min-width: 800px) { .casa-topo { margin: 0 -24px 12px; padding: 8px 24px; } }
+.casa-topo h2 { flex: 1 1 auto; font-size: 18px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.casa-topo .botao { flex: 0 0 auto; }
+.botao.voltar { min-width: 44px; }
+@media (max-width: 700px) {
+  .rot-voltar { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .casa-topo h2 .selo { display: none; }
+}
+.menu-casa { position: relative; flex: 0 0 auto; }
+.menu-casa-painel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 12; width: min(300px, calc(100vw - 20px)); background: #fff; border: 1px solid var(--borda); border-radius: 10px; padding: 8px; display: grid; gap: 8px; box-shadow: 0 8px 24px rgba(17, 24, 39, .18); }
+.menu-casa-painel .botao { width: 100%; justify-content: flex-start; text-align: left; }
+.menu-casa-painel #acoes-exportar { display: grid; gap: 8px; }
+
+/* quadro do calendario */
+.quadro { background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px; padding: 10px; margin-bottom: 12px; }
+@media (min-width: 800px) { .quadro { padding: 16px; } }
+.cal-topo { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.cal-mes { display: flex; align-items: center; gap: 6px; flex: 1 1 320px; max-width: 520px; }
+.cal-mes select { flex: 1 1 auto; min-width: 0; font-weight: 700; font-size: 17px; color: var(--t-azul); min-height: 48px; }
+.cal-mes #ano-sel { flex: 0 0 96px; width: 96px; }
+.cal-mes .botao.nav { flex: 0 0 48px; width: 48px; min-height: 48px; padding: 0; font-size: 28px; line-height: 1; }
+.cal-vista { display: flex; align-items: center; gap: 8px; }
+.segmento { display: inline-flex; }
+.segmento .botao { border-radius: 0; margin-left: -1px; min-width: 64px; }
+.segmento .botao:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
+.segmento .botao:last-child { border-radius: 0 6px 6px 0; }
+.segmento .botao[aria-pressed="true"] { background: var(--t-azul); color: #fff; }
+.dica-curta { margin: 4px 0 8px; color: var(--suave); font-size: 15px; }
+
+/* grade do mes: celulas + barras de reserva atravessando os dias */
+#grade { margin: 0; }
+.cal-linha { gap: 2px; margin-bottom: 2px; }
+.cal-linha .dia, .cal-linha .rbarra { grid-row: 1; }
+.cal-linha > .dia:nth-child(1) { grid-column: 1; } .cal-linha > .dia:nth-child(2) { grid-column: 2; } .cal-linha > .dia:nth-child(3) { grid-column: 3; } .cal-linha > .dia:nth-child(4) { grid-column: 4; }
+.cal-linha > .dia:nth-child(5) { grid-column: 5; } .cal-linha > .dia:nth-child(6) { grid-column: 6; } .cal-linha > .dia:nth-child(7) { grid-column: 7; }
+.cal-cab { margin-bottom: 2px; }
+.cal-dow { font-size: 13px; padding: 4px 0; }
+.cal-dow.fds { color: var(--texto); }
+.dia { position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; text-align: left; min-height: 74px; padding: 6px 4px 0 6px; border-radius: 6px; background: #fff; border: 1px solid var(--borda); }
+.dia .num { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; margin: -2px 0 0 -3px; border-radius: 13px; font-size: 15px; font-weight: 700; }
+.dia .cod { position: absolute; top: 6px; right: 6px; min-height: 0; font-size: 12px; }
+.dia.fds { background: var(--t-fds); }
+.dia.fora { background: var(--t-fora); color: #4b5563; }
+.dia.fora .num { font-weight: 400; }
+.dia.hoje { box-shadow: none; border-color: var(--t-azul); border-width: 2px; padding: 5px 3px 0 5px; }
+.dia.hoje .num { background: var(--t-azul); color: #fff; }
+.dia.alugado { background: var(--t-alugado-bg); border-color: var(--t-alugado-borda); color: var(--t-azul); }
+.dia.pre_reserva { background: var(--t-pre-bg); border-color: var(--t-pre-borda); color: var(--t-pre-texto); }
+.dia.bloqueio_dono { background: var(--t-bloq-bg); border-color: #9ca3af; color: var(--t-bloq-texto); }
+.dia.manutencao { background: radial-gradient(#9ca3af 1.2px, #f3f4f6 1.4px) 0 0 / 8px 8px; border-color: #9ca3af; color: var(--t-bloq-texto); }
+.dia.hoje.alugado .num { background: var(--t-azul); color: #fff; }
+.dia.feriado::before { content: ""; position: absolute; left: 0; bottom: 0; border-style: solid; border-width: 0 0 12px 12px; border-color: transparent transparent #92400e transparent; border-bottom-left-radius: 5px; }
+.dia.sel { background: var(--t-ouro-claro); outline: 3px solid var(--t-ouro); outline-offset: -3px; color: var(--t-ouro-texto); }
+.dia.sel-fim { outline: 3px dashed var(--t-ouro); outline-offset: -3px; }
+.dia:focus-visible { outline: 3px solid var(--t-azul); outline-offset: 1px; z-index: 2; }
+.marca-sel { position: absolute; left: 0; right: 0; bottom: 3px; text-align: center; font-size: 11px; font-weight: 700; color: var(--t-ouro-texto); }
+
+.rbarra { align-self: end; z-index: 1; display: flex; align-items: center; gap: 4px; height: 24px; margin: 0 3px 5px; padding: 0 6px; border-radius: 12px; font-size: 12px; font-weight: 700; line-height: 1; pointer-events: none; overflow: hidden; min-width: 0; white-space: nowrap; }
+.barra-letra { display: none; }
+.barra-nome { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rbarra.l1 .barra-selo { display: none; }
+.barra-selo { flex: 0 0 auto; white-space: nowrap; background: #fff; color: var(--t-azul); border-radius: 8px; padding: 2px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; }
+.rbarra.alugado { background: var(--t-azul); color: #fff; }
+.rbarra.pre_reserva { background: repeating-linear-gradient(45deg, #fef3c7, #fef3c7 6px, #fde68a 6px, #fde68a 12px); color: var(--t-pre-texto); box-shadow: inset 0 0 0 1px var(--t-pre-borda); }
+.rbarra.bloqueio_dono { background: repeating-linear-gradient(-45deg, #e5e7eb, #e5e7eb 5px, #d1d5db 5px, #d1d5db 10px); color: var(--t-bloq-texto); box-shadow: inset 0 0 0 1px #6b7280; }
+.rbarra.manutencao { background: radial-gradient(#6b7280 1.2px, #f3f4f6 1.4px) 0 0 / 8px 8px; color: var(--t-bloq-texto); box-shadow: inset 0 0 0 1px #6b7280; }
+.rbarra.manutencao .barra-nome, .rbarra.bloqueio_dono .barra-nome { background: rgba(255, 255, 255, .85); border-radius: 6px; padding: 2px 4px; flex: 0 1 auto; }
+.rbarra.cont-esq { margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.rbarra.cont-dir { margin-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.c1 { grid-column-start: 1; } .c2 { grid-column-start: 2; } .c3 { grid-column-start: 3; } .c4 { grid-column-start: 4; } .c5 { grid-column-start: 5; } .c6 { grid-column-start: 6; } .c7 { grid-column-start: 7; }
+.l1 { grid-column-end: span 1; } .l2 { grid-column-end: span 2; } .l3 { grid-column-end: span 3; } .l4 { grid-column-end: span 4; } .l5 { grid-column-end: span 5; } .l6 { grid-column-end: span 6; } .l7 { grid-column-end: span 7; }
+
+#grade[aria-busy="true"]:empty { min-height: 300px; border-radius: 8px; background: linear-gradient(#eef0f3, #f8f9fb); }
+.carregando-cal { margin: 8px 0; padding: 12px; text-align: center; color: var(--suave); background: var(--fundo); border-radius: 8px; }
+.erro-cal { margin: 8px 0; padding: 12px; border: 1px solid var(--erro); background: #fef2f2; color: var(--erro); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+
+/* legenda sempre colada na grade */
+.legenda { margin: 10px 0 4px; gap: 6px 16px; font-size: 14px; }
+.legenda .amostra { width: 26px; height: 26px; line-height: 24px; border-radius: 6px; }
+.legenda .amostra.alugado { background: var(--t-azul); color: #fff; }
+.legenda .amostra.feriado { position: relative; background: #fff; }
+.legenda .amostra.feriado::before { content: ""; position: absolute; left: 0; bottom: 0; border-style: solid; border-width: 0 0 12px 12px; border-color: transparent transparent #92400e transparent; border-bottom-left-radius: 4px; }
+.dica-mais { margin-top: 4px; }
+.dica-mais summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--t-azul); font-weight: 600; }
+.dica-mais p { margin: 0 0 8px; color: var(--suave); }
+
+/* barra de selecao: colada na base da tela */
+.selecao { position: sticky; bottom: 0; z-index: 7; margin: 0 -10px 12px; border: 0; border-top: 3px solid var(--t-ouro); border-radius: 12px 12px 0 0; background: #fff; box-shadow: 0 -6px 18px rgba(17, 24, 39, .16); padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+@media (min-width: 800px) { .selecao { margin: 0 0 12px; border: 1px solid var(--t-ouro); border-top-width: 3px; border-radius: 10px; } }
+.selecao-info { display: grid; gap: 2px; font-weight: 600; min-width: 0; flex: 1 1 220px; }
+#selecao-preco { color: var(--t-azul); font-weight: 700; }
+#selecao-preco:empty { display: none; }
+.selecao-acoes { display: flex; gap: 8px; flex: 1 1 220px; }
+.selecao-acoes .botao { flex: 1 1 auto; }
+.selecao-acoes .botao.primario { flex: 2 1 auto; }
+
+/* visao do ano */
+.ano-grade { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 600px) { .ano-grade { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .ano-grade { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.mini-mes { width: 100%; min-height: 44px; display: grid; gap: 6px; justify-items: start; padding: 10px; font: inherit; color: var(--texto); background: #fff; border: 1px solid var(--borda); border-radius: 10px; cursor: pointer; text-align: left; }
+.mini-mes:hover { border-color: var(--t-azul); }
+.mini-nome { font-weight: 700; color: var(--t-azul); }
+.mini-grade { display: grid; grid-template-columns: repeat(7, 10px); gap: 2px; }
+.mini { display: block; width: 10px; height: 10px; border-radius: 2px; background: #e5e7eb; }
+.mini.vazio-c { background: transparent; }
+.mini.alugado { background: var(--t-azul); }
+.mini.pre_reserva { background: #fde68a; box-shadow: inset 0 0 0 2px var(--t-pre-borda); }
+.mini.bloqueio_dono { background: #6b7280; border-radius: 0; }
+.mini.manutencao { background: #fff; border-radius: 50%; box-shadow: inset 0 0 0 2px #6b7280; }
+.mini.hoje { outline: 2px solid var(--t-ouro); outline-offset: 1px; }
+.mini-conta { font-size: 14px; color: var(--suave); }
+
+/* proximas reservas */
+#proximas .item { grid-template-columns: auto 1fr; }
+#proximas .item .meta { grid-column: 2; text-align: left; }
+@media (min-width: 800px) { #proximas .item { grid-template-columns: auto 1fr auto; } #proximas .item .meta { grid-column: auto; text-align: right; } }
+
+/* folha de reserva: folha inferior no celular, painel lateral no desktop */
+.resumo-reserva { margin: 0 0 12px; padding: 8px 12px; background: var(--fundo); border-radius: 8px; font-weight: 600; color: var(--t-azul); }
+dialog.folha { padding: 16px 16px 0; overflow-y: auto; }
+dialog.folha > .acoes { position: sticky; bottom: 0; background: #fff; padding: 12px 0; margin-top: 8px; border-top: 1px solid var(--borda); }
+@media (max-width: 699px) {
+  dialog.folha { margin: auto 0 0 0; width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 16px 16px 0 0; }
+}
+@media (min-width: 700px) {
+  dialog.folha { margin: 0 0 0 auto; width: 460px; max-width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; border-width: 0 0 0 1px; padding: 20px 20px 0; }
+}
+
+/* celular */
+@media (max-width: 520px) {
+  .dia { min-height: 66px; padding: 5px 2px 0 4px; }
+  .dia .cod { right: 4px; font-size: 11px; }
+  .dia .num { font-size: 14px; min-width: 24px; height: 24px; }
+  .rbarra { height: 22px; margin: 0 2px 4px; padding: 0 5px; font-size: 11px; }
+  .rbarra.l1 .barra-selo, .rbarra.l2 .barra-selo { display: none; }
+  .cal-vista { width: 100%; justify-content: space-between; }
+  .cal-vista .botao { flex: 1 1 auto; }
+  .segmento { flex: 1 1 auto; }
+  .segmento .botao { flex: 1 1 50%; }
+}
+@media (max-width: 400px) { .topo nav a { padding: 8px 7px; font-size: 14px; } .topo { padding: 4px 8px; } .dica-curta { margin: 2px 0 6px; font-size: 14px; } }
+@media (prefers-reduced-motion: no-preference) { .dia, .mini-mes { transition: background-color .15s, border-color .15s; } }

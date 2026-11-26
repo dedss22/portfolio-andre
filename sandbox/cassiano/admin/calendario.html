@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#162038">
+<title>Temporada | Painel Cassiano Imóveis (demonstração)</title>
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="../sandbox.css">
+<link rel="stylesheet" href="temporada.css">
+<link rel="stylesheet" href="agenda.css">
+</head>
+<body>
+<a class="pular" href="#principal">Pular para o conteúdo</a>
+<header class="topo" id="topo"></header>
+<main id="principal" tabindex="-1">
+  <h1 id="titulo-pagina" tabindex="-1">Temporada</h1>
+  <section id="casas" hidden>
+    <section class="agenda" id="agenda-geral" aria-labelledby="agenda-titulo">
+      <h2 id="agenda-titulo">Agenda geral</h2>
+      <p class="agenda-sub">Todas as casas de uma vez, no período que você escolher.</p>
+      <div class="agenda-controles">
+        <div class="agenda-datas">
+          <div class="campo-ag"><label for="agenda-de">De</label><input type="date" id="agenda-de"></div>
+          <div class="campo-ag"><label for="agenda-ate">Até</label><input type="date" id="agenda-ate"></div>
+        </div>
+        <div class="agenda-atalhos" id="agenda-atalhos" role="group" aria-label="Atalhos de período">
+          <button class="chip" type="button" data-atalho="mes" aria-pressed="false">Este mês</button>
+          <button class="chip" type="button" data-atalho="proximo" aria-pressed="false">Próximo mês</button>
+          <button class="chip" type="button" data-atalho="30" aria-pressed="false">Próximos 30 dias</button>
+          <button class="chip" type="button" data-atalho="90" aria-pressed="false">Próximos 90 dias</button>
+          <button class="chip" type="button" data-atalho="ano" aria-pressed="false">Ano</button>
+        </div>
+        <p class="erro-campo" id="agenda-erro-periodo" role="alert"></p>
+      </div>
+      <div class="agenda-origens" id="agenda-origens" role="group" aria-label="Mostrar reservas de">
+        <span class="agenda-origens-rot" aria-hidden="true">Mostrar reservas de:</span>
+        <button class="chip ag-chip o-direto" type="button" data-origem="direto" aria-pressed="true"><span class="ico" aria-hidden="true">D</span>Direta <span class="conta"></span></button>
+        <button class="chip ag-chip o-airbnb" type="button" data-origem="airbnb" aria-pressed="true"><span class="ico" aria-hidden="true">A</span>Airbnb <span class="conta"></span></button>
+        <button class="chip ag-chip o-booking" type="button" data-origem="booking" aria-pressed="true"><span class="ico" aria-hidden="true">B</span>Booking <span class="conta"></span></button>
+        <button class="chip ag-chip o-site" type="button" data-origem="site" aria-pressed="true"><span class="ico" aria-hidden="true">S</span>Site <span class="conta"></span></button>
+      </div>
+      <p class="agenda-aviso" id="agenda-aviso-filtro" role="status" hidden><span id="agenda-aviso-filtro-texto"></span> <button class="botao" type="button" id="agenda-mostrar-tudo">Mostrar tudo</button></p>
+      <div class="agenda-barra">
+        <p class="agenda-resumo" id="agenda-resumo" role="status" aria-live="polite"></p>
+        <div class="agenda-acoes">
+          <button class="botao" type="button" id="agenda-imprimir">Imprimir</button>
+          <span class="agenda-exportar" id="agenda-exportar" hidden>
+            <a class="botao" id="agenda-xlsx" href="#">Exportar planilha (Excel)</a>
+            <a class="botao" id="agenda-csv" href="#">Exportar (CSV)</a>
+          </span>
+        </div>
+      </div>
+      <p class="carregando-cal" id="agenda-carregando" role="status" hidden>Carregando a agenda…</p>
+      <div class="erro-cal" id="agenda-erro" role="alert" hidden><span id="agenda-erro-texto"></span> <button class="botao" type="button" id="agenda-erro-tentar">Tentar de novo</button></div>
+      <div class="agenda-tela" id="agenda-tela" role="region" aria-label="Agenda geral. Role para os lados para ver mais dias." tabindex="0" aria-busy="true"></div>
+      <h2 class="so-print" id="agenda-titulo-print"></h2>
+      <div class="agenda-impressao" id="agenda-impressao" aria-hidden="true"></div>
+      <ul class="agenda-legenda" id="agenda-legenda" aria-label="Legenda da agenda">
+        <li><span class="amostra ag-faixa o-direto t-alugado" aria-hidden="true"><span class="ico">D</span></span><span><strong>Direta</strong> — Reserva feita direto com você</span></li>
+        <li><span class="amostra ag-faixa o-airbnb t-alugado" aria-hidden="true"><span class="ico">A</span></span><span><strong>Airbnb</strong> — Reserva do Airbnb</span></li>
+        <li><span class="amostra ag-faixa o-booking t-alugado" aria-hidden="true"><span class="ico">B</span></span><span><strong>Booking</strong> — Reserva do Booking</span></li>
+        <li><span class="amostra ag-faixa o-site t-alugado" aria-hidden="true"><span class="ico">S</span></span><span><strong>Motor de reservas do site</strong> (em breve)</span></li>
+        <li><span class="amostra ag-faixa o-direto t-pre_reserva" aria-hidden="true"><span class="ico">P</span></span><span><strong>Pré-reserva</strong> — Ainda não confirmada (borda tracejada)</span></li>
+        <li><span class="amostra ag-faixa t-bloqueio" aria-hidden="true"><span class="ico">B</span></span><span><strong>Bloqueio</strong> — Data bloqueada no painel</span></li>
+        <li><span class="amostra ag-faixa t-bloqueio canal" aria-hidden="true"><span class="ico">B</span></span><span><strong>Bloqueio do canal</strong> — Data bloqueada pelo Airbnb ou Booking</span></li>
+        <li><span class="amostra ag-faixa t-manutencao" aria-hidden="true"><span class="ico">M</span></span><span><strong>Manutenção</strong></span></li>
+        <li><span class="amostra ag-faixa t-conflito" aria-hidden="true"><span class="ico">!</span></span><span><strong>Conflito</strong> — Duas reservas na mesma data</span></li>
+        <li><span class="amostra ag-livre-am" aria-hidden="true"></span><span><strong>Livre</strong> — Sem reserva (fins de semana em cinza claro)</span></li>
+      </ul>
+      <p class="agenda-nota">O nome aparece no dia de entrada. O dia de saída fica livre (check-out exclusivo).</p>
+      <div class="agenda-livres" id="agenda-livres">
+        <h3>Períodos livres</h3>
+        <div class="agenda-min"><label for="agenda-min-noites">Mostrar só períodos de pelo menos (noites)</label><input type="number" id="agenda-min-noites" min="1" max="366" value="1" inputmode="numeric"></div>
+        <p class="vazio" id="agenda-livres-vazio" hidden>Nenhum período livre com esse tamanho neste intervalo.</p>
+        <div class="agenda-livres-lista" id="agenda-livres-lista"></div>
+      </div>
+    </section>
+    <h2 class="agenda-casas-titulo">Casas</h2>
+    <p class="vazio" id="casas-dica">Escolha uma casa para ver as datas ocupadas e marcar novas reservas.</p>
+    <div class="acoes">
+      <a class="botao primario" id="cadastrar-casa" href="imoveis.html#/novo/temporada">Cadastrar casa de temporada</a>
+    </div>
+    <div class="acoes" id="exportar-todas" hidden>
+      <a class="botao" id="exportar-todas-xlsx" href="#">Exportar todas as casas (Excel)</a>
+      <a class="botao" id="exportar-todas-csv" href="#">Exportar todas (CSV)</a>
+    </div>
+    <ul class="lista casas" id="casas-lista"></ul>
+  </section>
+  <div id="vazio-imoveis" hidden>
+    <p class="vazio">Nenhuma casa de temporada cadastrada.</p>
+    <a class="botao primario" id="cadastrar-casa-vazio" href="imoveis.html#/novo/temporada">Cadastrar casa de temporada</a>
+  </div>
+  <section id="cal" hidden>
+    <div class="casa-topo" id="casa-topo">
+      <a class="botao voltar" id="voltar-casas" href="#/"><span aria-hidden="true">←</span><span class="rot-voltar"> Todas as casas</span></a>
+      <h2 id="casa-titulo" tabindex="-1"></h2>
+      <div class="menu-casa" id="menu-casa">
+        <button class="botao" type="button" id="menu-casa-botao" aria-expanded="false" aria-controls="menu-casa-painel">Ações <span aria-hidden="true">▾</span></button>
+        <div class="menu-casa-painel" id="menu-casa-painel" hidden>
+          <a class="botao" id="editar-casa" href="imoveis.html#/editar/0">Editar dados da casa</a>
+          <button class="botao" type="button" id="abrir-precos">Épocas e preços</button>
+          <div id="acoes-exportar" hidden>
+            <a class="botao" id="exportar-xlsx" href="#">Exportar planilha do ano (Excel)</a>
+            <a class="botao" id="exportar-csv" href="#">Exportar CSV</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="quadro">
+      <div class="cal-topo">
+        <div class="cal-mes" role="group" aria-label="Mês">
+          <button class="botao nav" type="button" id="mes-ant" aria-label="Mês anterior"><span aria-hidden="true">‹</span></button>
+          <strong id="mes-nome" class="so-leitor-t" aria-live="polite"></strong>
+          <select id="mes-sel" aria-label="Escolher o mês"></select>
+          <select id="ano-sel" aria-label="Escolher o ano"></select>
+          <button class="botao nav" type="button" id="mes-prox" aria-label="Próximo mês"><span aria-hidden="true">›</span></button>
+        </div>
+        <div class="cal-vista">
+          <button class="botao" type="button" id="mes-hoje">Hoje</button>
+          <div class="segmento" role="group" aria-label="Visualização">
+            <button class="botao" type="button" id="vista-mes" aria-pressed="true">Mês</button>
+            <button class="botao" type="button" id="vista-ano" aria-pressed="false">Ano</button>
+          </div>
+        </div>
+      </div>
+      <div id="vista-mes-corpo">
+        <p class="dica-curta" id="dica">Toque no dia da entrada e depois no dia da saída.</p>
+        <div role="grid" aria-label="Dias do mês" id="grade" aria-busy="true"></div>
+        <ul class="legenda" aria-label="Legenda">
+          <li><span class="amostra" aria-hidden="true">·</span>Livre</li>
+          <li><span class="amostra alugado" aria-hidden="true">A</span>Alugado</li>
+          <li><span class="amostra pre_reserva" aria-hidden="true">P</span>Pré-reserva</li>
+          <li><span class="amostra bloqueio_dono" aria-hidden="true">B</span>Bloqueio do proprietário</li>
+          <li><span class="amostra manutencao" aria-hidden="true">M</span>Manutenção</li>
+          <li><span class="amostra feriado" aria-hidden="true"></span>Feriado</li>
+        </ul>
+        <details class="dica-mais"><summary>Como funciona</summary><p>Cada dia mostra a noite que começa nele; no dia da saída outro hóspede já pode entrar. Toque em um dia ocupado para abrir a reserva.</p></details>
+      </div>
+      <div id="vista-ano-corpo" hidden>
+        <ul class="ano-grade" id="ano-grade" aria-label="Meses do ano"></ul>
+      </div>
+      <p class="carregando-cal" id="carregando-cal" role="status" hidden>Carregando datas…</p>
+      <div class="erro-cal" id="erro-cal" role="alert" hidden><span id="erro-cal-texto"></span> <button class="botao" type="button" id="erro-cal-tentar">Tentar de novo</button></div>
+    </div>
+    <div id="selecao" class="selecao" hidden>
+      <div class="selecao-info"><span id="selecao-texto" role="status" aria-live="polite"></span><span id="selecao-preco"></span></div>
+      <div class="selecao-acoes"><button class="botao primario" type="button" id="selecao-reservar">Reservar estas datas</button>
+      <button class="botao" type="button" id="selecao-limpar">Limpar</button></div>
+    </div>
+
+    <h2 id="proximas-titulo">Próximas reservas deste período</h2>
+    <ul class="lista" id="proximas"></ul>
+
+    <details class="cartao" id="precos">
+      <summary>Épocas e preços (alta temporada, réveillon, carnaval…)</summary>
+      <p id="precos-base"></p>
+      <table class="tabela-precos"><thead><tr><th>Nome</th><th>De</th><th>Até (saída)</th><th>Diária (R$)</th><th>Mínimo</th><th></th></tr></thead><tbody id="precos-corpo"></tbody></table>
+      <div class="acoes"><button class="botao" type="button" id="preco-add">Adicionar época</button><button class="botao primario" type="button" id="preco-salvar">Salvar épocas</button></div>
+      <p class="erro-campo" id="precos-erro" role="alert"></p>
+    </details>
+  </section>
+  <p id="erro" class="erro" role="alert" hidden></p>
+</main>
+<dialog class="folha" id="folha" aria-labelledby="folha-titulo"></dialog>
+<dialog class="folha" id="agenda-folha" aria-labelledby="agenda-folha-titulo"></dialog>
+<script src="../mock-api.js"></script>
+<script src="painel.js"></script>
+<script src="agenda.js"></script>
+<script src="calendario.js"></script>
+</body>
+</html>

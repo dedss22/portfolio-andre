@@ -1,0 +1,11 @@
+/* Painel: seletor de icone das caracteristicas do imovel (desenhos do Font Awesome 4.7, o mesmo do site). Sem estilo inline. */
+.botao.icone-botao { gap: 8px; min-width: 76px; }
+.icone-botao .fa { font-size: 22px; width: 26px; text-align: center; }
+.icone-seta { font-size: 12px; }
+dialog.icones-caixa { max-width: 420px; max-height: calc(100vh - 32px); overflow-y: auto; }
+.icones-caixa h2 { margin-top: 0; }
+.icones-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.icone-op { min-height: 52px; border: 1px solid var(--borda); border-radius: 8px; background: #fff; color: var(--azul); cursor: pointer; padding: 0; }
+.icone-op .fa { font-size: 24px; }
+.icone-op:hover { border-color: var(--azul); background: var(--fundo); }
+.icone-op[aria-pressed="true"] { background: var(--azul); color: #fff; border-color: var(--azul); }
