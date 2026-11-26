@@ -388,6 +388,90 @@
   transition: width 0.3s ease;
 }
 
+.sb-scene-timer-track {
+  height: 3px;
+  background: rgba(245, 158, 11, 0.16);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin: -0.22rem 0 0.48rem;
+}
+
+.sb-scene-timer-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #F59E0B 0%, #FDE68A 100%);
+  border-radius: 9999px;
+}
+
+.sb-scene-timer-fill.is-running {
+  animation-name: sbSceneFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.sb-scene-timer-fill.is-paused {
+  opacity: 0.72;
+}
+
+@keyframes sbSceneFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.sb-ns-scene-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(253, 230, 138, 0.85);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 9999px;
+  padding: 0.16rem 0.52rem;
+  white-space: nowrap;
+}
+
+.sb-speed-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.sb-speed-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.42rem;
+  border-radius: 5px;
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all 0.15s ease;
+}
+.sb-speed-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.1);
+}
+.sb-speed-btn.is-active {
+  background: #F59E0B;
+  color: #1c1917;
+}
+
+.sb-ns-btn-pause {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #FDE68A;
+}
+.sb-ns-btn-pause:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.32);
+  border-color: #FBBF24;
+  color: #FFFFFF;
+}
+
 .sb-ns-body {
   display: flex;
   align-items: flex-start;
@@ -1053,6 +1137,7 @@
   gap: 0.45rem;
   overflow-x: auto;
   padding-bottom: 0.25rem;
+  margin: 0.25rem 0 2.35rem;
   scrollbar-width: thin;
 }
 
@@ -1472,7 +1557,7 @@
   position: absolute;
   z-index: 95;
   /* Compact: single line tip, no title/progress/desc/actions */
-  max-width: 268px;
+  max-width: 292px;
   min-width: 140px;
   background: #0B1220;
   color: #FFFFFF;
@@ -1500,7 +1585,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 244px;
+  max-width: 268px;
 }
 
 .sb-coachmark.is-hidden {
@@ -1585,6 +1670,11 @@
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
+.sb-ns-autoplay-badge.is-paused {
+  background: rgba(148, 163, 184, 0.2);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: #E2E8F0;
+}
 
 .sb-autoplay-dot {
   width: 7px;
@@ -1602,6 +1692,82 @@
   box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.32) !important;
   transform: scale(0.97);
   transition: transform 0.16s ease, box-shadow 0.16s ease !important;
+}
+
+/* Visual Animated Auto-Play Cursor */
+.sb-auto-cursor {
+  position: absolute;
+  z-index: 105;
+  pointer-events: none;
+  width: 24px;
+  height: 24px;
+  left: 160px;
+  top: 48px;
+  filter: drop-shadow(0 4px 10px rgba(11, 18, 32, 0.45));
+  will-change: left, top, transform;
+}
+
+.sb-auto-cursor-svg {
+  display: block;
+  transform: translate(-5px, -3px);
+  transition: transform 0.14s ease;
+}
+
+.sb-auto-cursor.is-clicking .sb-auto-cursor-svg {
+  transform: translate(-5px, -3px) scale(0.84);
+}
+
+.sb-auto-cursor-ring {
+  position: absolute;
+  left: -12px;
+  top: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2.5px solid #F59E0B;
+  background: rgba(245, 158, 11, 0.22);
+  opacity: 0;
+  transform: scale(0.35);
+  pointer-events: none;
+}
+
+.sb-auto-cursor.is-clicking .sb-auto-cursor-ring {
+  animation: sbCursorClickRing 0.38s ease-out forwards;
+}
+
+@keyframes sbCursorClickRing {
+  0% { opacity: 0.95; transform: scale(0.35); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+
+/* Internal stage scroll frame during Auto-Play so Narrative Strip stays pinned in view */
+.sb-shell.is-auto-frame .sb-stage {
+  max-height: var(--sb-stage-max-h, 520px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+.sb-shell.is-auto-frame .sb-app-body {
+  padding-bottom: 3.35rem;
+}
+.sb-shell.is-auto-frame .sb-stage.has-overlay {
+  min-height: min(510px, var(--sb-stage-max-h, 510px));
+}
+.sb-shell.is-auto-frame .sb-excel-backdrop {
+  align-items: flex-start;
+  padding: 0.65rem;
+}
+.sb-shell.is-auto-frame .sb-xl-grid-wrap {
+  max-height: calc(var(--sb-stage-max-h, 500px) - 148px);
+}
+
+.sb-invite-card {
+  animation: sbInviteIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes sbInviteIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ==========================================================================
@@ -2123,7 +2289,29 @@
     white-space: normal;
   }
   .sb-ns-desc {
-    display: none; /* hide long desc on small screens, strip stays readable */
+    display: none; /* hide long desc in free/idle compact mode */
+  }
+  .sb-narrative-strip.is-autoplay .sb-ns-desc,
+  .sb-narrative-strip.is-auto-paused .sb-ns-desc,
+  .sb-narrative-strip.is-challenge .sb-ns-desc {
+    display: block;
+    font-size: 0.74rem !important;
+    line-height: 1.38 !important;
+  }
+  .sb-ns-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .sb-ns-btn {
+    font-size: 0.7rem;
+    padding: 0.26rem 0.48rem;
+  }
+  .sb-speed-btn {
+    font-size: 0.68rem;
+    padding: 0.18rem 0.36rem;
+  }
+  .sb-xlsx-tabs {
+    margin-top: 3.15rem;
   }
   .sb-mb-text {
     max-width: calc(100vw - 56px);
