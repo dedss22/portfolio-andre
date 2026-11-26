@@ -13,6 +13,12 @@
   var lang = 'pt';
   var rafPosId = null;
   var locoScrollBound = false;
+  var hasTriggeredViewportAutoplay = false;
+  var sandboxObserver = null;
+  var autoPlayTimer = null;
+  var autoPlayRippleTimer = null;
+  var pulseItemTimer = null;
+  var pulsedItemId = null;
 
   /* ------------------------------------------------------------------------
      Bilingual Dictionary (Page Case Study + Sandbox + Narrative Strip + Micro-Balloon)
@@ -27,9 +33,9 @@
       gc_meta_client_val: 'Paralelo 17 (Concierge) • Sul da Bahia',
       gc_meta_services_val: 'Desenho de Fluxo & Engenharia Full-Stack',
       gc_sb_badge: 'Demo Interativa • Dados Fictícios',
-      gc_sb_heading: 'Teste o fluxo completo Dono + Cozinheira em 7 passos guiados',
+      gc_sb_heading: 'Veja a demo automática ou faça o Desafio Carbonara em 7 passos',
       gc_sb_sub:
-        'Siga a faixa narrativa e os balões interativos para simular do login do Concierge até o fechamento da compra com nota fiscal e planilha .xlsx.',
+        'Ao chegar aqui, a demo automática mostra o pedido do Macarrão à Carbonara de ponta a ponta — depois assuma o controle, monte os 5 itens e visualize a planilha.',
       gc_overview_label: '01 • Origem, Fluxo & Entrega',
       gc_overview_title: 'Como identifiquei o gargalo na Paralelo 17, desenhei o fluxo e construí o sistema',
       gc_overview_p1:
@@ -75,6 +81,9 @@
       btn_restart: 'Reiniciar Tour',
       btn_free_explore: 'Explorar livremente',
       btn_resume_tour: 'Retomar Guia',
+      btn_autoplay_watch: 'Ver Automático',
+      btn_autoplay_pause: 'Pausar Automático',
+      ns_autoplay_badge: '▶ DEMO AUTOMÁTICA',
       rail_steps: [
         '1. Login',
         '2. Criar Estadia',
@@ -187,6 +196,29 @@
       xlsx_ready_title: 'Planilha .xlsx pronta para prestação de contas',
       xlsx_ready_sub: 'Aba Geral + abas coloridas por fornecedor prontas para prestação de contas.',
       btn_download_xlsx: 'Baixar Resumo Demo (.csv)',
+      btn_preview_sheet: 'Visualizar Planilha Gerada',
+      sheet_modal_title: 'pedido-MIR-204-concierge.xlsx',
+      sheet_tab_general: 'Geral',
+      sheet_col_sup: 'Fornecedor',
+      sheet_col_item: 'Item',
+      sheet_col_qty: 'Qtd',
+      sheet_col_unit: 'Unid.',
+      sheet_col_est: 'Estimativa (R$)',
+      sheet_col_note: 'Similar / Pagador',
+      sheet_row_total_est: 'Total Estimado do Pedido',
+      sheet_row_total_notes: 'Total das Notas Lançadas',
+      sheet_row_paid_guest: 'Pago pelo Hóspede',
+      sheet_row_paid_concierge: 'Pago p/ Outra Pessoa (Concierge)',
+      sheet_close_btn: 'Fechar',
+      invite_title: 'Agora experimente você! Vamos fazer um Carbonara?',
+      invite_desc: 'Assuma desde o início e faça as compras dos 5 ingredientes da Chef Camila (Macarrão, Bandeja de Ovos, Pimenta-do-Reino, Bacon e Queijo Parmesão) até gerar a planilha final.',
+      invite_btn_start: '🍝 Iniciar Desafio Carbonara',
+      invite_btn_preview: '👁 Visualizar Planilha Gerada',
+      invite_btn_rewatch: '↻ Assistir Automático Novamente',
+      carbonara_mission_title: '🍝 Missão da Chef Camila: Macarrão à Carbonara',
+      carbonara_ingredients_word: 'ingredientes',
+      carbonara_mission_hint: 'Clique em um ingrediente faltante para pular direto ao setor dele:',
+      carbonara_mission_ready: '5/5 ingredientes no carrinho! Pode enviar o pedido para o Concierge.',
       audit_title: 'Trilha de Auditoria (America/Bahia)',
       toast_nfe_added: 'Comprovante salvo com segurança, separando o que foi pago pelo Hóspede e pela Paralelo 17.',
       toast_order_closed: 'Pedido #1 finalizado! Planilha pronta para prestação de contas liberada.',
@@ -216,11 +248,11 @@
         },
         '4a': {
           title: 'Passo 4 de 7 — Cardápio da Cozinheira',
-          desc: 'Agora você está vendo o celular da Chef Camila. Use os setores ou Kits Prontos e clique em "+" para adicionar pelo menos 1 item.'
+          desc: 'Você está no celular da Chef Camila (sem senha). Comece pelo setor Mercado adicionando os ingredientes do Macarrão à Carbonara.'
         },
         '4b': {
           title: 'Passo 4 de 7 — Enviar Pedido',
-          desc: 'Item adicionado! Agora clique em "Fechar / Enviar Pedido" para encaminhar a lista ao Concierge.'
+          desc: 'Ótimo! Continue pelos setores (Mercado, Açougue e Frios) para fechar os 5 itens do Carbonara ou clique em "Fechar / Enviar Pedido".'
         },
         '5a': {
           title: 'Passo 5 de 7 — Abrir Pedido no Painel',
@@ -249,7 +281,7 @@
         '1': '👆 Clique em "Entrar no Painel"',
         '2': '💾 Preencha e salve a estadia',
         '3': '📲 Abra o Cardápio da Cozinheira',
-        '4a': '➕ Adicione 1 item aqui',
+        '4a': '🍝 Adicione o Macarrão (+)',
         '4b': '📩 Envie o pedido para a equipe',
         '5a': '📋 Clique para abrir o Pedido #1',
         '5b': '📲 Aprove e envie no WhatsApp',
@@ -267,9 +299,9 @@
       gc_meta_client_val: 'Paralelo 17 (Concierge) • Southern Bahia',
       gc_meta_services_val: 'Workflow Design & Full-Stack Engineering',
       gc_sb_badge: 'Interactive Demo • Mock Data',
-      gc_sb_heading: 'Test the full Owner + Cook workflow in 7 guided steps',
+      gc_sb_heading: 'Watch the auto-demo or take the 7-step Carbonara Challenge',
       gc_sb_sub:
-        'Follow the narrative strip and interactive balloons from Concierge login through cook ordering, invoice upload, and final .xlsx settlement.',
+        'Scroll here to watch the automated Carbonara order flow end to end—then take over from step 1, pick all 5 ingredients, and preview the generated spreadsheet.',
       gc_overview_label: '01 • Origin, Workflow & Build',
       gc_overview_title: 'How I spotted the bottleneck at Paralelo 17, designed the flow, and built it end to end',
       gc_overview_p1:
@@ -315,6 +347,9 @@
       btn_restart: 'Restart Tour',
       btn_free_explore: 'Explore freely',
       btn_resume_tour: 'Resume Guide',
+      btn_autoplay_watch: 'Watch Auto-Demo',
+      btn_autoplay_pause: 'Pause Auto-Demo',
+      ns_autoplay_badge: '▶ AUTO DEMO',
       rail_steps: [
         '1. Login',
         '2. Create Stay',
@@ -427,6 +462,29 @@
       xlsx_ready_title: 'Spreadsheet .xlsx ready for accounting',
       xlsx_ready_sub: 'General summary tab + color-coded supplier tabs ready for settlement.',
       btn_download_xlsx: 'Download Demo Summary (.csv)',
+      btn_preview_sheet: 'Preview Generated Sheet',
+      sheet_modal_title: 'order-MIR-204-concierge.xlsx',
+      sheet_tab_general: 'General',
+      sheet_col_sup: 'Supplier',
+      sheet_col_item: 'Item',
+      sheet_col_qty: 'Qty',
+      sheet_col_unit: 'Unit',
+      sheet_col_est: 'Est. (BRL)',
+      sheet_col_note: 'Subst. / Payer',
+      sheet_row_total_est: 'Estimated Order Total',
+      sheet_row_total_notes: 'Total Logged Invoices',
+      sheet_row_paid_guest: 'Paid by Guest',
+      sheet_row_paid_concierge: 'Paid by Other / Concierge',
+      sheet_close_btn: 'Close',
+      invite_title: 'Now it’s your turn! Let’s make a Carbonara?',
+      invite_desc: 'Take over from Step 1 and shop for Chef Camila’s 5 ingredients (Spaghetti, Tray of Eggs, Black Pepper, Bacon, and Parmesan) all the way to the final spreadsheet.',
+      invite_btn_start: '🍝 Start Carbonara Challenge',
+      invite_btn_preview: '👁 Preview Generated Sheet',
+      invite_btn_rewatch: '↻ Watch Auto-Demo Again',
+      carbonara_mission_title: '🍝 Chef Camila’s Mission: Pasta Carbonara',
+      carbonara_ingredients_word: 'ingredients',
+      carbonara_mission_hint: 'Click any missing ingredient to jump straight to its supplier:',
+      carbonara_mission_ready: '5/5 ingredients in cart! Ready to send the order to the Concierge.',
       audit_title: 'Audit Trail (America/Bahia)',
       toast_nfe_added: 'Receipt stored securely, tracking what was paid by the Guest vs. Paralelo 17.',
       toast_order_closed: 'Order #1 finalized! Spreadsheet ready for accounting unlocked.',
@@ -456,11 +514,11 @@
         },
         '4a': {
           title: 'Step 4 of 7 — Cook\'s Menu',
-          desc: 'You are now seeing Chef Camila\'s phone view. Browse suppliers or Ready Kits and click "+" to add at least 1 item.'
+          desc: 'You are viewing Chef Camila\'s phone (no login). Start in Market by adding the Pasta Carbonara ingredients.'
         },
         '4b': {
           title: 'Step 4 of 7 — Send Order',
-          desc: 'Item added! Now click "Close / Send Order" to submit the list to the Concierge.'
+          desc: 'Great! Pick the remaining Carbonara items across Market, Butcher, and Deli & Dairy—or click "Close / Send Order" now.'
         },
         '5a': {
           title: 'Step 5 of 7 — Open Order in Dashboard',
@@ -489,7 +547,7 @@
         '1': '👆 Click "Enter Dashboard"',
         '2': '💾 Fill in & save the stay',
         '3': '📲 Open the Cook\'s Menu',
-        '4a': '➕ Add 1 item here',
+        '4a': '🍝 Add Spaghetti (+)',
         '4b': '📩 Send the order to the team',
         '5a': '📋 Click to open Order #1',
         '5b': '📲 Approve & send via WhatsApp',
@@ -504,25 +562,37 @@
      Catalog Data (Sanitized Sample of the 6 Real Suppliers + 5 Kits)
      ------------------------------------------------------------------------ */
   var SUPPLIERS = [
-    { id: 'peixaria', pt: 'Peixaria', en: 'Seafood', color: '#0284c7', count: 9 },
+    { id: 'mercado', pt: 'Mercado', en: 'Market', color: '#d97706', count: 63 },
     { id: 'acougue', pt: 'Açougue', en: 'Butcher', color: '#b91c1c', count: 20 },
     { id: 'frios-laticinios', pt: 'Frios & Laticínios', en: 'Deli & Dairy', color: '#f59e0b', count: 19 },
     { id: 'hortifruti', pt: 'Hortifruti', en: 'Produce', color: '#059669', count: 40 },
     { id: 'bebidas', pt: 'Bebidas', en: 'Beverages', color: '#7c3aed', count: 21 },
-    { id: 'mercado', pt: 'Mercado', en: 'Market', color: '#d97706', count: 63 }
+    { id: 'peixaria', pt: 'Peixaria', en: 'Seafood', color: '#0284c7', count: 9 }
+  ];
+
+  var CARBONARA_META = [
+    { id: 'mc-pasta', sup: 'mercado', shortPt: 'Macarrão', shortEn: 'Spaghetti' },
+    { id: 'mc-2', sup: 'mercado', shortPt: 'Bandeja de Ovos', shortEn: 'Eggs Tray' },
+    { id: 'mc-pimenta', sup: 'mercado', shortPt: 'Pimenta-do-Reino', shortEn: 'Black Pepper' },
+    { id: 'ac-bacon', sup: 'acougue', shortPt: 'Bacon', shortEn: 'Bacon' },
+    { id: 'fr-parmesao', sup: 'frios-laticinios', shortPt: 'Queijo Parmesão', shortEn: 'Parmesan' }
   ];
 
   var CATALOG = [
-    { id: 'px-1', sup: 'peixaria', pt: 'Camarão Rosa VG Limpo', en: 'Cleaned Pink Shrimp VG', unit: 'kg', price: 128.0 },
-    { id: 'px-2', sup: 'peixaria', pt: 'Peixe Branco em Postas', en: 'White Fish Steaks', unit: 'kg', price: 78.0 },
-    { id: 'px-3', sup: 'peixaria', pt: 'Filé de Salmão Fresco', en: 'Fresh Salmon Fillet', unit: 'kg', price: 112.0 },
-    { id: 'px-4', sup: 'peixaria', pt: 'Filé de Tilápia / Saint Peter', en: 'Tilapia / Saint Peter Fillet', unit: 'kg', price: 64.0 },
+    { id: 'mc-pasta', sup: 'mercado', pt: 'Macarrão Espaguete Grano Duro', en: 'Grano Duro Spaghetti', unit: 'pct', price: 14.5, carbonara: true },
+    { id: 'mc-2', sup: 'mercado', pt: 'Bandeja de Ovos', en: 'Tray of Eggs (30)', unit: 'bdj', price: 28.0, carbonara: true },
+    { id: 'mc-pimenta', sup: 'mercado', pt: 'Pimenta-do-Reino Preta', en: 'Black Peppercorns', unit: 'vidro', price: 16.0, carbonara: true },
+    { id: 'mc-1', sup: 'mercado', pt: 'Carvão Vegetal Graúdo 4kg', en: 'Lump Charcoal 4kg', unit: 'pct', price: 32.0 },
+    { id: 'mc-3', sup: 'mercado', pt: 'Arroz Branco Tipo 1', en: 'White Rice Type 1', unit: 'kg', price: 8.9 },
+    { id: 'mc-4', sup: 'mercado', pt: 'Sorvete de Creme Nobre', en: 'Artisanal Vanilla Ice Cream', unit: 'un', price: 42.0 },
 
+    { id: 'ac-bacon', sup: 'acougue', pt: 'Bacon em Cubos Defumado', en: 'Smoked Diced Bacon', unit: 'kg', price: 46.0, carbonara: true },
     { id: 'ac-1', sup: 'acougue', pt: 'Picanha Bovina Especial', en: 'Prime Beef Picanha', unit: 'kg', price: 96.0 },
     { id: 'ac-2', sup: 'acougue', pt: 'Filé-Mignon Limpo Inteiro', en: 'Whole Trimmed Tenderloin', unit: 'kg', price: 108.0 },
     { id: 'ac-3', sup: 'acougue', pt: 'Costela Bovina para Assar', en: 'Roasting Beef Ribs', unit: 'kg', price: 48.0 },
     { id: 'ac-4', sup: 'acougue', pt: 'Fraldinha para Churrasco', en: 'BBQ Flank Steak', unit: 'kg', price: 58.0 },
 
+    { id: 'fr-parmesao', sup: 'frios-laticinios', pt: 'Queijo Parmesão em Peça', en: 'Parmesan Cheese Block', unit: 'kg', price: 94.0, carbonara: true },
     { id: 'fr-1', sup: 'frios-laticinios', pt: 'Presunto Cozido Nobre Fatiado', en: 'Sliced Cooked Ham', unit: 'kg', price: 54.0 },
     { id: 'fr-2', sup: 'frios-laticinios', pt: 'Salame Italiano Fatiado', en: 'Sliced Italian Salami', unit: 'kg', price: 89.0 },
     { id: 'fr-3', sup: 'frios-laticinios', pt: 'Peito de Peru Defumado', en: 'Smoked Turkey Breast', unit: 'kg', price: 68.0 },
@@ -538,10 +608,10 @@
     { id: 'bb-3', sup: 'bebidas', pt: 'Água de Coco Natural Integral', en: 'Natural Coconut Water', unit: 'L', price: 16.0 },
     { id: 'bb-4', sup: 'bebidas', pt: 'Suco de Laranja Integral', en: '100% Orange Juice', unit: 'L', price: 18.5 },
 
-    { id: 'mc-1', sup: 'mercado', pt: 'Carvão Vegetal Graúdo 4kg', en: 'Lump Charcoal 4kg', unit: 'pct', price: 32.0 },
-    { id: 'mc-2', sup: 'mercado', pt: 'Ovos Frescos Grandes (30 un)', en: 'Fresh Large Eggs (Tray 30)', unit: 'bdj', price: 28.0 },
-    { id: 'mc-3', sup: 'mercado', pt: 'Arroz Branco Tipo 1', en: 'White Rice Type 1', unit: 'kg', price: 8.9 },
-    { id: 'mc-4', sup: 'mercado', pt: 'Sorvete de Creme Nobre', en: 'Artisanal Vanilla Ice Cream', unit: 'un', price: 42.0 }
+    { id: 'px-1', sup: 'peixaria', pt: 'Camarão Rosa VG Limpo', en: 'Cleaned Pink Shrimp VG', unit: 'kg', price: 128.0 },
+    { id: 'px-2', sup: 'peixaria', pt: 'Peixe Branco em Postas', en: 'White Fish Steaks', unit: 'kg', price: 78.0 },
+    { id: 'px-3', sup: 'peixaria', pt: 'Filé de Salmão Fresco', en: 'Fresh Salmon Fillet', unit: 'kg', price: 112.0 },
+    { id: 'px-4', sup: 'peixaria', pt: 'Filé de Tilápia / Saint Peter', en: 'Tilapia / Saint Peter Fillet', unit: 'kg', price: 64.0 }
   ];
 
   var KITS = [
@@ -647,7 +717,7 @@
         }
       ],
       activeStayCode: 'MIR-204',
-      activeSupplier: 'peixaria',
+      activeSupplier: 'mercado',
       appliedKits: {},
       cart: {},
       orders: [],
@@ -655,11 +725,17 @@
       orderDetailTab: 'items',
       showWhatsappPreview: false,
       nfeDraft: {
-        supplier: 'peixaria',
-        amount: '320.00',
+        supplier: 'mercado',
+        amount: '157.50',
         date: '2026-12-18',
         payer: 'guest'
       },
+      autoPlayStatus: 'idle',
+      autoPlayIndex: 0,
+      showCarbonaraInvite: false,
+      showSheetModal: false,
+      activeSheetTab: 'geral',
+      challengeMode: false,
       toast: null
     };
   }
@@ -713,6 +789,31 @@
       total += entry.qty * item.price;
     });
     return { count: count, units: units, total: total };
+  }
+
+  function getCarbonaraStats() {
+    var doneCount = 0;
+    var items = CARBONARA_META.map(function (cm) {
+      var entry = state.cart[cm.id];
+      var inCart = !!(entry && entry.qty > 0);
+      if (inCart) doneCount += 1;
+      return {
+        id: cm.id,
+        sup: cm.sup,
+        shortPt: cm.shortPt,
+        shortEn: cm.shortEn,
+        done: inCart
+      };
+    });
+    return { doneCount: doneCount, total: CARBONARA_META.length, items: items };
+  }
+
+  function populateCarbonaraCart() {
+    state.cart['mc-pasta'] = { qty: 2, similar: true };
+    state.cart['mc-2'] = { qty: 1, similar: true };
+    state.cart['mc-pimenta'] = { qty: 1, similar: true };
+    state.cart['ac-bacon'] = { qty: 1, similar: true };
+    state.cart['fr-parmesao'] = { qty: 0.5, similar: true };
   }
 
   /* Returns the word "item" or "items" (PT: "item"/"itens") based on count */
@@ -856,9 +957,17 @@
     }
 
     var stats = getCartStats();
+    var cStats = getCarbonaraStats();
     if (state.tourActive) {
       if (state.tourStep === '4a' && stats.count >= 1) {
         state.tourStep = '4b';
+        if (cStats.doneCount === cStats.total) {
+          renderAndScroll('step-4b-send-order-btn');
+        } else {
+          render();
+        }
+        return;
+      } else if (state.tourStep === '4b' && cStats.doneCount === cStats.total && delta > 0) {
         renderAndScroll('step-4b-send-order-btn');
         return;
       } else if (state.tourStep === '4b' && stats.count === 0) {
@@ -895,7 +1004,7 @@
   function doSendOrder() {
     var stats = getCartStats();
     if (stats.count === 0) {
-      state.cart['px-1'] = { qty: 2, similar: true };
+      populateCarbonaraCart();
       stats = getCartStats();
     }
 
@@ -918,7 +1027,7 @@
       }
     });
 
-    var firstSup = orderItems.length ? orderItems[0].sup : 'peixaria';
+    var firstSup = orderItems.length ? orderItems[0].sup : 'mercado';
     var orderObj = {
       id: 'ord-1',
       number: 1,
@@ -1043,6 +1152,8 @@
 
   function jumpToTourStep(targetStep) {
     clearToast();
+    state.showCarbonaraInvite = false;
+    state.showSheetModal = false;
     if (targetStep === '1') {
       state.screen = 'login';
       state.tourStep = '1';
@@ -1080,7 +1191,7 @@
     }
     if (targetStep === '4b') {
       if (getCartStats().count === 0) {
-        state.cart['px-1'] = { qty: 2, similar: true };
+        state.cart['mc-pasta'] = { qty: 1, similar: true };
       }
       state.screen = 'menu';
       state.tourStep = '4b';
@@ -1132,10 +1243,10 @@
         ord7.notes.push({
           id: 'nfe-1',
           nfeNum: 'NF-e 004.812',
-          supplierId: 'peixaria',
-          supplierPt: 'Peixaria',
-          supplierEn: 'Seafood',
-          amount: ord7.totalEstimate || 256,
+          supplierId: 'mercado',
+          supplierPt: 'Mercado',
+          supplierEn: 'Market',
+          amount: ord7.totalEstimate || 157.5,
           date: '2026-12-18',
           payer: 'guest'
         });
@@ -1151,7 +1262,7 @@
       case '1': doLogin(); break;
       case '2': doSaveStay(); break;
       case '3': doOpenMenu('MIR-204'); break;
-      case '4a': doChangeQty('px-1', 2); break;
+      case '4a': doChangeQty('mc-pasta', 1); break;
       case '4b': doSendOrder(); break;
       case '5a': doOpenOrder(state.orders[0] && state.orders[0].id); break;
       case '5b': doApproveAndSend(); break;
@@ -1170,8 +1281,186 @@
   }
 
   function restartTour() {
+    hasTriggeredViewportAutoplay = true;
+    clearAutoPlayTimers();
     state = createInitialState();
     renderAndScroll('step-1-login-btn');
+  }
+
+  function startCarbonaraChallenge() {
+    hasTriggeredViewportAutoplay = true;
+    clearAutoPlayTimers();
+    state = createInitialState();
+    state.challengeMode = true;
+    state.tourActive = true;
+    state.autoPlayStatus = 'idle';
+    renderAndScroll('step-1-login-btn');
+  }
+
+  /* ------------------------------------------------------------------------
+     Auto-Play Engine (IntersectionObserver + Smooth Visible Click Demo)
+     ------------------------------------------------------------------------ */
+  var AUTOPLAY_STEPS = [
+    { delay: 900, rippleMs: 360, target: '[data-tour-target="step-1-login-btn"]', run: function () { doLogin(); } },
+    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-2-save-stay-btn"]', run: function () { doSaveStay(); } },
+    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-3-open-menu-btn"]', run: function () { doOpenMenu('MIR-204'); } },
+    { delay: 850, rippleMs: 320, target: '[data-action="qty-plus"][data-item="mc-pasta"]', run: function () { doChangeQty('mc-pasta', 2); } },
+    { delay: 720, rippleMs: 300, target: '[data-action="qty-plus"][data-item="mc-2"]', run: function () { doChangeQty('mc-2', 1); } },
+    { delay: 720, rippleMs: 300, target: '[data-action="qty-plus"][data-item="mc-pimenta"]', run: function () { doChangeQty('mc-pimenta', 1); } },
+    { delay: 680, rippleMs: 300, target: '[data-action="select-sup"][data-sup="acougue"]', run: function () { state.activeSupplier = 'acougue'; render(); } },
+    { delay: 750, rippleMs: 320, target: '[data-action="qty-plus"][data-item="ac-bacon"]', run: function () { doChangeQty('ac-bacon', 2); } },
+    { delay: 680, rippleMs: 300, target: '[data-action="select-sup"][data-sup="frios-laticinios"]', run: function () { state.activeSupplier = 'frios-laticinios'; render(); } },
+    { delay: 750, rippleMs: 320, target: '[data-action="qty-plus"][data-item="fr-parmesao"]', run: function () { doChangeQty('fr-parmesao', 1); } },
+    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-4b-send-order-btn"]', run: function () { doSendOrder(); } },
+    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-5a-open-order-btn"]', run: function () { doOpenOrder(state.orders[0] && state.orders[0].id); } },
+    { delay: 1350, rippleMs: 380, target: '[data-tour-target="step-5b-approve-btn"]', run: function () { doApproveAndSend(); } },
+    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-6-attach-nfe-btn"]', run: function () { doAttachMockNfe(); } },
+    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-7-close-order-btn"]', run: function () { doCloseOrder(); finishAutoPlay(); } }
+  ];
+
+  function getAutoPlayScale() {
+    if (typeof window.__COMPRAS_AUTOPLAY_SCALE === 'number' && window.__COMPRAS_AUTOPLAY_SCALE > 0) {
+      return window.__COMPRAS_AUTOPLAY_SCALE;
+    }
+    return 1;
+  }
+
+  function clearAutoPlayTimers() {
+    if (autoPlayTimer) {
+      clearTimeout(autoPlayTimer);
+      autoPlayTimer = null;
+    }
+    if (autoPlayRippleTimer) {
+      clearTimeout(autoPlayRippleTimer);
+      autoPlayRippleTimer = null;
+    }
+    if (rootEl) {
+      rootEl.querySelectorAll('.sb-auto-ripple').forEach(function (el) {
+        el.classList.remove('sb-auto-ripple');
+      });
+    }
+  }
+
+  function stopAutoPlay(nextStatus) {
+    clearAutoPlayTimers();
+    if (!state) return;
+    if (state.autoPlayStatus === 'running') {
+      state.autoPlayStatus = nextStatus || 'paused';
+      render();
+    }
+  }
+
+  function finishAutoPlay() {
+    clearAutoPlayTimers();
+    if (!state) return;
+    state.autoPlayStatus = 'completed';
+    state.showCarbonaraInvite = true;
+    clearToast();
+    render();
+  }
+
+  function inferAutoPlayIndex() {
+    if (!state) return 0;
+    switch (state.tourStep) {
+      case '1': return 0;
+      case '2': return 1;
+      case '3': return 2;
+      case '4a': return 3;
+      case '4b': {
+        if (!state.cart['mc-pasta']) return 3;
+        if (!state.cart['mc-2']) return 4;
+        if (!state.cart['mc-pimenta']) return 5;
+        if (!state.cart['ac-bacon']) return state.activeSupplier === 'acougue' ? 7 : 6;
+        if (!state.cart['fr-parmesao']) return state.activeSupplier === 'frios-laticinios' ? 9 : 8;
+        return 10;
+      }
+      case '5a': return 11;
+      case '5b': return 12;
+      case '6': return 13;
+      case '7': return 14;
+      default: return 0;
+    }
+  }
+
+  function scheduleNextAutoPlayStep() {
+    clearAutoPlayTimers();
+    if (!state || state.autoPlayStatus !== 'running') return;
+    if (state.autoPlayIndex >= AUTOPLAY_STEPS.length) {
+      finishAutoPlay();
+      return;
+    }
+
+    var stepDef = AUTOPLAY_STEPS[state.autoPlayIndex];
+    var scale = getAutoPlayScale();
+    var waitMs = Math.max(40, Math.round(stepDef.delay * scale));
+    var rippleMs = Math.max(30, Math.round(stepDef.rippleMs * scale));
+
+    autoPlayTimer = setTimeout(function () {
+      if (!state || state.autoPlayStatus !== 'running') return;
+      var targetEl = rootEl && stepDef.target ? rootEl.querySelector(stepDef.target) : null;
+      if (targetEl) {
+        targetEl.classList.add('sb-auto-ripple');
+      }
+      autoPlayRippleTimer = setTimeout(function () {
+        if (!state || state.autoPlayStatus !== 'running') return;
+        if (targetEl) targetEl.classList.remove('sb-auto-ripple');
+        state.autoPlayIndex += 1;
+        stepDef.run();
+        if (state && state.autoPlayStatus === 'running') {
+          scheduleNextAutoPlayStep();
+        }
+      }, rippleMs);
+    }, waitMs);
+  }
+
+  function startAutoPlay(fromBeginning) {
+    hasTriggeredViewportAutoplay = true;
+    clearAutoPlayTimers();
+    if (fromBeginning || !state || state.tourStep === '7done') {
+      state = createInitialState();
+    }
+    state.tourActive = true;
+    state.showCarbonaraInvite = false;
+    state.showSheetModal = false;
+    state.challengeMode = false;
+    state.autoPlayStatus = 'running';
+    state.autoPlayIndex = fromBeginning ? 0 : inferAutoPlayIndex();
+    clearToast();
+    render();
+    scheduleNextAutoPlayStep();
+  }
+
+  function toggleAutoPlay() {
+    if (!state) return;
+    if (state.autoPlayStatus === 'running') {
+      stopAutoPlay('paused');
+    } else if (state.tourStep === '7done' || state.autoPlayStatus === 'completed') {
+      startAutoPlay(true);
+    } else {
+      startAutoPlay(false);
+    }
+  }
+
+  function setupViewportObserver() {
+    if (!rootEl || sandboxObserver) return;
+    if (typeof IntersectionObserver !== 'function') return;
+    sandboxObserver = new IntersectionObserver(function (entries) {
+      if (hasTriggeredViewportAutoplay) return;
+      for (var i = 0; i < entries.length; i++) {
+        var entry = entries[i];
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          hasTriggeredViewportAutoplay = true;
+          if (state && state.autoPlayStatus === 'idle' && state.tourStep === '1' && !state.challengeMode) {
+            startAutoPlay(true);
+          }
+          if (sandboxObserver) {
+            sandboxObserver.disconnect();
+          }
+          break;
+        }
+      }
+    }, { threshold: 0.25 });
+    sandboxObserver.observe(rootEl);
   }
 
   function downloadDemoCsv() {
@@ -1214,10 +1503,16 @@
 
   /* ---- Narrative Strip (replaces big coachmark) ---- */
   function renderNarrativeStrip() {
+    var isAutoRunning = state.autoPlayStatus === 'running';
+    var autoBadgeHtml = isAutoRunning
+      ? '<span class="sb-ns-autoplay-badge"><span class="sb-autoplay-dot" aria-hidden="true"></span>' + esc(t('ns_autoplay_badge')) + '</span>'
+      : '';
+
     if (!state.tourActive) {
       return (
         '<div class="sb-narrative-strip sb-narrative-free">' +
         '  <div class="sb-ns-left">' +
+        autoBadgeHtml +
         '    <span class="sb-ns-free-label">' + esc(lang === 'en' ? 'Free Explore Mode' : 'Modo Livre — Explore à vontade') + '</span>' +
         '  </div>' +
         '  <div class="sb-ns-actions">' +
@@ -1230,6 +1525,25 @@
 
     var dict = I18N[lang] || I18N.pt;
     var nsData = dict.ns_steps[state.tourStep] || dict.ns_steps['1'];
+    var nsTitle = nsData.title;
+    var nsDesc = nsData.desc;
+
+    if (state.tourStep === '4b') {
+      var cStats = getCarbonaraStats();
+      if (cStats.doneCount === cStats.total) {
+        nsTitle = lang === 'en'
+          ? 'Step 4 of 7 — Carbonara 5/5 Ready! Send Order'
+          : 'Passo 4 de 7 — Carbonara 5/5 Pronto! Enviar Pedido';
+        nsDesc = lang === 'en'
+          ? 'All 5 Carbonara ingredients are in the cart. Click "Close / Send Order" to notify the Concierge.'
+          : 'Todos os 5 ingredientes do Carbonara estão no carrinho! Clique em "Fechar / Enviar Pedido" para enviar ao Concierge.';
+      } else if (cStats.doneCount > 0) {
+        nsTitle = lang === 'en'
+          ? 'Step 4 of 7 — Carbonara (' + cStats.doneCount + '/5) • Send or Keep Picking'
+          : 'Passo 4 de 7 — Carbonara (' + cStats.doneCount + '/5) • Continue ou Envie';
+      }
+    }
+
     var stepNum = getStepNumber(state.tourStep);
     var isDone = state.tourStep === '7done';
     var isCookStep = (state.tourStep === '4a' || state.tourStep === '4b');
@@ -1249,9 +1563,10 @@
     var badgeText = isDone ? t('ns_done_badge') : t('ns_step_of').replace('{n}', String(stepNum));
 
     return (
-      '<div class="sb-narrative-strip">' +
+      '<div class="sb-narrative-strip' + (isAutoRunning ? ' is-autoplay' : '') + '">' +
       '  <div class="sb-ns-top">' +
       '    <div class="sb-ns-left">' +
+      autoBadgeHtml +
       '      <span class="sb-ns-persona ' + personaClass + '">' + esc(persona) + '</span>' +
       '      <span class="sb-ns-badge">' + esc(badgeText) + '</span>' +
       '    </div>' +
@@ -1259,8 +1574,8 @@
       '  </div>' +
       '  <div class="sb-ns-progress-track"><div class="sb-ns-progress-fill" style="width:' + pct + '%"></div></div>' +
       '  <div class="sb-ns-body">' +
-      '    <strong class="sb-ns-title">' + esc(nsData.title) + '</strong>' +
-      '    <p class="sb-ns-desc">' + esc(nsData.desc) + '</p>' +
+      '    <strong class="sb-ns-title">' + esc(nsTitle) + '</strong>' +
+      '    <p class="sb-ns-desc">' + esc(nsDesc) + '</p>' +
       '  </div>' +
       '</div>'
     );
@@ -1273,6 +1588,7 @@
     var roleText = isCook ? t('role_cook') : t('role_admin');
     var curNum = getStepNumber(state.tourStep);
     var railLabels = I18N[lang].rail_steps;
+    var isAutoRunning = state.autoPlayStatus === 'running';
 
     var railHtml = railLabels
       .map(function (lbl, idx) {
@@ -1302,6 +1618,9 @@
       '    <span class="sb-role-badge ' + roleClass + '">' + esc(roleText) + '</span>' +
       '  </div>' +
       '  <div class="sb-chrome-actions">' +
+      '    <button type="button" class="sb-chrome-btn sb-chrome-autoplay ' + (isAutoRunning ? 'is-running' : '') + '" data-action="toggle-autoplay">' +
+      (isAutoRunning ? '⏸ ' + esc(t('btn_autoplay_pause')) : '▶ ' + esc(t('btn_autoplay_watch'))) +
+      '    </button>' +
       '    <button type="button" class="sb-chrome-btn ' + (state.tourActive ? 'is-active' : '') + '" data-action="toggle-tour">' +
       (state.tourActive ? esc(t('btn_free_explore')) : esc(t('btn_resume_tour'))) +
       '    </button>' +
@@ -1491,18 +1810,62 @@
       return it.sup === state.activeSupplier;
     });
 
+    var cStats = getCarbonaraStats();
+    var cPct = Math.round((cStats.doneCount / cStats.total) * 100);
+    var cChipsHtml = cStats.items
+      .map(function (ci) {
+        var supObjChip = getSupplierObj(ci.sup);
+        var supLabel = lang === 'en' ? supObjChip.en : supObjChip.pt;
+        var itemLabel = lang === 'en' ? ci.shortEn : ci.shortPt;
+        var cls = 'sb-carb-chip' + (ci.done ? ' is-done' : '') + (state.activeSupplier === ci.sup ? ' is-cur-sup' : '');
+        return (
+          '<button type="button" class="' + cls + '" data-action="carbonara-jump" data-sup="' + ci.sup + '" data-item="' + ci.id + '">' +
+          '  <span>' + (ci.done ? '✓' : '○') + ' ' + esc(itemLabel) + '</span>' +
+          '  <span class="sb-carb-chip-sup">' + esc(supLabel) + '</span>' +
+          '</button>'
+        );
+      })
+      .join('');
+
+    var missionBanner = (
+      '<div class="sb-carbonara-mission' + (cStats.doneCount === cStats.total ? ' is-complete' : '') + '">' +
+      '  <div class="sb-carb-head">' +
+      '    <strong class="sb-carb-title">' + esc(t('carbonara_mission_title')) + ' — <span class="sb-tabular">' + cStats.doneCount + '/' + cStats.total + ' ' + esc(t('carbonara_ingredients_word')) + '</span></strong>' +
+      '    <span class="sb-carb-sub">' + esc(cStats.doneCount === cStats.total ? t('carbonara_mission_ready') : t('carbonara_mission_hint')) + '</span>' +
+      '  </div>' +
+      '  <div class="sb-carb-progress-track"><div class="sb-carb-progress-fill" style="width:' + cPct + '%"></div></div>' +
+      '  <div class="sb-carb-chips">' + cChipsHtml + '</div>' +
+      '</div>'
+    );
+
+    var targetIdx = -1;
+    for (var fi = 0; fi < filteredItems.length; fi++) {
+      var cand = filteredItems[fi];
+      var candQty = state.cart[cand.id] ? state.cart[cand.id].qty : 0;
+      if (cand.carbonara && candQty === 0) {
+        targetIdx = fi;
+        break;
+      }
+    }
+    if (targetIdx === -1) targetIdx = 0;
+
     var itemsHtml = filteredItems
       .map(function (it, idx) {
         var entry = state.cart[it.id];
         var qty = entry ? entry.qty : 0;
         var sim = entry ? entry.similar : true;
-        var isFirstPlus = idx === 0;
-        var plusAttr = isFirstPlus ? ' data-tour-target="step-4a-add-item-btn"' : '';
+        var isTargetPlus = idx === targetIdx;
+        var plusAttr = isTargetPlus ? ' data-tour-target="step-4a-add-item-btn"' : '';
+        var isCarb = !!it.carbonara;
+        var isPulsed = pulsedItemId === it.id;
         return (
-          '<div class="sb-item-card ' + (qty > 0 ? 'is-in-cart' : '') + '">' +
+          '<div class="sb-item-card ' + (qty > 0 ? 'is-in-cart' : '') + (isCarb ? ' is-carbonara' : '') + (isPulsed ? ' sb-item-pulse' : '') + '" data-item-id="' + it.id + '">' +
           '  <div class="sb-item-head">' +
           '    <div>' +
-          '      <h4 class="sb-item-name">' + esc(lang === 'en' ? it.en : it.pt) + '</h4>' +
+          '      <div class="sb-item-title-row">' +
+          '        <h4 class="sb-item-name">' + esc(lang === 'en' ? it.en : it.pt) + '</h4>' +
+          (isCarb ? '        <span class="sb-carb-item-tag">🍝 Carbonara</span>' : '') +
+          '      </div>' +
           '      <div class="sb-item-unit sb-tabular">' + esc(it.unit) + ' • ' + formatBRL(it.price) + '/' + esc(it.unit) + '</div>' +
           '    </div>' +
           '    <button type="button" class="sb-similar-toggle ' + (sim ? 'is-on' : '') + '" data-action="toggle-similar" data-item="' + it.id + '">' +
@@ -1555,6 +1918,7 @@
       '  </div>' +
       cookBanner +
       '  <div class="sb-app-body">' +
+      missionBanner +
       '    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">' +
       '      <span style="font-size:0.76rem;font-weight:700;color:#57534e;">⚡ ' + esc(t('kits_label')) + ' ' + esc(state.stayDraft.guests) + ' ' + esc(t('guests_word')) + '):</span>' +
       '      <span style="font-size:0.73rem;color:#78716c;">' + esc(t('menu_catalog_meta')) + '</span>' +
@@ -1764,20 +2128,31 @@
         })
         .join('');
 
+      var orderSupIds = [];
+      ord.items.forEach(function (it) {
+        if (orderSupIds.indexOf(it.sup) === -1) orderSupIds.push(it.sup);
+      });
+      var orderSuppliers = SUPPLIERS.filter(function (s) {
+        return orderSupIds.indexOf(s.id) !== -1;
+      });
+
       var xlsxHtml = isFinalized
         ? '<div class="sb-xlsx-preview" data-tour-target="step-7done-xlsx-card">' +
-          '  <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;">' +
+          '  <div class="sb-xlsx-header-row">' +
           '    <div>' +
           '      <strong style="font-size:0.92rem;color:#065f46;display:block;">📊 ' + esc(t('xlsx_ready_title')) + '</strong>' +
           '      <span style="font-size:0.78rem;color:#047857;">' + esc(t('xlsx_ready_sub')) + '</span>' +
           '    </div>' +
-          '    <button type="button" class="sb-btn sb-btn-emerald sb-btn-sm" data-action="download-csv">⬇ ' + esc(t('btn_download_xlsx')) + '</button>' +
+          '    <div class="sb-xlsx-actions-col">' +
+          '      <button type="button" class="sb-btn sb-btn-emerald sb-btn-sm" data-action="download-csv">⬇ ' + esc(t('btn_download_xlsx')) + '</button>' +
+          '      <button type="button" class="sb-btn sb-btn-excel-preview sb-btn-sm" data-action="open-sheet-preview">👁 ' + esc(t('btn_preview_sheet')) + '</button>' +
+          '    </div>' +
           '  </div>' +
           '  <div class="sb-xlsx-tabs">' +
-          '    <span class="sb-xlsx-sheet-pill" style="background:#1c1917;">Geral</span>' +
-          SUPPLIERS.map(function (s) {
+          '    <button type="button" class="sb-xlsx-sheet-pill" style="background:#1c1917;" data-action="open-sheet-tab" data-sheet="geral">' + esc(t('sheet_tab_general')) + '</button>' +
+          orderSuppliers.map(function (s) {
             var tc = s.id === 'frios-laticinios' ? '#1c1917' : '#ffffff';
-            return '<span class="sb-xlsx-sheet-pill" style="background:' + s.color + ';color:' + tc + ';">' + esc(lang === 'en' ? s.en : s.pt) + '</span>';
+            return '<button type="button" class="sb-xlsx-sheet-pill" style="background:' + s.color + ';color:' + tc + ';" data-action="open-sheet-tab" data-sheet="' + s.id + '">' + esc(lang === 'en' ? s.en : s.pt) + '</button>';
           }).join('') +
           '  </div>' +
           '</div>'
@@ -1875,13 +2250,205 @@
     );
   }
 
+  /* ---- Carbonara Invite Overlay (after Auto-Play completes) ---- */
+  function renderCarbonaraInviteModal() {
+    if (!state.showCarbonaraInvite) return '';
+    return (
+      '<div class="sb-invite-backdrop" role="dialog" aria-modal="true" aria-labelledby="sb-invite-title">' +
+      '  <div class="sb-invite-card">' +
+      '    <button type="button" class="sb-invite-close" aria-label="Fechar" data-action="dismiss-invite">✕</button>' +
+      '    <div class="sb-invite-badge">🍝 ' + esc(lang === 'en' ? 'Interactive Challenge' : 'Desafio Interativo') + '</div>' +
+      '    <h3 class="sb-invite-title" id="sb-invite-title">' + esc(t('invite_title')) + '</h3>' +
+      '    <p class="sb-invite-desc">' + esc(t('invite_desc')) + '</p>' +
+      '    <div class="sb-invite-ingredients">' +
+      CARBONARA_META.map(function (cm) {
+        return '<span class="sb-invite-ing-pill">✓ ' + esc(lang === 'en' ? cm.shortEn : cm.shortPt) + '</span>';
+      }).join('') +
+      '    </div>' +
+      '    <div class="sb-invite-actions">' +
+      '      <button type="button" class="sb-btn sb-btn-amber sb-invite-primary" data-action="start-carbonara-challenge">' + esc(t('invite_btn_start')) + '</button>' +
+      '      <div class="sb-invite-secondary-row">' +
+      '        <button type="button" class="sb-btn sb-btn-outline sb-btn-sm" data-action="open-sheet-preview">' + esc(t('invite_btn_preview')) + '</button>' +
+      '        <button type="button" class="sb-btn sb-btn-outline sb-btn-sm" data-action="restart-autoplay">' + esc(t('invite_btn_rewatch')) + '</button>' +
+      '      </div>' +
+      '    </div>' +
+      '  </div>' +
+      '</div>'
+    );
+  }
+
+  /* ---- Authentic Excel-Style Sheet Preview Modal ---- */
+  function renderSheetPreviewModal() {
+    if (!state.showSheetModal) return '';
+    var ord = getCurrentOrder() || (state.orders.length ? state.orders[0] : null);
+    if (!ord) return '';
+
+    var orderSupIds = [];
+    ord.items.forEach(function (it) {
+      if (orderSupIds.indexOf(it.sup) === -1) orderSupIds.push(it.sup);
+    });
+    var orderSuppliers = SUPPLIERS.filter(function (s) {
+      return orderSupIds.indexOf(s.id) !== -1;
+    });
+
+    var activeTab = state.activeSheetTab || 'geral';
+    if (activeTab !== 'geral' && orderSupIds.indexOf(activeTab) === -1) {
+      activeTab = 'geral';
+    }
+
+    var visibleItems = activeTab === 'geral'
+      ? ord.items
+      : ord.items.filter(function (it) { return it.sup === activeTab; });
+
+    var itemsSum = 0;
+    visibleItems.forEach(function (it) {
+      itemsSum += it.qty * it.price;
+    });
+
+    var totalNotes = 0;
+    var paidGuest = 0;
+    var paidConcierge = 0;
+    ord.notes.forEach(function (n) {
+      if (activeTab === 'geral' || n.supplierId === activeTab) {
+        totalNotes += n.amount;
+        if (n.payer === 'guest') paidGuest += n.amount;
+        else paidConcierge += n.amount;
+      }
+    });
+
+    var rowsHtml = '';
+    var rowNum = 1;
+    rowsHtml +=
+      '<tr class="sb-xl-header-row">' +
+      '  <td class="sb-xl-rownum">' + (rowNum++) + '</td>' +
+      '  <th>' + esc(t('sheet_col_sup')) + '</th>' +
+      '  <th>' + esc(t('sheet_col_item')) + '</th>' +
+      '  <th class="sb-xl-num">' + esc(t('sheet_col_qty')) + '</th>' +
+      '  <th>' + esc(t('sheet_col_unit')) + '</th>' +
+      '  <th class="sb-xl-num">' + esc(t('sheet_col_est')) + '</th>' +
+      '  <th>' + esc(t('sheet_col_note')) + '</th>' +
+      '</tr>';
+
+    visibleItems.forEach(function (it) {
+      var sup = getSupplierObj(it.sup);
+      var supLabel = lang === 'en' ? sup.en : sup.pt;
+      var supTextColor = sup.id === 'frios-laticinios' ? '#1c1917' : '#ffffff';
+      var simLabel = it.similar
+        ? (lang === 'en' ? 'Subst. OK' : 'Aceita similar')
+        : (lang === 'en' ? 'Exact only' : 'Sem similar');
+      rowsHtml +=
+        '<tr>' +
+        '  <td class="sb-xl-rownum">' + (rowNum++) + '</td>' +
+        '  <td><span class="sb-xl-sup-tag" style="background:' + sup.color + ';color:' + supTextColor + ';">' + esc(supLabel) + '</span></td>' +
+        '  <td><strong>' + esc(lang === 'en' ? it.en : it.pt) + '</strong></td>' +
+        '  <td class="sb-xl-num sb-tabular">' + it.qty + '</td>' +
+        '  <td>' + esc(it.unit) + '</td>' +
+        '  <td class="sb-xl-num sb-tabular">' + formatBRL(it.qty * it.price) + '</td>' +
+        '  <td class="sb-xl-muted">' + esc(simLabel) + '</td>' +
+        '</tr>';
+    });
+
+    var lastItemRow = Math.max(2, rowNum - 1);
+    var totalRowNum = rowNum++;
+    rowsHtml +=
+      '<tr class="sb-xl-total-row">' +
+      '  <td class="sb-xl-rownum">' + totalRowNum + '</td>' +
+      '  <td colspan="4"><strong>' + esc(t('sheet_row_total_est')) + '</strong></td>' +
+      '  <td class="sb-xl-num sb-tabular"><strong>' + formatBRL(itemsSum) + '</strong></td>' +
+      '  <td class="sb-xl-muted sb-tabular">=SUM(E2:E' + lastItemRow + ')</td>' +
+      '</tr>';
+
+    if (totalNotes > 0) {
+      rowsHtml +=
+        '<tr class="sb-xl-summary-row">' +
+        '  <td class="sb-xl-rownum">' + (rowNum++) + '</td>' +
+        '  <td colspan="4">' + esc(t('sheet_row_total_notes')) + '</td>' +
+        '  <td class="sb-xl-num sb-tabular"><strong>' + formatBRL(totalNotes) + '</strong></td>' +
+        '  <td>' + esc(ord.notes.length + ' NF-e') + '</td>' +
+        '</tr>' +
+        '<tr class="sb-xl-summary-row">' +
+        '  <td class="sb-xl-rownum">' + (rowNum++) + '</td>' +
+        '  <td colspan="4">' + esc(t('sheet_row_paid_guest')) + '</td>' +
+        '  <td class="sb-xl-num sb-tabular" style="color:#059669;"><strong>' + formatBRL(paidGuest) + '</strong></td>' +
+        '  <td><span class="sb-xl-payer-pill is-guest">' + esc(lang === 'en' ? 'Guest' : 'Hóspede') + '</span></td>' +
+        '</tr>' +
+        '<tr class="sb-xl-summary-row">' +
+        '  <td class="sb-xl-rownum">' + (rowNum++) + '</td>' +
+        '  <td colspan="4">' + esc(t('sheet_row_paid_concierge')) + '</td>' +
+        '  <td class="sb-xl-num sb-tabular" style="color:#9333ea;"><strong>' + formatBRL(paidConcierge) + '</strong></td>' +
+        '  <td><span class="sb-xl-payer-pill is-concierge">Concierge</span></td>' +
+        '</tr>';
+    }
+
+    var sheetTabsHtml =
+      '<button type="button" class="sb-xl-sheet-tab ' + (activeTab === 'geral' ? 'is-active' : '') + '" data-action="select-sheet-tab" data-sheet="geral">' +
+      '  <span class="sb-xl-tab-dot" style="background:#107c41;"></span>' +
+      '  <span>' + esc(t('sheet_tab_general')) + '</span>' +
+      '</button>' +
+      orderSuppliers.map(function (s) {
+        var isAct = activeTab === s.id;
+        return (
+          '<button type="button" class="sb-xl-sheet-tab ' + (isAct ? 'is-active' : '') + '" data-action="select-sheet-tab" data-sheet="' + s.id + '">' +
+          '  <span class="sb-xl-tab-dot" style="background:' + s.color + ';"></span>' +
+          '  <span>' + esc(lang === 'en' ? s.en : s.pt) + '</span>' +
+          '</button>'
+        );
+      }).join('');
+
+    return (
+      '<div class="sb-excel-backdrop" role="dialog" aria-modal="true" aria-labelledby="sb-xl-title">' +
+      '  <div class="sb-excel-window">' +
+      '    <div class="sb-xl-topbar">' +
+      '      <div class="sb-xl-title-group">' +
+      '        <span class="sb-xl-icon">X</span>' +
+      '        <strong id="sb-xl-title">' + esc(t('sheet_modal_title')) + '</strong>' +
+      '        <span class="sb-xl-badge">ExcelJS</span>' +
+      '      </div>' +
+      '      <div class="sb-xl-top-actions">' +
+      '        <button type="button" class="sb-xl-top-btn" data-action="download-csv">⬇ ' + esc(t('btn_download_xlsx')) + '</button>' +
+      '        <button type="button" class="sb-xl-close-btn" data-action="close-sheet-preview">✕ ' + esc(t('sheet_close_btn')) + '</button>' +
+      '      </div>' +
+      '    </div>' +
+      '    <div class="sb-xl-formulabar">' +
+      '      <span class="sb-xl-namebox">E' + totalRowNum + '</span>' +
+      '      <span class="sb-xl-fx">fx</span>' +
+      '      <span class="sb-xl-formula-text">=SUM(E2:E' + lastItemRow + ') &nbsp;→&nbsp; <strong>' + formatBRL(itemsSum) + '</strong></span>' +
+      '    </div>' +
+      '    <div class="sb-xl-grid-wrap">' +
+      '      <table class="sb-xl-grid">' +
+      '        <thead>' +
+      '          <tr>' +
+      '            <th class="sb-xl-corner"></th>' +
+      '            <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th>' +
+      '          </tr>' +
+      '        </thead>' +
+      '        <tbody>' + rowsHtml + '</tbody>' +
+      '      </table>' +
+      '    </div>' +
+      '    <div class="sb-xl-tabs-bar" role="tablist" aria-label="Worksheet tabs">' + sheetTabsHtml + '</div>' +
+      '  </div>' +
+      '</div>'
+    );
+  }
+
   /* ---- Micro-Balloon (compact, 1-line tip, points to the target button) ---- */
   function renderMicroBalloon() {
-    if (!state.tourActive) {
+    if (!state.tourActive || state.showCarbonaraInvite || state.showSheetModal) {
       return '<div class="sb-coachmark is-hidden" id="sb-coachmark"></div>';
     }
     var dict = I18N[lang] || I18N.pt;
     var mbText = dict.mb_steps[state.tourStep] || dict.mb_steps['1'];
+
+    if (state.tourStep === '4b') {
+      var cStats = getCarbonaraStats();
+      if (cStats.doneCount === cStats.total) {
+        mbText = lang === 'en' ? '📩 5/5 Carbonara! Send order' : '📩 5/5 Carbonara! Envie o pedido';
+      } else if (cStats.doneCount > 0) {
+        mbText = lang === 'en'
+          ? '🍝 ' + cStats.doneCount + '/5 Carbonara — pick more or send!'
+          : '🍝 ' + cStats.doneCount + '/5 Carbonara — continue ou envie!';
+      }
+    }
 
     return (
       '<aside class="sb-coachmark sb-coachmark-micro" id="sb-coachmark" role="tooltip" aria-live="polite" data-placement="bottom">' +
@@ -1922,7 +2489,7 @@
   }
 
   function positionCoachmark() {
-    if (!rootEl || !state || !state.tourActive) return;
+    if (!rootEl || !state || !state.tourActive || state.showCarbonaraInvite || state.showSheetModal) return;
     var stage = rootEl.querySelector('.sb-stage');
     var cm = rootEl.querySelector('#sb-coachmark');
     if (!stage || !cm) return;
@@ -1951,7 +2518,7 @@
     var vh = window.innerHeight || document.documentElement.clientHeight || 800;
     var margin = 8;
     var inItemCard = !!target.closest('.sb-item-card');
-    var gap = inItemCard ? 18 : 10;
+    var gap = inItemCard ? 19 : 10;
 
     var tLeft = tRect.left - stageRect.left;
     var tTop = tRect.top - stageRect.top;
@@ -1965,7 +2532,7 @@
 
     // Gather all interactive controls, item cards & toast to avoid overlapping (excluding target itself)
     var controlRects = [];
-    rootEl.querySelectorAll('input, select, textarea, button, .sb-qty-val, .sb-fin-card, .sb-nfe-preview, .sb-item-card, .sb-toast').forEach(function (el) {
+    rootEl.querySelectorAll('input, select, textarea, button, .sb-qty-val, .sb-fin-card, .sb-nfe-preview, .sb-item-card, .sb-toast, .sb-phase-box').forEach(function (el) {
       if (el === target || target.contains(el)) return;
       if (el.contains(target) && !el.classList.contains('sb-item-card')) return;
       var r = el.getBoundingClientRect();
@@ -1993,7 +2560,7 @@
     }
 
     var isMobile = vw <= 640;
-    var order = isMobile ? ['bottom', 'top'] : ['top', 'bottom', 'left', 'right'];
+    var order = isMobile ? ['bottom', 'top'] : (inItemCard ? ['bottom', 'top', 'left', 'right'] : ['top', 'bottom', 'left', 'right']);
     var candidates = [];
 
     order.forEach(function (dir) {
@@ -2066,7 +2633,7 @@
     var finalTop = best.top;
     var finalDir = best.dir;
 
-    if (!best.inVp) {
+    if (!best.inVp && !(best.inStage && best.overlapsControls === 0)) {
       var spaceAbove = tTop - stageMinTop;
       var spaceBelow = stageRect.height - 8 - tBottom;
       if (spaceAbove >= ch + gap || spaceAbove >= spaceBelow) {
@@ -2100,8 +2667,34 @@
     });
   }
 
+  function scrollOverlayIntoView(selector) {
+    if (!rootEl || !selector) return;
+    setTimeout(function () {
+      var el = rootEl.querySelector(selector);
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      var vh = window.innerHeight || 800;
+      if (r.top < 16 || r.bottom > vh - 16) {
+        var isLocoSmooth =
+          document.documentElement.classList.contains('has-scroll-smooth') &&
+          typeof scroll !== 'undefined' &&
+          scroll &&
+          typeof scroll.scrollTo === 'function';
+        if (isLocoSmooth) {
+          try {
+            if (typeof scroll.update === 'function') scroll.update();
+            scroll.scrollTo(el, { offset: -Math.max(24, Math.round((vh - Math.min(r.height, vh - 48)) / 2)), duration: 180, disableLerp: true });
+          } catch (e) {}
+        } else if (typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({ block: 'center', behavior: 'auto' });
+        }
+      }
+    }, 40);
+  }
+
   function scrollTargetComfortably(targetAttr) {
     if (!rootEl || !targetAttr) return;
+    if (state && (state.autoPlayStatus === 'running' || state.showCarbonaraInvite || state.showSheetModal)) return;
     var target = rootEl.querySelector('[data-tour-target="' + targetAttr + '"]');
     if (!target) return;
     var sbShell = rootEl.querySelector('.sb-shell');
@@ -2119,7 +2712,7 @@
 
     // Keep the top of .sb-shell (stepper + narrative strip) and the target visible together
     var isMob = (window.innerWidth || 1280) <= 640;
-    var bottomPad = isMob ? 90 : 48;
+    var bottomPad = isMob ? 110 : 88;
     var targetFitsWithShell = (rect.bottom - shellRect.top) <= (vh - bottomPad);
     var scrollAnchor = targetFitsWithShell ? sbShell : target;
     var offsetVal = targetFitsWithShell ? -14 : -Math.round(vh * 0.45);
@@ -2141,9 +2734,10 @@
   }
 
   function scrollTargetLater(targetAttr) {
+    var skipScroll = !!(state && (state.autoPlayStatus === 'running' || state.showCarbonaraInvite || state.showSheetModal));
     render();
     setTimeout(function () {
-      scrollTargetComfortably(targetAttr);
+      if (!skipScroll) scrollTargetComfortably(targetAttr);
       positionCoachmark();
     }, 60);
     setTimeout(positionCoachmark, 380);
@@ -2181,15 +2775,19 @@
     else screenHtml = renderAdminScreen();
 
     var toastHtml = state.toast ? '<div class="sb-toast" role="status">' + esc(state.toast) + '</div>' : '';
+    var cStats = getCarbonaraStats();
+    var hasModal = !!(state.showCarbonaraInvite || state.showSheetModal);
 
     rootEl.innerHTML =
-      '<div class="sb-shell">' +
+      '<div class="sb-shell" data-autoplay="' + esc(state.autoPlayStatus) + '" data-tour-step="' + esc(state.tourStep) + '" data-carbonara-count="' + cStats.doneCount + '" data-challenge="' + (state.challengeMode ? '1' : '0') + '">' +
       renderChrome() +
       renderNarrativeStrip() +
-      '  <div class="sb-stage">' +
+      '  <div class="sb-stage' + (hasModal ? ' has-overlay' : '') + '">' +
       toastHtml +
       screenHtml +
       renderMicroBalloon() +
+      renderCarbonaraInviteModal() +
+      renderSheetPreviewModal() +
       '  </div>' +
       '</div>';
 
@@ -2199,14 +2797,45 @@
     });
   }
 
+  function interruptAutoPlayOnUserAction(targetEl) {
+    if (!state || state.autoPlayStatus !== 'running') return;
+    hasTriggeredViewportAutoplay = true;
+    var activeId = targetEl && targetEl.id ? targetEl.id : null;
+    stopAutoPlay('paused');
+    if (activeId && rootEl) {
+      var restored = rootEl.querySelector('#' + activeId);
+      if (restored && typeof restored.focus === 'function') restored.focus();
+    }
+  }
+
   function bindSandboxEvents() {
     if (!rootEl || rootEl._sbBound) return;
     rootEl._sbBound = true;
 
     rootEl.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-action]');
-      if (!btn) return;
+      if (!btn) {
+        if (state && state.autoPlayStatus === 'running') {
+          interruptAutoPlayOnUserAction(e.target);
+        }
+        return;
+      }
       var action = btn.getAttribute('data-action');
+
+      if (action === 'toggle-autoplay') {
+        toggleAutoPlay();
+        return;
+      }
+      if (action === 'restart-autoplay') {
+        startAutoPlay(true);
+        return;
+      }
+
+      if (state && state.autoPlayStatus === 'running') {
+        hasTriggeredViewportAutoplay = true;
+        clearAutoPlayTimers();
+        state.autoPlayStatus = 'paused';
+      }
 
       switch (action) {
         case 'toggle-tour':
@@ -2216,6 +2845,51 @@
         case 'restart-tour':
           restartTour();
           break;
+        case 'start-carbonara-challenge':
+          startCarbonaraChallenge();
+          break;
+        case 'dismiss-invite':
+          state.showCarbonaraInvite = false;
+          render();
+          break;
+        case 'open-sheet-preview':
+          state.showCarbonaraInvite = false;
+          state.showSheetModal = true;
+          state.activeSheetTab = 'geral';
+          clearToast();
+          render();
+          scrollOverlayIntoView('.sb-excel-window');
+          break;
+        case 'open-sheet-tab':
+          state.showCarbonaraInvite = false;
+          state.showSheetModal = true;
+          state.activeSheetTab = btn.getAttribute('data-sheet') || 'geral';
+          clearToast();
+          render();
+          scrollOverlayIntoView('.sb-excel-window');
+          break;
+        case 'close-sheet-preview':
+          state.showSheetModal = false;
+          render();
+          break;
+        case 'select-sheet-tab':
+          state.activeSheetTab = btn.getAttribute('data-sheet') || 'geral';
+          render();
+          break;
+        case 'carbonara-jump': {
+          var targetSup = btn.getAttribute('data-sup');
+          var targetItem = btn.getAttribute('data-item');
+          if (targetSup) state.activeSupplier = targetSup;
+          pulsedItemId = targetItem || null;
+          if (pulseItemTimer) clearTimeout(pulseItemTimer);
+          pulseItemTimer = setTimeout(function () {
+            pulsedItemId = null;
+            var el = rootEl && rootEl.querySelector('.sb-item-card.sb-item-pulse');
+            if (el) el.classList.remove('sb-item-pulse');
+          }, 1400);
+          render();
+          break;
+        }
         case 'tour-next':
           handleTourNextAuto();
           break;
@@ -2320,6 +2994,11 @@
     });
 
     rootEl.addEventListener('submit', function (e) {
+      if (state && state.autoPlayStatus === 'running') {
+        hasTriggeredViewportAutoplay = true;
+        clearAutoPlayTimers();
+        state.autoPlayStatus = 'paused';
+      }
       if (e.target && e.target.id === 'sb-login-form') {
         e.preventDefault();
         doLogin();
@@ -2345,6 +3024,9 @@
       else if (id === 'sb-stay-notes') state.stayDraft.notes = e.target.value;
       else if (id === 'sb-nfe-amt') state.nfeDraft.amount = e.target.value;
       else if (id === 'sb-nfe-date') state.nfeDraft.date = e.target.value;
+      if (state && state.autoPlayStatus === 'running') {
+        interruptAutoPlayOnUserAction(e.target);
+      }
     });
 
     rootEl.addEventListener('change', function (e) {
@@ -2360,6 +3042,9 @@
             if (it.id === itemId) it.checked = target.checked;
           });
         }
+      }
+      if (state && state.autoPlayStatus === 'running') {
+        interruptAutoPlayOnUserAction(target);
       }
     });
   }
@@ -2391,6 +3076,7 @@
 
     bindSandboxEvents();
     render();
+    setupViewportObserver();
   }
 
   window.addEventListener('portfolio:langchange', function (e) {
