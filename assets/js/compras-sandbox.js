@@ -16,9 +16,14 @@
   var hasTriggeredViewportAutoplay = false;
   var sandboxObserver = null;
   var autoPlayTimer = null;
+  var autoPlayCursorTimer = null;
   var autoPlayRippleTimer = null;
   var pulseItemTimer = null;
   var pulsedItemId = null;
+  var lastCursorPos = null;
+  var lastRenderedScreen = null;
+  var sceneTimerStartTs = 0;
+  var sceneTimerTotalMs = 0;
 
   /* ------------------------------------------------------------------------
      Bilingual Dictionary (Page Case Study + Sandbox + Narrative Strip + Micro-Balloon)
@@ -83,7 +88,12 @@
       btn_resume_tour: 'Retomar Guia',
       btn_autoplay_watch: 'Ver Automático',
       btn_autoplay_pause: 'Pausar Automático',
+      btn_autoplay_resume: 'Retomar Automático',
+      btn_next_scene: 'Próxima cena',
       ns_autoplay_badge: '▶ DEMO AUTOMÁTICA',
+      ns_autoplay_paused_badge: '⏸ DEMO PAUSADA',
+      speed_label: 'Velocidade',
+      scene_word: 'Cena',
       rail_steps: [
         '1. Login',
         '2. Criar Estadia',
@@ -167,8 +177,9 @@
       btn_approve_send: 'Aprovar & Enviar p/ Fornecedores',
       btn_whatsapp_preview: 'Ver Disparo WhatsApp',
       sup_tab_label: 'Itens por Fornecedor',
+      sup_grouped_badge: '{n} fornecedores agrupados',
       wa_preview_label: 'Prévia da mensagem WhatsApp:',
-      toast_approved: 'Pedido aprovado! Listas enviadas para os 6 fornecedores via WhatsApp.',
+      toast_approved: 'Pedido aprovado! Listas formatadas para {n} fornecedores no WhatsApp.',
 
       // Step 6 & 7: Order detail tabs
       phase_1: '1. Em Aprovação',
@@ -288,7 +299,96 @@
         '6': '🧾 Anexe uma nota fiscal simulada',
         '7': '✅ Feche e gere a planilha final',
         '7done': '🎉 Tour concluído!'
-      }
+      },
+
+      // Auto-Play Storytelling Scenes (explanatory business copy, zero imperatives)
+      auto_ns_scenes: [
+        {
+          title: '1. Acesso da Equipe (/admin)',
+          desc: 'O Concierge entra no painel da Paralelo 17 para organizar todas as compras das casas da temporada em um só lugar.',
+          mb: '👔 Entrando como Concierge...'
+        },
+        {
+          title: '2. Cadastro da Estadia',
+          desc: 'Em segundos, registra a Casa Mirante (8 hóspedes, 4 dias). Os kits do sistema já escalam as quantidades automaticamente.',
+          mb: '🏡 Registrando Casa Mirante (8 hósp.)'
+        },
+        {
+          title: '3. Link Único sem Senha',
+          desc: 'Zero atrito: o link /e/MIR-204 vai direto no WhatsApp. A cozinheira abre no celular sem baixar app e sem senha.',
+          mb: '📱 Abrindo link sem senha (/e/MIR-204)'
+        },
+        {
+          title: '4. Cardápio da Cozinheira — Mercado',
+          desc: 'No celular da Chef Camila, começamos pelo setor Mercado adicionando Macarrão Espaguete para o jantar Carbonara.',
+          mb: '🍝 Adicionando Macarrão (Mercado)'
+        },
+        {
+          title: '4. Cardápio — Ingredientes do Mercado',
+          desc: 'Com um toque, a Bandeja de Ovos entra no pedido com estimativa em tempo real e opção de aceitar similar.',
+          mb: '🥚 +1 Bandeja de Ovos no carrinho'
+        },
+        {
+          title: '4. Cardápio — Fechando o Setor Mercado',
+          desc: 'Pimenta-do-Reino adicionada! Todos os itens secos do Carbonara já estão separados para o primeiro fornecedor.',
+          mb: '🌶️ +1 Pimenta-do-Reino (3/5 itens)'
+        },
+        {
+          title: '4. Trocando de Fornecedor — Açougue',
+          desc: 'Sem listas soltas no WhatsApp: na mesma tela, a cozinheira navega para o setor Açougue para incluir as carnes.',
+          mb: '🥩 Indo para o setor Açougue...'
+        },
+        {
+          title: '4. Cardápio — Açougue (Bacon)',
+          desc: 'Bacon em Cubos Defumado adicionado (1 kg). O sistema calcula o subtotal e já vincula o item ao fornecedor certo.',
+          mb: '🥓 +1 kg Bacon (4/5 Carbonara)'
+        },
+        {
+          title: '4. Trocando de Fornecedor — Frios & Laticínios',
+          desc: 'Agora vamos ao setor Frios & Laticínios para completar o último ingrediente do Macarrão à Carbonara.',
+          mb: '🧀 Indo para Frios & Laticínios...'
+        },
+        {
+          title: '4. Cardápio — Parmesão (5/5 Completo!)',
+          desc: 'Queijo Parmesão adicionado! Os 5 ingredientes de 3 setores diferentes foram reunidos em um único pedido.',
+          mb: '🧀 +0,5 kg Parmesão — 5/5 completo!'
+        },
+        {
+          title: '4. Envio Instantâneo ao Concierge',
+          desc: 'Pedido fechado no celular da Chef Camila e enviado em tempo real para a fila de aprovação da equipe Paralelo 17.',
+          mb: '📩 Enviando Pedido #1 para a equipe...'
+        },
+        {
+          title: '5. Fila de Pedidos no Painel (/admin)',
+          desc: 'De volta ao painel do Concierge, o Pedido #1 da Casa Mirante já aparece com itens, valor estimado e horário.',
+          mb: '📋 Abrindo Pedido #1 na fila...'
+        },
+        {
+          title: '5. Mágica dos 3 Fornecedores + WhatsApp',
+          desc: 'Veja a mágica: o pedido já chega separado para 3 fornecedores (Mercado, Açougue, Frios) e pronto para envio no WhatsApp!',
+          mb: '📲 3 fornecedores no WhatsApp!'
+        },
+        {
+          title: '6. Comprovantes, NF-e e Quem Pagou',
+          desc: 'Na entrega, a equipe confere o checklist, salva a NF-e no storage privado e separa o que foi pago pelo Hóspede vs. Concierge.',
+          mb: '🧾 Lançando NF-e por pagador...'
+        },
+        {
+          title: '7. Conciliação & Fechamento do Ciclo',
+          desc: 'Com a nota lançada e os totais batidos, o Concierge encerra o pedido gravando a trilha de auditoria e gerando o Excel.',
+          mb: '✅ Finalizando Pedido #1...'
+        },
+        {
+          title: '7. Tudo Fechado! Planilha Pronta',
+          desc: 'Pedido Finalizado! O sistema libera a planilha .xlsx com Aba Geral + abas coloridas por fornecedor. Vamos vê-la por dentro.',
+          mb: '📊 Abrindo prévia do Excel .xlsx...'
+        },
+        {
+          title: '7. Planilha Consolidada (ExcelJS)',
+          desc: 'Tudo pronto para prestação de contas: itens, fórmulas =SUM(), totais das notas e saldo por pagador em segundos!',
+          mb: '📊 Conferindo planilha final...'
+        }
+      ]
     },
     en: {
       // Page Case Study Copy
@@ -349,7 +449,12 @@
       btn_resume_tour: 'Resume Guide',
       btn_autoplay_watch: 'Watch Auto-Demo',
       btn_autoplay_pause: 'Pause Auto-Demo',
+      btn_autoplay_resume: 'Resume Auto-Demo',
+      btn_next_scene: 'Next scene',
       ns_autoplay_badge: '▶ AUTO DEMO',
+      ns_autoplay_paused_badge: '⏸ DEMO PAUSED',
+      speed_label: 'Speed',
+      scene_word: 'Scene',
       rail_steps: [
         '1. Login',
         '2. Create Stay',
@@ -433,8 +538,9 @@
       btn_approve_send: 'Approve & Dispatch to Suppliers',
       btn_whatsapp_preview: 'WhatsApp Preview',
       sup_tab_label: 'Items by Supplier',
+      sup_grouped_badge: '{n} suppliers grouped',
       wa_preview_label: 'WhatsApp message preview:',
-      toast_approved: 'Order approved! Lists dispatched to 6 suppliers via WhatsApp.',
+      toast_approved: 'Order approved! Formatted lists ready for {n} suppliers on WhatsApp.',
 
       // Step 6 & 7: Order detail tabs
       phase_1: '1. Approval',
@@ -554,7 +660,96 @@
         '6': '🧾 Attach a mock invoice',
         '7': '✅ Close & generate spreadsheet',
         '7done': '🎉 Tour completed!'
-      }
+      },
+
+      // Auto-Play Storytelling Scenes (explanatory business copy, zero imperatives)
+      auto_ns_scenes: [
+        {
+          title: '1. Team Access (/admin)',
+          desc: 'The Concierge signs into the Paralelo 17 dashboard to coordinate every vacation home\u2019s grocery run in one place.',
+          mb: '👔 Signing in as Concierge...'
+        },
+        {
+          title: '2. Stay Setup in Seconds',
+          desc: 'Casa Mirante is registered (8 guests, 4 days). Ready-made kits automatically scale quantities to match the stay.',
+          mb: '🏡 Creating Casa Mirante (8 guests)'
+        },
+        {
+          title: '3. Zero-Login Cook Link',
+          desc: 'No friction: the unique /e/MIR-204 link goes via WhatsApp. The house cook opens it on mobile with no app or password.',
+          mb: '📱 Opening cook\u2019s link (/e/MIR-204)'
+        },
+        {
+          title: '4. Cook\u2019s Menu — Market',
+          desc: 'On Chef Camila\u2019s phone, she starts in the Market tab adding Grano Duro Spaghetti for Pasta Carbonara.',
+          mb: '🍝 Adding Spaghetti (Market)'
+        },
+        {
+          title: '4. Cook\u2019s Menu — Market Pantry',
+          desc: 'With one tap, a Tray of Eggs joins the cart with live cost estimation and substitute preferences.',
+          mb: '🥚 +1 Tray of Eggs added'
+        },
+        {
+          title: '4. Cook\u2019s Menu — Completing Market',
+          desc: 'Black Peppercorns added! All dry pantry items for the Carbonara are already grouped for the first supplier.',
+          mb: '🌶️ +1 Black Pepper (3/5 items)'
+        },
+        {
+          title: '4. Switching Supplier — Butcher',
+          desc: 'No scattered WhatsApp voice notes: in the same view, the cook switches to Butcher to pick meats.',
+          mb: '🥩 Switching to Butcher tab...'
+        },
+        {
+          title: '4. Cook\u2019s Menu — Butcher (Bacon)',
+          desc: 'Smoked Diced Bacon added (1 kg). Totals update live and the item is tagged to the Butcher partner.',
+          mb: '🥓 +1 kg Bacon (4/5 Carbonara)'
+        },
+        {
+          title: '4. Switching Supplier — Deli & Dairy',
+          desc: 'Now switching to Deli & Dairy for the final ingredient of Chef Camila\u2019s Carbonara.',
+          mb: '🧀 Switching to Deli & Dairy...'
+        },
+        {
+          title: '4. Cook\u2019s Menu — Parmesan (5/5 Ready!)',
+          desc: 'Parmesan Cheese added! All 5 ingredients across 3 suppliers are combined into one organized order.',
+          mb: '🧀 +0.5 kg Parmesan — 5/5 complete!'
+        },
+        {
+          title: '4. Instant Dispatch to Concierge',
+          desc: 'Submitted straight from Chef Camila\u2019s phone and routed in real time to the Paralelo 17 approval queue.',
+          mb: '📩 Sending Order #1 to team...'
+        },
+        {
+          title: '5. Concierge Order Queue (/admin)',
+          desc: 'Back in /admin, Casa Mirante\u2019s Order #1 appears immediately with item count, estimate, and timestamp.',
+          mb: '📋 Opening Order #1...'
+        },
+        {
+          title: '5. Auto-Split into 3 Suppliers + WhatsApp',
+          desc: 'Watch the magic: Carbonara items arrive pre-grouped for 3 suppliers (Market, Butcher, Deli) ready to send on WhatsApp!',
+          mb: '📲 3 suppliers ready for WhatsApp!'
+        },
+        {
+          title: '6. Invoices, Receipts & Payer Split',
+          desc: 'Upon delivery, staff checks off items, uploads the invoice to private storage, and tracks Guest vs. Concierge payments.',
+          mb: '🧾 Logging invoice by payer...'
+        },
+        {
+          title: '7. Reconciliation & Closing',
+          desc: 'With receipts logged and totals balanced, the Concierge closes the order\u2014recording the audit trail and building the Excel file.',
+          mb: '✅ Finalizing Order #1...'
+        },
+        {
+          title: '7. All Closed! Spreadsheet Unlocked',
+          desc: 'Order Finalized! The .xlsx workbook is ready with a General summary plus color-coded supplier tabs. Let\u2019s preview it.',
+          mb: '📊 Opening .xlsx preview...'
+        },
+        {
+          title: '7. Generated ExcelJS Workbook',
+          desc: 'Ready for accounting: line items, =SUM() formulas, logged invoices, and payer breakdown generated automatically!',
+          mb: '📊 Reviewing final spreadsheet...'
+        }
+      ]
     }
   };
 
@@ -732,6 +927,10 @@
       },
       autoPlayStatus: 'idle',
       autoPlayIndex: 0,
+      autoPlaySpeed: 1,
+      manualOverride: false,
+      sceneTimerSeq: 0,
+      scenePausedPct: 0,
       showCarbonaraInvite: false,
       showSheetModal: false,
       activeSheetTab: 'geral',
@@ -1090,7 +1289,10 @@
     if (state.tourActive && state.tourStep === '5b') {
       state.tourStep = '6';
     }
-    showToast(t('toast_approved'));
+    var supMap = {};
+    ord.items.forEach(function (it) { supMap[it.sup] = true; });
+    var supCount = Object.keys(supMap).length || 3;
+    showToast(t('toast_approved').replace('{n}', String(supCount)));
     scrollTargetLater('step-6-attach-nfe-btn');
   }
 
@@ -1298,24 +1500,35 @@
   }
 
   /* ------------------------------------------------------------------------
-     Auto-Play Engine (IntersectionObserver + Smooth Visible Click Demo)
+     Auto-Play Engine (IntersectionObserver + Animated Cursor + Scene Pacing)
      ------------------------------------------------------------------------ */
+  function openAutoSheetPreview() {
+    state.showCarbonaraInvite = false;
+    state.showSheetModal = true;
+    state.activeSheetTab = 'geral';
+    clearToast();
+    render();
+    scrollOverlayIntoView('.sb-excel-window');
+  }
+
   var AUTOPLAY_STEPS = [
-    { delay: 900, rippleMs: 360, target: '[data-tour-target="step-1-login-btn"]', run: function () { doLogin(); } },
-    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-2-save-stay-btn"]', run: function () { doSaveStay(); } },
-    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-3-open-menu-btn"]', run: function () { doOpenMenu('MIR-204'); } },
-    { delay: 850, rippleMs: 320, target: '[data-action="qty-plus"][data-item="mc-pasta"]', run: function () { doChangeQty('mc-pasta', 2); } },
-    { delay: 720, rippleMs: 300, target: '[data-action="qty-plus"][data-item="mc-2"]', run: function () { doChangeQty('mc-2', 1); } },
-    { delay: 720, rippleMs: 300, target: '[data-action="qty-plus"][data-item="mc-pimenta"]', run: function () { doChangeQty('mc-pimenta', 1); } },
-    { delay: 680, rippleMs: 300, target: '[data-action="select-sup"][data-sup="acougue"]', run: function () { state.activeSupplier = 'acougue'; render(); } },
-    { delay: 750, rippleMs: 320, target: '[data-action="qty-plus"][data-item="ac-bacon"]', run: function () { doChangeQty('ac-bacon', 2); } },
-    { delay: 680, rippleMs: 300, target: '[data-action="select-sup"][data-sup="frios-laticinios"]', run: function () { state.activeSupplier = 'frios-laticinios'; render(); } },
-    { delay: 750, rippleMs: 320, target: '[data-action="qty-plus"][data-item="fr-parmesao"]', run: function () { doChangeQty('fr-parmesao', 1); } },
-    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-4b-send-order-btn"]', run: function () { doSendOrder(); } },
-    { delay: 950, rippleMs: 360, target: '[data-tour-target="step-5a-open-order-btn"]', run: function () { doOpenOrder(state.orders[0] && state.orders[0].id); } },
-    { delay: 1350, rippleMs: 380, target: '[data-tour-target="step-5b-approve-btn"]', run: function () { doApproveAndSend(); } },
-    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-6-attach-nfe-btn"]', run: function () { doAttachMockNfe(); } },
-    { delay: 1000, rippleMs: 360, target: '[data-tour-target="step-7-close-order-btn"]', run: function () { doCloseOrder(); finishAutoPlay(); } }
+    { delay: 2200, cursorMs: 400, rippleMs: 350, target: '[data-tour-target="step-1-login-btn"]', run: function () { doLogin(); } },
+    { delay: 2800, cursorMs: 420, rippleMs: 360, target: '[data-tour-target="step-2-save-stay-btn"]', run: function () { doSaveStay(); } },
+    { delay: 2800, cursorMs: 420, rippleMs: 360, target: '[data-tour-target="step-3-open-menu-btn"]', run: function () { doOpenMenu('MIR-204'); } },
+    { delay: 1900, cursorMs: 380, rippleMs: 300, target: '[data-action="qty-plus"][data-item="mc-pasta"]', run: function () { doChangeQty('mc-pasta', 2); } },
+    { delay: 1200, cursorMs: 340, rippleMs: 280, target: '[data-action="qty-plus"][data-item="mc-2"]', run: function () { doChangeQty('mc-2', 1); } },
+    { delay: 1200, cursorMs: 340, rippleMs: 280, target: '[data-action="qty-plus"][data-item="mc-pimenta"]', run: function () { doChangeQty('mc-pimenta', 1); } },
+    { delay: 1200, cursorMs: 340, rippleMs: 280, target: '[data-action="select-sup"][data-sup="acougue"]', run: function () { state.activeSupplier = 'acougue'; render(); } },
+    { delay: 1300, cursorMs: 340, rippleMs: 280, target: '[data-action="qty-plus"][data-item="ac-bacon"]', run: function () { doChangeQty('ac-bacon', 2); } },
+    { delay: 1200, cursorMs: 340, rippleMs: 280, target: '[data-action="select-sup"][data-sup="frios-laticinios"]', run: function () { state.activeSupplier = 'frios-laticinios'; render(); } },
+    { delay: 1300, cursorMs: 340, rippleMs: 280, target: '[data-action="qty-plus"][data-item="fr-parmesao"]', run: function () { doChangeQty('fr-parmesao', 1); } },
+    { delay: 2000, cursorMs: 400, rippleMs: 340, target: '[data-tour-target="step-4b-send-order-btn"]', run: function () { doSendOrder(); } },
+    { delay: 2300, cursorMs: 400, rippleMs: 340, target: '[data-tour-target="step-5a-open-order-btn"]', run: function () { doOpenOrder(state.orders[0] && state.orders[0].id); } },
+    { delay: 3700, cursorMs: 440, rippleMs: 380, target: '[data-tour-target="step-5b-approve-btn"]', focusExtra: '.sb-whatsapp-box', run: function () { doApproveAndSend(); } },
+    { delay: 2600, cursorMs: 400, rippleMs: 340, target: '[data-tour-target="step-6-attach-nfe-btn"]', run: function () { doAttachMockNfe(); } },
+    { delay: 2400, cursorMs: 400, rippleMs: 340, target: '[data-tour-target="step-7-close-order-btn"]', focusExtra: '.sb-nfe-preview', run: function () { doCloseOrder(); } },
+    { delay: 2200, cursorMs: 400, rippleMs: 360, target: '[data-action="open-sheet-preview"]', focusExtra: '[data-tour-target="step-7done-xlsx-card"]', run: function () { openAutoSheetPreview(); } },
+    { delay: 3800, cursorMs: 0, rippleMs: 0, target: null, focusOverlay: '.sb-excel-window', run: function () { finishAutoPlay(); } }
   ];
 
   function getAutoPlayScale() {
@@ -1325,10 +1538,26 @@
     return 1;
   }
 
+  function getEffectiveAutoPlayScale() {
+    var speed = state && state.autoPlaySpeed ? state.autoPlaySpeed : 1;
+    return getAutoPlayScale() / speed;
+  }
+
+  function isAutoNarrativeActive() {
+    if (!state || !state.tourActive || state.challengeMode) return false;
+    if (state.autoPlayStatus === 'running') return true;
+    if (state.autoPlayStatus === 'paused' && !state.manualOverride) return true;
+    return false;
+  }
+
   function clearAutoPlayTimers() {
     if (autoPlayTimer) {
       clearTimeout(autoPlayTimer);
       autoPlayTimer = null;
+    }
+    if (autoPlayCursorTimer) {
+      clearTimeout(autoPlayCursorTimer);
+      autoPlayCursorTimer = null;
     }
     if (autoPlayRippleTimer) {
       clearTimeout(autoPlayRippleTimer);
@@ -1338,10 +1567,19 @@
       rootEl.querySelectorAll('.sb-auto-ripple').forEach(function (el) {
         el.classList.remove('sb-auto-ripple');
       });
+      var cursorEl = rootEl.querySelector('#sb-auto-cursor');
+      if (cursorEl) {
+        cursorEl.classList.remove('is-moving');
+        cursorEl.classList.remove('is-clicking');
+      }
     }
   }
 
   function stopAutoPlay(nextStatus) {
+    if (sceneTimerTotalMs > 0 && sceneTimerStartTs > 0 && state) {
+      var elapsed = Math.max(0, Date.now() - sceneTimerStartTs);
+      state.scenePausedPct = Math.min(96, Math.round((elapsed / sceneTimerTotalMs) * 100));
+    }
     clearAutoPlayTimers();
     if (!state) return;
     if (state.autoPlayStatus === 'running') {
@@ -1354,13 +1592,18 @@
     clearAutoPlayTimers();
     if (!state) return;
     state.autoPlayStatus = 'completed';
+    state.showSheetModal = false;
     state.showCarbonaraInvite = true;
     clearToast();
     render();
+    scrollOverlayIntoView('.sb-invite-card');
   }
 
   function inferAutoPlayIndex() {
     if (!state) return 0;
+    if (state.tourStep === '7done') {
+      return state.showSheetModal ? 16 : 15;
+    }
     switch (state.tourStep) {
       case '1': return 0;
       case '2': return 1;
@@ -1382,6 +1625,45 @@
     }
   }
 
+  function syncAutoCursorInitialPos() {
+    if (!rootEl || !state || state.autoPlayStatus !== 'running' || state.showSheetModal || state.showCarbonaraInvite) return;
+    var stage = rootEl.querySelector('.sb-stage');
+    var cursorEl = rootEl.querySelector('#sb-auto-cursor');
+    if (!stage || !cursorEl) return;
+    if (!lastCursorPos) {
+      lastCursorPos = {
+        x: Math.max(48, Math.round((stage.clientWidth || 640) * 0.24)),
+        y: (stage.scrollTop || 0) + 52
+      };
+    }
+    cursorEl.style.transition = 'none';
+    cursorEl.style.left = lastCursorPos.x + 'px';
+    cursorEl.style.top = lastCursorPos.y + 'px';
+  }
+
+  function animateAutoCursorTo(targetEl, cursorMs) {
+    if (!rootEl || !targetEl) return;
+    var stage = rootEl.querySelector('.sb-stage');
+    var cursorEl = rootEl.querySelector('#sb-auto-cursor');
+    if (!stage || !cursorEl) return;
+    var sRect = stage.getBoundingClientRect();
+    var tRect = targetEl.getBoundingClientRect();
+    if (tRect.width === 0 || tRect.height === 0) return;
+
+    var stScrollTop = stage.scrollTop || 0;
+    var stScrollLeft = stage.scrollLeft || 0;
+    var targetX = Math.round(tRect.left - sRect.left + stScrollLeft + tRect.width / 2);
+    var targetY = Math.round(tRect.top - sRect.top + stScrollTop + tRect.height / 2);
+
+    syncAutoCursorInitialPos();
+    void cursorEl.offsetWidth;
+    cursorEl.style.transition = 'left ' + cursorMs + 'ms cubic-bezier(0.22, 1, 0.36, 1), top ' + cursorMs + 'ms cubic-bezier(0.22, 1, 0.36, 1), transform 0.16s ease';
+    cursorEl.classList.add('is-moving');
+    cursorEl.style.left = targetX + 'px';
+    cursorEl.style.top = targetY + 'px';
+    lastCursorPos = { x: targetX, y: targetY };
+  }
+
   function scheduleNextAutoPlayStep() {
     clearAutoPlayTimers();
     if (!state || state.autoPlayStatus !== 'running') return;
@@ -1391,42 +1673,119 @@
     }
 
     var stepDef = AUTOPLAY_STEPS[state.autoPlayIndex];
-    var scale = getAutoPlayScale();
-    var waitMs = Math.max(40, Math.round(stepDef.delay * scale));
-    var rippleMs = Math.max(30, Math.round(stepDef.rippleMs * scale));
+    var effScale = getEffectiveAutoPlayScale();
+    var hasTarget = !!stepDef.target;
+    var waitMs = Math.max(20, Math.round(stepDef.delay * effScale));
+    var cursorMs = hasTarget ? Math.max(18, Math.round((stepDef.cursorMs || 400) * effScale)) : 0;
+    var rippleMs = hasTarget ? Math.max(18, Math.round((stepDef.rippleMs || 340) * effScale)) : 0;
+
+    sceneTimerTotalMs = waitMs + cursorMs + rippleMs;
+    sceneTimerStartTs = Date.now();
+    state.sceneTimerSeq = (state.sceneTimerSeq || 0) + 1;
+    state.scenePausedPct = 0;
+
+    render();
+    scrollAutoPlayFocus(stepDef);
 
     autoPlayTimer = setTimeout(function () {
       if (!state || state.autoPlayStatus !== 'running') return;
-      var targetEl = rootEl && stepDef.target ? rootEl.querySelector(stepDef.target) : null;
-      if (targetEl) {
-        targetEl.classList.add('sb-auto-ripple');
-      }
-      autoPlayRippleTimer = setTimeout(function () {
-        if (!state || state.autoPlayStatus !== 'running') return;
-        if (targetEl) targetEl.classList.remove('sb-auto-ripple');
+      if (!hasTarget) {
         state.autoPlayIndex += 1;
         stepDef.run();
         if (state && state.autoPlayStatus === 'running') {
           scheduleNextAutoPlayStep();
         }
-      }, rippleMs);
+        return;
+      }
+
+      var targetEl = rootEl ? rootEl.querySelector(stepDef.target) : null;
+      if (targetEl) {
+        animateAutoCursorTo(targetEl, cursorMs);
+      }
+
+      autoPlayCursorTimer = setTimeout(function () {
+        if (!state || state.autoPlayStatus !== 'running') return;
+        var currentTarget = rootEl ? rootEl.querySelector(stepDef.target) : null;
+        var cursorEl = rootEl ? rootEl.querySelector('#sb-auto-cursor') : null;
+        if (cursorEl) {
+          cursorEl.classList.remove('is-moving');
+          cursorEl.classList.add('is-clicking');
+        }
+        if (currentTarget) {
+          currentTarget.classList.add('sb-auto-ripple');
+        }
+
+        autoPlayRippleTimer = setTimeout(function () {
+          if (!state || state.autoPlayStatus !== 'running') return;
+          if (currentTarget) currentTarget.classList.remove('sb-auto-ripple');
+          if (cursorEl) cursorEl.classList.remove('is-clicking');
+          state.autoPlayIndex += 1;
+          stepDef.run();
+          if (state && state.autoPlayStatus === 'running') {
+            scheduleNextAutoPlayStep();
+          }
+        }, rippleMs);
+      }, cursorMs);
     }, waitMs);
+  }
+
+  function nextAutoPlayScene() {
+    if (!state) return;
+    clearAutoPlayTimers();
+    if (state.autoPlayIndex >= AUTOPLAY_STEPS.length) {
+      finishAutoPlay();
+      return;
+    }
+    var wasRunning = state.autoPlayStatus === 'running';
+    var stepDef = AUTOPLAY_STEPS[state.autoPlayIndex];
+    state.manualOverride = false;
+    state.scenePausedPct = 0;
+    state.autoPlayIndex += 1;
+    stepDef.run();
+    if (wasRunning && state && state.autoPlayStatus === 'running') {
+      scheduleNextAutoPlayStep();
+    } else if (state && state.autoPlayStatus === 'paused') {
+      render();
+      if (state.autoPlayIndex < AUTOPLAY_STEPS.length) {
+        scrollAutoPlayFocus(AUTOPLAY_STEPS[state.autoPlayIndex], true);
+      }
+    }
+  }
+
+  function setAutoPlaySpeed(speedVal) {
+    if (!state) return;
+    var parsed = parseFloat(speedVal);
+    if (parsed !== 0.75 && parsed !== 1 && parsed !== 1.5) parsed = 1;
+    state.autoPlaySpeed = parsed;
+    if (state.autoPlayStatus === 'running') {
+      state.scenePausedPct = 0;
+      scheduleNextAutoPlayStep();
+    } else {
+      render();
+    }
   }
 
   function startAutoPlay(fromBeginning) {
     hasTriggeredViewportAutoplay = true;
     clearAutoPlayTimers();
-    if (fromBeginning || !state || state.tourStep === '7done') {
+    var preservedSpeed = state && state.autoPlaySpeed ? state.autoPlaySpeed : 1;
+    var wasPausedAtValidScene = !fromBeginning && state && state.autoPlayStatus === 'paused' && !state.manualOverride && state.autoPlayIndex >= 0 && state.autoPlayIndex < AUTOPLAY_STEPS.length;
+
+    if (fromBeginning || !state || state.autoPlayStatus === 'completed' || (state.tourStep === '7done' && state.autoPlayStatus === 'idle')) {
       state = createInitialState();
+      state.autoPlaySpeed = preservedSpeed;
+      lastCursorPos = null;
     }
     state.tourActive = true;
     state.showCarbonaraInvite = false;
-    state.showSheetModal = false;
+    if (!wasPausedAtValidScene) {
+      state.showSheetModal = false;
+    }
     state.challengeMode = false;
+    state.manualOverride = false;
     state.autoPlayStatus = 'running';
-    state.autoPlayIndex = fromBeginning ? 0 : inferAutoPlayIndex();
+    state.autoPlayIndex = fromBeginning ? 0 : (wasPausedAtValidScene ? state.autoPlayIndex : inferAutoPlayIndex());
     clearToast();
-    render();
     scheduleNextAutoPlayStep();
   }
 
@@ -1434,7 +1793,7 @@
     if (!state) return;
     if (state.autoPlayStatus === 'running') {
       stopAutoPlay('paused');
-    } else if (state.tourStep === '7done' || state.autoPlayStatus === 'completed') {
+    } else if (state.autoPlayStatus === 'completed' || state.autoPlayIndex >= AUTOPLAY_STEPS.length || (state.tourStep === '7done' && state.autoPlayStatus === 'idle')) {
       startAutoPlay(true);
     } else {
       startAutoPlay(false);
@@ -1503,10 +1862,16 @@
 
   /* ---- Narrative Strip (replaces big coachmark) ---- */
   function renderNarrativeStrip() {
+    var dict = I18N[lang] || I18N.pt;
     var isAutoRunning = state.autoPlayStatus === 'running';
+    var isAutoMode = isAutoNarrativeActive();
+    var isAutoPaused = isAutoMode && state.autoPlayStatus === 'paused';
+
     var autoBadgeHtml = isAutoRunning
       ? '<span class="sb-ns-autoplay-badge"><span class="sb-autoplay-dot" aria-hidden="true"></span>' + esc(t('ns_autoplay_badge')) + '</span>'
-      : '';
+      : (isAutoPaused
+          ? '<span class="sb-ns-autoplay-badge is-paused">' + esc(t('ns_autoplay_paused_badge')) + '</span>'
+          : '');
 
     if (!state.tourActive) {
       return (
@@ -1523,24 +1888,32 @@
       );
     }
 
-    var dict = I18N[lang] || I18N.pt;
-    var nsData = dict.ns_steps[state.tourStep] || dict.ns_steps['1'];
-    var nsTitle = nsData.title;
-    var nsDesc = nsData.desc;
+    var nsTitle = '';
+    var nsDesc = '';
+    var sceneIdx = Math.max(0, Math.min(AUTOPLAY_STEPS.length - 1, state.autoPlayIndex || 0));
 
-    if (state.tourStep === '4b') {
-      var cStats = getCarbonaraStats();
-      if (cStats.doneCount === cStats.total) {
-        nsTitle = lang === 'en'
-          ? 'Step 4 of 7 — Carbonara 5/5 Ready! Send Order'
-          : 'Passo 4 de 7 — Carbonara 5/5 Pronto! Enviar Pedido';
-        nsDesc = lang === 'en'
-          ? 'All 5 Carbonara ingredients are in the cart. Click "Close / Send Order" to notify the Concierge.'
-          : 'Todos os 5 ingredientes do Carbonara estão no carrinho! Clique em "Fechar / Enviar Pedido" para enviar ao Concierge.';
-      } else if (cStats.doneCount > 0) {
-        nsTitle = lang === 'en'
-          ? 'Step 4 of 7 — Carbonara (' + cStats.doneCount + '/5) • Send or Keep Picking'
-          : 'Passo 4 de 7 — Carbonara (' + cStats.doneCount + '/5) • Continue ou Envie';
+    if (isAutoMode && dict.auto_ns_scenes && dict.auto_ns_scenes[sceneIdx]) {
+      nsTitle = dict.auto_ns_scenes[sceneIdx].title;
+      nsDesc = dict.auto_ns_scenes[sceneIdx].desc;
+    } else {
+      var nsData = dict.ns_steps[state.tourStep] || dict.ns_steps['1'];
+      nsTitle = nsData.title;
+      nsDesc = nsData.desc;
+
+      if (state.tourStep === '4b') {
+        var cStats = getCarbonaraStats();
+        if (cStats.doneCount === cStats.total) {
+          nsTitle = lang === 'en'
+            ? 'Step 4 of 7 — Carbonara 5/5 Ready! Send Order'
+            : 'Passo 4 de 7 — Carbonara 5/5 Pronto! Enviar Pedido';
+          nsDesc = lang === 'en'
+            ? 'All 5 Carbonara ingredients are in the cart. Click "Close / Send Order" to notify the Concierge.'
+            : 'Todos os 5 ingredientes do Carbonara estão no carrinho! Clique em "Fechar / Enviar Pedido" para enviar ao Concierge.';
+        } else if (cStats.doneCount > 0) {
+          nsTitle = lang === 'en'
+            ? 'Step 4 of 7 — Carbonara (' + cStats.doneCount + '/5) • Send or Keep Picking'
+            : 'Passo 4 de 7 — Carbonara (' + cStats.doneCount + '/5) • Continue ou Envie';
+        }
       }
     }
 
@@ -1551,28 +1924,73 @@
     var personaClass = isCookStep ? 'sb-ns-persona-cook' : 'sb-ns-persona-admin';
     var pct = Math.round((stepNum / 7) * 100);
     var prevDisabled = state.tourStep === '1' ? ' disabled' : '';
-    var isDoneOrFree = isDone;
 
-    var actionBtns = isDoneOrFree
-      ? '<button type="button" class="sb-ns-btn" data-action="toggle-tour">' + esc(t('ns_free')) + '</button>' +
-        '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="restart-tour">' + esc(t('ns_restart')) + '</button>'
-      : '<button type="button" class="sb-ns-btn" data-action="tour-prev"' + prevDisabled + '>' + esc(t('ns_prev')) + '</button>' +
+    var actionBtns = '';
+    if (isAutoMode) {
+      var curSpeed = state.autoPlaySpeed || 1;
+      var speedBtns = [0.75, 1, 1.5].map(function (spd) {
+        var isAct = curSpeed === spd;
+        return '<button type="button" class="sb-speed-btn' + (isAct ? ' is-active' : '') + '" data-action="autoplay-speed" data-speed="' + spd + '" aria-pressed="' + (isAct ? 'true' : 'false') + '">' + spd + 'x</button>';
+      }).join('');
+      actionBtns =
+        '<div class="sb-speed-group" role="group" aria-label="' + esc(t('speed_label')) + '">' +
+        speedBtns +
+        '</div>' +
+        '<button type="button" class="sb-ns-btn sb-ns-btn-pause" data-action="toggle-autoplay">' +
+        (isAutoRunning ? '⏸ ' + esc(t('btn_autoplay_pause')) : '▶ ' + esc(t('btn_autoplay_resume'))) +
+        '</button>' +
+        '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="autoplay-next-scene">⏭ ' + esc(t('btn_next_scene')) + '</button>';
+    } else if (isDone) {
+      actionBtns =
+        '<button type="button" class="sb-ns-btn" data-action="toggle-tour">' + esc(t('ns_free')) + '</button>' +
+        '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="restart-tour">' + esc(t('ns_restart')) + '</button>';
+    } else {
+      actionBtns =
+        '<button type="button" class="sb-ns-btn" data-action="tour-prev"' + prevDisabled + '>' + esc(t('ns_prev')) + '</button>' +
         '<button type="button" class="sb-ns-btn" data-action="toggle-tour">' + esc(t('ns_free')) + '</button>' +
         '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="tour-next">' + esc(t('ns_skip')) + '</button>';
+    }
 
     var badgeText = isDone ? t('ns_done_badge') : t('ns_step_of').replace('{n}', String(stepNum));
+    var sceneCountHtml = isAutoMode
+      ? '<span class="sb-ns-scene-count sb-tabular">' + esc(t('scene_word')) + ' ' + (sceneIdx + 1) + '/' + AUTOPLAY_STEPS.length + '</span>'
+      : '';
+
+    var sceneTimerHtml = '';
+    if (isAutoMode) {
+      if (isAutoRunning && sceneTimerTotalMs > 0) {
+        var elapsed = sceneTimerStartTs > 0 ? Math.max(0, Date.now() - sceneTimerStartTs) : 0;
+        var delayAttr = elapsed > 60 ? 'animation-delay:-' + elapsed + 'ms;' : '';
+        sceneTimerHtml =
+          '<div class="sb-scene-timer-track" aria-hidden="true">' +
+          '  <div class="sb-scene-timer-fill is-running" data-scene-seq="' + (state.sceneTimerSeq || 0) + '" style="animation-duration:' + Math.max(80, sceneTimerTotalMs) + 'ms;' + delayAttr + '"></div>' +
+          '</div>';
+      } else {
+        sceneTimerHtml =
+          '<div class="sb-scene-timer-track" aria-hidden="true">' +
+          '  <div class="sb-scene-timer-fill is-paused" style="width:' + Math.round(state.scenePausedPct || 0) + '%;"></div>' +
+          '</div>';
+      }
+    }
+
+    var stripClasses = 'sb-narrative-strip' +
+      (isAutoRunning ? ' is-autoplay' : '') +
+      (isAutoPaused ? ' is-auto-paused' : '') +
+      (state.challengeMode ? ' is-challenge' : '');
 
     return (
-      '<div class="sb-narrative-strip' + (isAutoRunning ? ' is-autoplay' : '') + '">' +
+      '<div class="' + stripClasses + '">' +
       '  <div class="sb-ns-top">' +
       '    <div class="sb-ns-left">' +
       autoBadgeHtml +
       '      <span class="sb-ns-persona ' + personaClass + '">' + esc(persona) + '</span>' +
       '      <span class="sb-ns-badge">' + esc(badgeText) + '</span>' +
+      sceneCountHtml +
       '    </div>' +
       '    <div class="sb-ns-actions">' + actionBtns + '</div>' +
       '  </div>' +
       '  <div class="sb-ns-progress-track"><div class="sb-ns-progress-fill" style="width:' + pct + '%"></div></div>' +
+      sceneTimerHtml +
       '  <div class="sb-ns-body">' +
       '    <strong class="sb-ns-title">' + esc(nsTitle) + '</strong>' +
       '    <p class="sb-ns-desc">' + esc(nsDesc) + '</p>' +
@@ -1605,6 +2023,11 @@
       })
       .join('');
 
+    var isAutoPaused = state.autoPlayStatus === 'paused' && !state.manualOverride && !state.challengeMode;
+    var autoBtnLabel = isAutoRunning
+      ? '⏸ ' + esc(t('btn_autoplay_pause'))
+      : (isAutoPaused ? '▶ ' + esc(t('btn_autoplay_resume')) : '▶ ' + esc(t('btn_autoplay_watch')));
+
     return (
       '<div class="sb-chrome">' +
       '  <div class="sb-chrome-left">' +
@@ -1619,7 +2042,7 @@
       '  </div>' +
       '  <div class="sb-chrome-actions">' +
       '    <button type="button" class="sb-chrome-btn sb-chrome-autoplay ' + (isAutoRunning ? 'is-running' : '') + '" data-action="toggle-autoplay">' +
-      (isAutoRunning ? '⏸ ' + esc(t('btn_autoplay_pause')) : '▶ ' + esc(t('btn_autoplay_watch'))) +
+      autoBtnLabel +
       '    </button>' +
       '    <button type="button" class="sb-chrome-btn ' + (state.tourActive ? 'is-active' : '') + '" data-action="toggle-tour">' +
       (state.tourActive ? esc(t('btn_free_explore')) : esc(t('btn_resume_tour'))) +
@@ -2065,9 +2488,15 @@
           '</div>'
         : '';
 
+      var supKeys5b = Object.keys(grouped5b);
+      var supGroupedText = t('sup_grouped_badge').replace('{n}', String(supKeys5b.length));
+
       tabContent =
         '<div class="sb-card" style="margin-top:0;">' +
-        '  <h4 class="sb-card-title" style="margin-bottom:0.65rem !important;">' + esc(t('sup_tab_label')) + '</h4>' +
+        '  <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.65rem;">' +
+        '    <h4 class="sb-card-title">' + esc(t('sup_tab_label')) + '</h4>' +
+        '    <span class="sb-badge sb-badge-amber">📦 ' + esc(supGroupedText) + '</span>' +
+        '  </div>' +
         '  <div class="sb-xlsx-table-wrap">' + supGroupsHtml + '</div>' +
         '  <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.65rem;flex-wrap:wrap;">' +
         '    <button type="button" class="sb-btn sb-btn-outline sb-btn-sm" data-action="toggle-wa-preview">📲 ' + esc(t('btn_whatsapp_preview')) + '</button>' +
@@ -2437,16 +2866,22 @@
       return '<div class="sb-coachmark is-hidden" id="sb-coachmark"></div>';
     }
     var dict = I18N[lang] || I18N.pt;
-    var mbText = dict.mb_steps[state.tourStep] || dict.mb_steps['1'];
+    var mbText = '';
 
-    if (state.tourStep === '4b') {
-      var cStats = getCarbonaraStats();
-      if (cStats.doneCount === cStats.total) {
-        mbText = lang === 'en' ? '📩 5/5 Carbonara! Send order' : '📩 5/5 Carbonara! Envie o pedido';
-      } else if (cStats.doneCount > 0) {
-        mbText = lang === 'en'
-          ? '🍝 ' + cStats.doneCount + '/5 Carbonara — pick more or send!'
-          : '🍝 ' + cStats.doneCount + '/5 Carbonara — continue ou envie!';
+    if (isAutoNarrativeActive() && dict.auto_ns_scenes) {
+      var sceneIdx = Math.max(0, Math.min(AUTOPLAY_STEPS.length - 1, state.autoPlayIndex || 0));
+      mbText = (dict.auto_ns_scenes[sceneIdx] && dict.auto_ns_scenes[sceneIdx].mb) || dict.mb_steps[state.tourStep];
+    } else {
+      mbText = dict.mb_steps[state.tourStep] || dict.mb_steps['1'];
+      if (state.tourStep === '4b') {
+        var cStats = getCarbonaraStats();
+        if (cStats.doneCount === cStats.total) {
+          mbText = lang === 'en' ? '📩 5/5 Carbonara! Send order' : '📩 5/5 Carbonara! Envie o pedido';
+        } else if (cStats.doneCount > 0) {
+          mbText = lang === 'en'
+            ? '🍝 ' + cStats.doneCount + '/5 Carbonara — pick more or send!'
+            : '🍝 ' + cStats.doneCount + '/5 Carbonara — continue ou envie!';
+        }
       }
     }
 
@@ -2458,11 +2893,31 @@
     );
   }
 
+  /* ---- Animated Visual Cursor (Auto-Play only) ---- */
+  function renderAutoCursor() {
+    if (!state || state.autoPlayStatus !== 'running' || state.showCarbonaraInvite || state.showSheetModal) {
+      return '';
+    }
+    return (
+      '<div class="sb-auto-cursor" id="sb-auto-cursor" aria-hidden="true">' +
+      '  <span class="sb-auto-cursor-ring"></span>' +
+      '  <svg class="sb-auto-cursor-svg" width="24" height="24" viewBox="0 0 24 24" fill="none">' +
+      '    <path d="M5 3L19 12.2L12.4 13.8L9.6 20.4L5 3Z" fill="#FFFFFF" stroke="#0B1220" stroke-width="2" stroke-linejoin="round"/>' +
+      '  </svg>' +
+      '</div>'
+    );
+  }
+
   /* ------------------------------------------------------------------------
      Coachmark (Micro-Balloon) Positioning Engine
      Guarantees balloon never covers target button or any inputs
      ------------------------------------------------------------------------ */
   function getActiveTargetSelector() {
+    if (isAutoNarrativeActive()) {
+      var sceneIdx = Math.max(0, Math.min(AUTOPLAY_STEPS.length - 1, state.autoPlayIndex || 0));
+      var scene = AUTOPLAY_STEPS[sceneIdx];
+      if (scene && scene.target) return scene.target;
+    }
     switch (state.tourStep) {
       case '1': return '[data-tour-target="step-1-login-btn"]';
       case '2': return '[data-tour-target="step-2-save-stay-btn"]';
@@ -2518,10 +2973,18 @@
     var vh = window.innerHeight || document.documentElement.clientHeight || 800;
     var margin = 8;
     var inItemCard = !!target.closest('.sb-item-card');
+    var isSupTab = target.classList.contains('sb-sup-tab');
+    var isSheetBtn = target.getAttribute('data-action') === 'open-sheet-preview';
+    var isNfeBtn = target.getAttribute('data-tour-target') === 'step-6-attach-nfe-btn';
     var gap = inItemCard ? 19 : 10;
 
-    var tLeft = tRect.left - stageRect.left;
-    var tTop = tRect.top - stageRect.top;
+    var stScrollTop = stage.scrollTop || 0;
+    var stScrollLeft = stage.scrollLeft || 0;
+    var stageVisW = stage.clientWidth || stageRect.width;
+    var stageVisH = stage.clientHeight || stageRect.height;
+
+    var tLeft = tRect.left - stageRect.left + stScrollLeft;
+    var tTop = tRect.top - stageRect.top + stScrollTop;
     var tRight = tLeft + tRect.width;
     var tBottom = tTop + tRect.height;
     var tCenterX = tLeft + tRect.width / 2;
@@ -2539,16 +3002,16 @@
       if (r.width > 0 && r.height > 0) controlRects.push(r);
     });
 
-    var vpMinLeft = Math.max(8, margin - stageRect.left);
-    var vpMaxLeft = Math.min(stageRect.width - cw - 8, vw - margin - cw - stageRect.left);
+    var vpMinLeft = Math.max(stScrollLeft + 8, margin - stageRect.left + stScrollLeft);
+    var vpMaxLeft = Math.min(stScrollLeft + stageVisW - cw - 8, vw - margin - cw - stageRect.left + stScrollLeft);
     if (vpMaxLeft < vpMinLeft) {
-      vpMinLeft = margin - stageRect.left;
-      vpMaxLeft = vw - margin - cw - stageRect.left;
+      vpMinLeft = margin - stageRect.left + stScrollLeft;
+      vpMaxLeft = vw - margin - cw - stageRect.left + stScrollLeft;
     }
-    var stageMinTop = 8;
-    var stageMaxTop = Math.max(stageMinTop, stageRect.height - ch - 8);
-    var vpMinTop = Math.max(stageMinTop, margin - stageRect.top);
-    var vpMaxTop = Math.min(stageMaxTop, vh - margin - ch - stageRect.top);
+    var stageMinTop = stScrollTop + 8;
+    var stageMaxTop = Math.max(stageMinTop, stScrollTop + stageVisH - ch - 8);
+    var vpMinTop = Math.max(stageMinTop, margin - stageRect.top + stScrollTop);
+    var vpMaxTop = Math.min(stageMaxTop, vh - margin - ch - stageRect.top + stScrollTop);
     if (vpMaxTop < vpMinTop) {
       vpMinTop = stageMinTop;
       vpMaxTop = stageMaxTop;
@@ -2560,7 +3023,18 @@
     }
 
     var isMobile = vw <= 640;
-    var order = isMobile ? ['bottom', 'top'] : (inItemCard ? ['bottom', 'top', 'left', 'right'] : ['top', 'bottom', 'left', 'right']);
+    var order;
+    if (isSupTab) {
+      order = ['bottom', 'top', 'left', 'right'];
+    } else if (isSheetBtn || isNfeBtn) {
+      order = isMobile ? ['bottom', 'top'] : ['bottom', 'left', 'top', 'right'];
+    } else if (isMobile) {
+      order = ['bottom', 'top'];
+    } else if (inItemCard) {
+      order = ['bottom', 'top', 'left', 'right'];
+    } else {
+      order = ['top', 'bottom', 'left', 'right'];
+    }
     var candidates = [];
 
     order.forEach(function (dir) {
@@ -2568,8 +3042,8 @@
       if (dir === 'bottom') {
         candTop = tBottom + gap;
         candLeft = clamp(tCenterX - cw / 2, vpMinLeft, vpMaxLeft);
-        if (waRect && candLeft + cw > waRect.left - 8 && stageRect.top + candTop + ch > waRect.top - 8) {
-          candLeft = clamp(waRect.left - stageRect.left - cw - 10, vpMinLeft, vpMaxLeft);
+        if (waRect && stageRect.left + candLeft - stScrollLeft + cw > waRect.left - 8 && stageRect.top + candTop - stScrollTop + ch > waRect.top - 8) {
+          candLeft = clamp(waRect.left - stageRect.left + stScrollLeft - cw - 10, vpMinLeft, vpMaxLeft);
         }
       } else if (dir === 'top') {
         candTop = tTop - ch - gap;
@@ -2583,10 +3057,10 @@
       }
 
       var absBox = {
-        left: stageRect.left + candLeft,
-        top: stageRect.top + candTop,
-        right: stageRect.left + candLeft + cw,
-        bottom: stageRect.top + candTop + ch
+        left: stageRect.left + candLeft - stScrollLeft,
+        top: stageRect.top + candTop - stScrollTop,
+        right: stageRect.left + candLeft - stScrollLeft + cw,
+        bottom: stageRect.top + candTop - stScrollTop + ch
       };
 
       var inVp =
@@ -2596,10 +3070,10 @@
         absBox.bottom <= vh - margin + 1;
 
       var inStage =
-        candLeft >= 6 &&
-        candLeft + cw <= stageRect.width - 6 &&
-        candTop >= 6 &&
-        candTop + ch <= stageRect.height - 6;
+        candLeft >= stScrollLeft + 6 &&
+        candLeft + cw <= stScrollLeft + stageVisW - 6 &&
+        candTop >= stScrollTop + 6 &&
+        candTop + ch <= stScrollTop + stageVisH - 6;
 
       var overlapsTarget = rectsOverlap(absBox, tRect, 6);
       var overlapsWa = waRect ? rectsOverlap(absBox, waRect, 6) : false;
@@ -2635,8 +3109,8 @@
 
     if (!best.inVp && !(best.inStage && best.overlapsControls === 0)) {
       var spaceAbove = tTop - stageMinTop;
-      var spaceBelow = stageRect.height - 8 - tBottom;
-      if (spaceAbove >= ch + gap || spaceAbove >= spaceBelow) {
+      var spaceBelow = stScrollTop + stageVisH - 8 - tBottom;
+      if (spaceAbove >= ch + gap && spaceAbove > spaceBelow && !isSupTab && !isSheetBtn) {
         finalDir = 'top';
         finalTop = clamp(tTop - ch - gap, stageMinTop, Math.max(stageMinTop, tTop - ch - 8));
       } else {
@@ -2667,14 +3141,81 @@
     });
   }
 
+  function applyAutoStageHeight() {
+    if (!rootEl || !state) return;
+    var shell = rootEl.querySelector('.sb-shell');
+    var strip = rootEl.querySelector('.sb-narrative-strip');
+    if (!shell || !strip) return;
+    if (!isAutoNarrativeActive()) {
+      shell.style.removeProperty('--sb-stage-max-h');
+      return;
+    }
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var shellRect = shell.getBoundingClientRect();
+    var stripRect = strip.getBoundingClientRect();
+    var headerSpan = stripRect.bottom - shellRect.top;
+    var anchorFitsHeader = headerSpan <= vh * 0.46;
+    var usedTop = anchorFitsHeader ? headerSpan : stripRect.height;
+    var maxStageH = Math.max(300, Math.round(vh - usedTop - 18));
+    shell.style.setProperty('--sb-stage-max-h', maxStageH + 'px');
+  }
+
+  function scrollPageAnchorIntoView(anchorEl, offsetVal, isFastTest) {
+    if (!anchorEl) return;
+    var isLocoSmooth =
+      document.documentElement.classList.contains('has-scroll-smooth') &&
+      typeof scroll !== 'undefined' &&
+      scroll &&
+      typeof scroll.scrollTo === 'function';
+    if (isLocoSmooth) {
+      try {
+        if (typeof scroll.update === 'function') scroll.update();
+        if (typeof scroll.start === 'function') scroll.start();
+        scroll.scrollTo(anchorEl, {
+          offset: offsetVal,
+          duration: isFastTest ? 10 : 340,
+          disableLerp: isFastTest
+        });
+      } catch (e) {}
+    } else {
+      var aRect = anchorEl.getBoundingClientRect();
+      var targetScrollY = Math.max(0, Math.round((window.scrollY || window.pageYOffset || 0) + aRect.top + offsetVal));
+      try {
+        window.scrollTo({ top: targetScrollY, behavior: isFastTest ? 'auto' : 'smooth' });
+      } catch (e) {
+        window.scrollTo(0, targetScrollY);
+      }
+    }
+  }
+
   function scrollOverlayIntoView(selector) {
     if (!rootEl || !selector) return;
-    setTimeout(function () {
+    var doScroll = function () {
+      if (!rootEl) return;
+      var stage = rootEl.querySelector('.sb-stage');
+      var shell = rootEl.querySelector('.sb-shell');
+      var strip = rootEl.querySelector('.sb-narrative-strip');
+      if (isAutoNarrativeActive() && stage) {
+        stage.scrollTop = 0;
+        var vhAuto = window.innerHeight || document.documentElement.clientHeight || 800;
+        var isFastAuto = getAutoPlayScale() < 0.25;
+        if (shell && strip) {
+          var shR = shell.getBoundingClientRect();
+          var stR = strip.getBoundingClientRect();
+          var anchorEl = (stR.bottom - shR.top) <= vhAuto * 0.46 ? shell : strip;
+          var aR = anchorEl.getBoundingClientRect();
+          if (stR.top < 6 || stR.bottom > vhAuto * 0.6 || aR.top < 4 || aR.top > 24) {
+            scrollPageAnchorIntoView(anchorEl, -8, isFastAuto);
+          }
+        }
+        return;
+      }
       var el = rootEl.querySelector(selector);
       if (!el) return;
       var r = el.getBoundingClientRect();
-      var vh = window.innerHeight || 800;
+      var vh = window.innerHeight || document.documentElement.clientHeight || 800;
       if (r.top < 16 || r.bottom > vh - 16) {
+        var isFastTest = getAutoPlayScale() < 0.25;
         var isLocoSmooth =
           document.documentElement.classList.contains('has-scroll-smooth') &&
           typeof scroll !== 'undefined' &&
@@ -2683,18 +3224,100 @@
         if (isLocoSmooth) {
           try {
             if (typeof scroll.update === 'function') scroll.update();
-            scroll.scrollTo(el, { offset: -Math.max(24, Math.round((vh - Math.min(r.height, vh - 48)) / 2)), duration: 180, disableLerp: true });
+            scroll.scrollTo(el, {
+              offset: -Math.max(24, Math.round((vh - Math.min(r.height, vh - 48)) / 2)),
+              duration: isFastTest ? 10 : 220,
+              disableLerp: true
+            });
           } catch (e) {}
-        } else if (typeof el.scrollIntoView === 'function') {
-          el.scrollIntoView({ block: 'center', behavior: 'auto' });
+        } else {
+          var targetY = Math.max(0, Math.round((window.scrollY || window.pageYOffset || 0) + r.top - Math.max(16, Math.round((vh - Math.min(r.height, vh - 32)) / 2))));
+          try {
+            window.scrollTo({ top: targetY, behavior: isFastTest ? 'auto' : 'smooth' });
+          } catch (e) {
+            window.scrollTo(0, targetY);
+          }
         }
       }
-    }, 40);
+    };
+    doScroll();
+    setTimeout(doScroll, 50);
+  }
+
+  function scrollAutoPlayFocus(stepDef, allowPaused) {
+    if (!rootEl || !state) return;
+    if (state.autoPlayStatus !== 'running' && !(allowPaused && state.autoPlayStatus === 'paused')) return;
+    if (stepDef && stepDef.focusOverlay) {
+      scrollOverlayIntoView(stepDef.focusOverlay);
+      return;
+    }
+    var shell = rootEl.querySelector('.sb-shell');
+    var strip = rootEl.querySelector('.sb-narrative-strip');
+    var stage = rootEl.querySelector('.sb-stage');
+    var target = stepDef && stepDef.target ? rootEl.querySelector(stepDef.target) : null;
+    var extra = stepDef && stepDef.focusExtra ? rootEl.querySelector(stepDef.focusExtra) : null;
+    if (!strip && !target) return;
+
+    applyAutoStageHeight();
+
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var isFastTest = getAutoPlayScale() < 0.25;
+    var shellRect = shell ? shell.getBoundingClientRect() : null;
+    var stripRect = strip ? strip.getBoundingClientRect() : null;
+
+    // 1. Frame the outer page so .sb-narrative-strip (and .sb-shell header when it fits) stays pinned in viewport
+    if (shell && strip && shellRect && stripRect) {
+      var headerSpan = stripRect.bottom - shellRect.top;
+      var anchorFitsHeader = headerSpan <= vh * 0.46;
+      var anchorEl = anchorFitsHeader ? shell : strip;
+      var stageR = stage ? stage.getBoundingClientRect() : null;
+      var needsOuterScroll = stripRect.top < 6 || stripRect.top > vh * 0.48 || (stageR && stageR.bottom > vh + 10);
+      if (needsOuterScroll) {
+        scrollPageAnchorIntoView(anchorEl, -8, isFastTest);
+      }
+    }
+
+    // 2. Scroll internally inside .sb-stage so target + focusExtra + micro-balloon room are comfortably visible
+    if (stage && target) {
+      var sRect = stage.getBoundingClientRect();
+      var tRect = target.getBoundingClientRect();
+      var eRect = extra ? extra.getBoundingClientRect() : null;
+      var stScrollTop = stage.scrollTop || 0;
+      var stageVisH = stage.clientHeight || sRect.height;
+
+      var tTop = tRect.top - sRect.top + stScrollTop;
+      var tBottom = tTop + tRect.height;
+      var eBottom = eRect ? (eRect.top - sRect.top + stScrollTop + eRect.height) : tBottom;
+
+      var neededTop = Math.max(0, tTop - 52);
+      var neededBottom = Math.max(tBottom + 56, eBottom + 18);
+
+      if (neededTop < stScrollTop + 2 || neededBottom > stScrollTop + stageVisH - 2) {
+        var desiredTop = 0;
+        if ((neededBottom - neededTop) <= stageVisH) {
+          if (neededBottom > stScrollTop + stageVisH - 2) {
+            desiredTop = Math.max(0, neededBottom - stageVisH + 10);
+          } else {
+            desiredTop = Math.max(0, neededTop - 12);
+          }
+        } else {
+          desiredTop = Math.max(0, tTop - 48);
+        }
+        try {
+          stage.scrollTo({ top: Math.round(desiredTop), behavior: isFastTest ? 'auto' : 'smooth' });
+        } catch (e) {
+          stage.scrollTop = Math.round(desiredTop);
+        }
+      }
+    }
+
+    requestAnimationFrame(positionCoachmark);
+    setTimeout(positionCoachmark, isFastTest ? 40 : 380);
   }
 
   function scrollTargetComfortably(targetAttr) {
     if (!rootEl || !targetAttr) return;
-    if (state && (state.autoPlayStatus === 'running' || state.showCarbonaraInvite || state.showSheetModal)) return;
+    if (state && (state.autoPlayStatus === 'running' || (state.autoPlayStatus === 'paused' && !state.manualOverride && !state.challengeMode) || state.showCarbonaraInvite || state.showSheetModal)) return;
     var target = rootEl.querySelector('[data-tour-target="' + targetAttr + '"]');
     if (!target) return;
     var sbShell = rootEl.querySelector('.sb-shell');
@@ -2734,7 +3357,7 @@
   }
 
   function scrollTargetLater(targetAttr) {
-    var skipScroll = !!(state && (state.autoPlayStatus === 'running' || state.showCarbonaraInvite || state.showSheetModal));
+    var skipScroll = !!(state && (state.autoPlayStatus === 'running' || (state.autoPlayStatus === 'paused' && !state.manualOverride && !state.challengeMode) || state.showCarbonaraInvite || state.showSheetModal));
     render();
     setTimeout(function () {
       if (!skipScroll) scrollTargetComfortably(targetAttr);
@@ -2769,6 +3392,9 @@
   function render() {
     if (!rootEl || !state) return;
 
+    var prevStage = rootEl.querySelector('.sb-stage');
+    var prevStageScrollTop = prevStage ? (prevStage.scrollTop || 0) : 0;
+
     var screenHtml = '';
     if (state.screen === 'login') screenHtml = renderLoginScreen();
     else if (state.screen === 'menu') screenHtml = renderCookMenuScreen();
@@ -2777,20 +3403,30 @@
     var toastHtml = state.toast ? '<div class="sb-toast" role="status">' + esc(state.toast) + '</div>' : '';
     var cStats = getCarbonaraStats();
     var hasModal = !!(state.showCarbonaraInvite || state.showSheetModal);
+    var isAutoFrame = isAutoNarrativeActive();
 
     rootEl.innerHTML =
-      '<div class="sb-shell" data-autoplay="' + esc(state.autoPlayStatus) + '" data-tour-step="' + esc(state.tourStep) + '" data-carbonara-count="' + cStats.doneCount + '" data-challenge="' + (state.challengeMode ? '1' : '0') + '">' +
+      '<div class="sb-shell' + (isAutoFrame ? ' is-auto-frame' : '') + '" data-autoplay="' + esc(state.autoPlayStatus) + '" data-autoplay-speed="' + esc(state.autoPlaySpeed || 1) + '" data-tour-step="' + esc(state.tourStep) + '" data-carbonara-count="' + cStats.doneCount + '" data-challenge="' + (state.challengeMode ? '1' : '0') + '">' +
       renderChrome() +
       renderNarrativeStrip() +
       '  <div class="sb-stage' + (hasModal ? ' has-overlay' : '') + '">' +
       toastHtml +
       screenHtml +
+      renderAutoCursor() +
       renderMicroBalloon() +
       renderCarbonaraInviteModal() +
       renderSheetPreviewModal() +
       '  </div>' +
       '</div>';
 
+    applyAutoStageHeight();
+    var newStage = rootEl.querySelector('.sb-stage');
+    if (newStage && isAutoFrame && !hasModal && lastRenderedScreen === state.screen) {
+      newStage.scrollTop = prevStageScrollTop;
+    }
+    lastRenderedScreen = state.screen;
+
+    syncAutoCursorInitialPos();
     requestAnimationFrame(function () {
       positionCoachmark();
       syncLocomotiveHeight();
@@ -2800,6 +3436,7 @@
   function interruptAutoPlayOnUserAction(targetEl) {
     if (!state || state.autoPlayStatus !== 'running') return;
     hasTriggeredViewportAutoplay = true;
+    state.manualOverride = true;
     var activeId = targetEl && targetEl.id ? targetEl.id : null;
     stopAutoPlay('paused');
     if (activeId && rootEl) {
@@ -2830,11 +3467,20 @@
         startAutoPlay(true);
         return;
       }
+      if (action === 'autoplay-next-scene') {
+        nextAutoPlayScene();
+        return;
+      }
+      if (action === 'autoplay-speed') {
+        setAutoPlaySpeed(btn.getAttribute('data-speed'));
+        return;
+      }
 
       if (state && state.autoPlayStatus === 'running') {
         hasTriggeredViewportAutoplay = true;
         clearAutoPlayTimers();
         state.autoPlayStatus = 'paused';
+        state.manualOverride = true;
       }
 
       switch (action) {
@@ -2891,12 +3537,15 @@
           break;
         }
         case 'tour-next':
+          state.manualOverride = true;
           handleTourNextAuto();
           break;
         case 'tour-prev':
+          state.manualOverride = true;
           handleTourPrev();
           break;
         case 'rail-step':
+          state.manualOverride = true;
           jumpToTourStep(btn.getAttribute('data-step'));
           break;
         case 'select-profile':
@@ -2998,6 +3647,7 @@
         hasTriggeredViewportAutoplay = true;
         clearAutoPlayTimers();
         state.autoPlayStatus = 'paused';
+        state.manualOverride = true;
       }
       if (e.target && e.target.id === 'sb-login-form') {
         e.preventDefault();
@@ -3088,7 +3738,10 @@
     }
   });
 
-  window.addEventListener('resize', schedulePositionCoachmark, { passive: true });
+  window.addEventListener('resize', function () {
+    applyAutoStageHeight();
+    schedulePositionCoachmark();
+  }, { passive: true });
   window.addEventListener('scroll', schedulePositionCoachmark, { passive: true });
 
   if (document.readyState === 'loading') {
