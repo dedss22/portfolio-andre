@@ -1,6 +1,7 @@
 /* ==========================================================================
    Sistema de Gestão de Compras — Interactive 7-Step Sandbox & Coachmark Tour
-   100% sanitized demo data • Bilingual PT | EN • Locomotive Scroll safe
+   v2.0 — Narrative Strip + Micro-Balloon • Zero occlusion • Bilingual PT|EN
+   100% sanitized demo data • Locomotive Scroll safe
    ========================================================================== */
 (function () {
   'use strict';
@@ -14,7 +15,7 @@
   var locoScrollBound = false;
 
   /* ------------------------------------------------------------------------
-     Bilingual Dictionary (Page Case Study + Sandbox + Coachmarks)
+     Bilingual Dictionary (Page Case Study + Sandbox + Narrative Strip + Micro-Balloon)
      ------------------------------------------------------------------------ */
   var I18N = {
     pt: {
@@ -28,13 +29,13 @@
       gc_sb_badge: 'Demo Interativa • Dados Fictícios',
       gc_sb_heading: 'Teste o fluxo completo Dono + Cozinheira em 7 passos guiados',
       gc_sb_sub:
-        'Siga os balões interativos para simular do login do Concierge até o fechamento da compra com nota fiscal e planilha .xlsx.',
+        'Siga a faixa narrativa e os balões interativos para simular do login do Concierge até o fechamento da compra com nota fiscal e planilha .xlsx.',
       gc_overview_label: '01 • Origem, Fluxo & Entrega',
       gc_overview_title: 'Como identifiquei o gargalo na Paralelo 17, desenhei o fluxo e construí o sistema',
       gc_overview_p1:
         'Acompanhando de perto a rotina de Concierge das casas de temporada na Paralelo 17 (Sul da Bahia), percebi a necessidade real por trás de cada hospedagem: as listas de compras dependiam de áudios e mensagens soltas no WhatsApp entre hóspedes, cozinheira e equipe, gerando esquecimentos de unidades, retrabalho ao separar 6 fornecedores locais e horas fechando notas fiscais na mão.',
       gc_overview_p2:
-        'Antes de escrever a primeira linha de código, desenhei toda a arquitetura de fluxo para unir ponta a ponta sem atrito: o Concierge cria a estadia em /admin e libera um link único sem senha (/e/:codigo); a cozinheira escolhe itens ou kits proporcionais pelo celular e envia o pedido; a equipe aprova, dispara listas formatadas por fornecedor no WhatsApp, gerencia as notas de compra separando quem pagou e fecha o pedido gerando automaticamente a planilha .xlsx consolidada.',
+        'Antes de escrever a primeira linha de código, desenhei toda a arquitetura de fluxo para unir ponta a ponta sem atrito: o Concierge cria a estadia em /admin e libera um link único sem senha (/e/:codigo); a cozinheira escolhe itens ou kits proporcionais pelo celular e envia o pedido; a equipe aprova, dispara listas formatadas por fornecedor no WhatsApp, gerencia as notas de compra separando quem pagou e fecha o pedido gerando automaticamente a planilha consolidada.',
       gc_pill_1: '172 Itens / 6 Fornecedores',
       gc_pill_2: '5 Kits Proporcionais',
       gc_pill_3: 'Link sem Login (/e/:codigo)',
@@ -72,14 +73,14 @@
       tour_guided: 'Tour Guiado',
       tour_free: 'Modo Livre',
       btn_restart: 'Reiniciar Tour',
-      btn_free_explore: 'Explorar Livremente',
+      btn_free_explore: 'Explorar livremente',
       btn_resume_tour: 'Retomar Guia',
       rail_steps: [
         '1. Login',
         '2. Criar Estadia',
         '3. Link Cardápio',
         '4. Pedido Cozinheira',
-        '5. Abrir Pedido',
+        '5. Aprovar Pedido',
         '6. Notas & NF-e',
         '7. Finalizar & .xlsx'
       ],
@@ -92,6 +93,7 @@
       guests_word: 'hóspedes',
       days_word: 'dias',
       items_word: 'itens',
+      item_word: 'item',
       units_word: 'unid.',
 
       // Step 1: Login
@@ -126,9 +128,9 @@
       btn_copy_link: 'Copiar Link',
       btn_whatsapp_invite: 'WhatsApp',
       btn_open_menu: 'Acessar Cardápio (Link da Cozinheira)',
-      toast_stay_saved: 'Estadia criada! Código /e/MIR-204 pronto para a cozinheira.',
+      toast_stay_saved: 'Estadia criada! Link exclusivo enviado no WhatsApp — abre no celular sem baixar app e sem senha.',
       toast_link_copied: 'Link /e/MIR-204 copiado para a área de transferência!',
-      toast_wa_invite: 'Mensagem de convite WhatsApp gerada para Chef Camila (/e/MIR-204).',
+      toast_wa_invite: 'Mensagem de convite enviada para Chef Camila — acesso sem senha pelo celular.',
 
       // Step 4: Cook Menu
       menu_welcome: 'Acesso sem login liberado para',
@@ -137,13 +139,13 @@
       kit_applied_tag: 'aplicado',
       btn_similar_yes: 'Aceita similar: Sim',
       btn_similar_no: 'Aceita similar: Não',
-      summary_selected: 'selecionados no carrinho',
+      summary_selected: 'no carrinho',
       summary_est: 'Estimativa base:',
       btn_send_order: 'Fechar / Enviar Pedido',
       toast_kit_added: 'Kit aplicado proporcionalmente para 8 hóspedes e 4 dias!',
       toast_order_sent: 'Pedido #1 registrado! Encaminhado para aprovação do Concierge.',
 
-      // Step 5, 6, 7: Orders & Detail
+      // Step 5a: Order list
       orders_queue_title: 'Fila de Pedidos das Casas',
       status_pending: '⏳ Em Aprovação',
       status_suppliers: '📲 Enviar Fornecedores',
@@ -151,6 +153,15 @@
       status_finalized: '✅ Finalizado',
       btn_open_order: 'Abrir Pedido #1',
       btn_back_list: '← Voltar à fila',
+
+      // Step 5b: Suppliers tab (new!)
+      btn_approve_send: 'Aprovar & Enviar p/ Fornecedores',
+      btn_whatsapp_preview: 'Ver Disparo WhatsApp',
+      sup_tab_label: 'Itens por Fornecedor',
+      wa_preview_label: 'Prévia da mensagem WhatsApp:',
+      toast_approved: 'Pedido aprovado! Listas enviadas para os 6 fornecedores via WhatsApp.',
+
+      // Step 6 & 7: Order detail tabs
       phase_1: '1. Em Aprovação',
       phase_2: '2. Fornecedores',
       phase_3: '3. Preparação & NF-e',
@@ -158,8 +169,6 @@
       dtab_items: 'Pedido de Compras',
       dtab_notes: 'Comprovantes & Notas',
       dtab_audit: 'Hospedagem & Auditoria',
-      btn_whatsapp_preview: 'Ver Disparo WhatsApp',
-      btn_approve_send: 'Aprovar & Enviar p/ Fornecedores',
       fin_total_notes: 'Total das Notas',
       fin_paid_guest: 'Pago pelo Hóspede',
       fin_paid_concierge: 'Pago p/ Outra Pessoa (Concierge)',
@@ -172,60 +181,81 @@
       payer_guest: 'Hóspede (Adiantamento)',
       payer_concierge: 'Outra Pessoa / Concierge',
       btn_attach_nfe: 'Anexar NF-e / Comprovante Demo & Registrar',
-      nfe_mock_badge: 'NF-e Anexada (Storage Privado)',
-      nfe_mock_key: 'DANFE Simulada • URL Assinada 60s',
+      nfe_mock_badge: 'NF-e Anexada (Armazenamento Privado)',
+      nfe_mock_key: 'Comprovante salvo com segurança, separando o que foi pago pelo Hóspede e pela Paralelo 17',
       btn_close_order: 'Fechar / Finalizar Pedido',
-      xlsx_ready_title: 'Planilha ExcelJS (.xlsx) Consolidada Liberada',
+      xlsx_ready_title: 'Planilha .xlsx pronta para prestação de contas',
       xlsx_ready_sub: 'Aba Geral + abas coloridas por fornecedor prontas para prestação de contas.',
       btn_download_xlsx: 'Baixar Resumo Demo (.csv)',
       audit_title: 'Trilha de Auditoria (America/Bahia)',
-      toast_nfe_added: 'Comprovante NF-e anexado e saldo financeiro atualizado!',
-      toast_order_closed: 'Pedido #1 finalizado! Planilha .xlsx e resumo consolidado liberados.',
+      toast_nfe_added: 'Comprovante salvo com segurança, separando o que foi pago pelo Hóspede e pela Paralelo 17.',
+      toast_order_closed: 'Pedido #1 finalizado! Planilha pronta para prestação de contas liberada.',
 
-      // Coachmark UI
-      cm_step_of: 'Passo {n} de 7',
-      cm_done_badge: 'Concluído • 7 de 7',
-      cm_prev: 'Anterior',
-      cm_next: 'Próximo (Auto)',
-      cm_free: 'Explorar livre',
-      cm_restart: 'Reiniciar Tour',
-      cm_steps: {
+      // Narrative Strip (new!)
+      ns_persona_admin: '👔 Equipe Paralelo 17 (Painel)',
+      ns_persona_cook: '📱 Celular da Cozinheira (Sem senha)',
+      ns_step_of: 'Passo {n} de 7',
+      ns_done_badge: '✅ Concluído • 7 de 7',
+      ns_prev: '← Anterior',
+      ns_next: 'Avançar →',
+      ns_skip: 'Pular etapa →',
+      ns_free: 'Explorar livre',
+      ns_restart: '↻ Reiniciar',
+      ns_steps: {
         '1': {
-          title: '1/7 • Login do Concierge (/admin)',
-          desc: 'A equipe imobiliária entra no painel administrativo com perfis pré-configurados. Clique em "Entrar no Painel" para começar.'
+          title: 'Passo 1 de 7 — Login da Equipe',
+          desc: 'A equipe Paralelo 17 entra no painel com perfis pré-configurados. Clique em "Entrar no Painel" para começar.'
         },
         '2': {
-          title: '2/7 • Criar uma Estadia',
-          desc: 'Preencha ou ajuste os dados fictícios da casa (Casa Mirante), datas e hóspedes. Clique em "Salvar Estadia" para gerar o link exclusivo.'
+          title: 'Passo 2 de 7 — Criar Estadia',
+          desc: 'Preencha ou ajuste os dados da Casa Mirante, datas e hóspedes. Clique em "Salvar Estadia" para gerar o link exclusivo da cozinheira.'
         },
         '3': {
-          title: '3/7 • Link da Cozinheira sem Login',
-          desc: 'O sistema gera a rota /e/MIR-204 para enviar por WhatsApp. A cozinheira acessa pelo celular sem senha! Clique em "Acessar Cardápio".'
+          title: 'Passo 3 de 7 — Link da Cozinheira',
+          desc: 'O sistema gera um link exclusivo enviado no WhatsApp — abre no celular sem baixar app e sem senha. Clique em "Acessar Cardápio".'
         },
         '4a': {
-          title: '4/7 • Escolher Itens no Cardápio',
-          desc: 'Agora você está na visão da cozinheira (/e/MIR-204). Use os setores ou Kits Prontos e clique em "+" para adicionar pelo menos 1 item.'
+          title: 'Passo 4 de 7 — Cardápio da Cozinheira',
+          desc: 'Agora você está vendo o celular da Chef Camila. Use os setores ou Kits Prontos e clique em "+" para adicionar pelo menos 1 item.'
         },
         '4b': {
-          title: '4/7 • Fechar / Enviar Pedido',
-          desc: 'Item adicionado e carrinho atualizado! Agora clique em "Fechar / Enviar Pedido" para encaminhar a lista ao Concierge.'
+          title: 'Passo 4 de 7 — Enviar Pedido',
+          desc: 'Item adicionado! Agora clique em "Fechar / Enviar Pedido" para encaminhar a lista ao Concierge.'
         },
-        '5': {
-          title: '5/7 • Abrir Pedido no Painel Concierge',
-          desc: 'De volta ao /admin, o pedido #1 da Chef Camila chegou na fila "Em Aprovação". Clique em "Abrir Pedido #1" para gerenciar.'
+        '5a': {
+          title: 'Passo 5 de 7 — Abrir Pedido no Painel',
+          desc: 'De volta ao painel da Paralelo 17, o pedido da Chef Camila chegou na fila. Clique em "Abrir Pedido #1" para ver os itens por fornecedor.'
+        },
+        '5b': {
+          title: 'Passo 5 de 7 — Aprovar e Enviar aos Fornecedores',
+          desc: 'Confira os itens agrupados por fornecedor e a mensagem pronta para WhatsApp. Clique em "Aprovar & Enviar p/ Fornecedores" para avançar.'
         },
         '6': {
-          title: '6/7 • Gerenciar Notas das Compras',
-          desc: 'Confira os itens recebidos, defina quem pagou e clique em "Anexar NF-e / Comprovante Demo & Registrar" para simular o upload no bucket privado.'
+          title: 'Passo 6 de 7 — Notas & Comprovantes',
+          desc: 'Confira os itens recebidos, defina quem pagou e clique em "Anexar NF-e / Comprovante" para salvar com segurança.'
         },
         '7': {
-          title: '7/7 • Fechar / Finalizar Pedido',
-          desc: 'Com a nota lançada e os totais conciliados, clique em "Fechar / Finalizar Pedido" para concluir o ciclo e liberar a planilha .xlsx.'
+          title: 'Passo 7 de 7 — Finalizar Pedido',
+          desc: 'Com a nota lançada e os totais conciliados, clique em "Fechar / Finalizar Pedido" para concluir o ciclo e liberar a planilha.'
         },
         '7done': {
-          title: 'Ciclo Completo Concluído!',
-          desc: 'Pedido finalizado, trilha de auditoria gravada e planilha ExcelJS pronta. Você pode reiniciar o tour ou explorar livremente todas as abas.'
+          title: 'Ciclo Completo Concluído! 🎉',
+          desc: 'Pedido finalizado, trilha de auditoria gravada e planilha pronta para prestação de contas. Reinicie o tour ou explore livremente.'
         }
+      },
+
+      // Micro-balloon one-liners (new!)
+      mb_steps: {
+        '1': '👆 Clique em "Entrar no Painel"',
+        '2': '💾 Preencha e salve a estadia',
+        '3': '📲 Abra o Cardápio da Cozinheira',
+        '4a': '➕ Adicione 1 item aqui',
+        '4b': '📩 Envie o pedido para a equipe',
+        '5a': '📋 Clique para abrir o Pedido #1',
+        '5b': '📲 Aprove e envie no WhatsApp',
+        '6': '🧾 Anexe uma nota fiscal simulada',
+        '7': '✅ Feche e gere a planilha final',
+        '7done': '🎉 Tour concluído!'
       }
     },
     en: {
@@ -233,17 +263,17 @@
       gc_eyebrow: 'Case Study + Sandbox • Paralelo 17 • 2026',
       gc_hero_title: 'Purchasing Management System — Paralelo 17',
       gc_hero_lead:
-        'Working inside Paralelo 17’s day-to-day Concierge operation, I spotted the bottleneck of managing stay groceries through scattered WhatsApp voice notes. I designed the entire end-to-end flow—from the team admin panel (/admin) to a passwordless cook menu (/e/:codigo) and invoice settlement—and built the full system into production.',
+        'Working inside Paralelo 17\u2019s day-to-day Concierge operation, I spotted the bottleneck of managing stay groceries through scattered WhatsApp voice notes. I designed the entire end-to-end flow—from the team admin panel (/admin) to a passwordless cook menu (/e/:codigo) and invoice settlement—and built the full system into production.',
       gc_meta_client_val: 'Paralelo 17 (Concierge) • Southern Bahia',
       gc_meta_services_val: 'Workflow Design & Full-Stack Engineering',
       gc_sb_badge: 'Interactive Demo • Mock Data',
       gc_sb_heading: 'Test the full Owner + Cook workflow in 7 guided steps',
       gc_sb_sub:
-        'Follow the interactive coachmark balloons from Concierge login through cook ordering, invoice upload, and final .xlsx settlement.',
+        'Follow the narrative strip and interactive balloons from Concierge login through cook ordering, invoice upload, and final .xlsx settlement.',
       gc_overview_label: '01 • Origin, Workflow & Build',
       gc_overview_title: 'How I spotted the bottleneck at Paralelo 17, designed the flow, and built it end to end',
       gc_overview_p1:
-        'Observing Paralelo 17’s luxury vacation rental Concierge routine in Southern Bahia, I noticed a clear operational need: every stay turned into scattered WhatsApp audios and improvised lists between guests, house cooks, and staff—causing missed quantities, manual supplier splits across 6 partners, and hours reconciling receipts by hand.',
+        'Observing Paralelo 17\u2019s luxury vacation rental Concierge routine in Southern Bahia, I noticed a clear operational need: every stay turned into scattered WhatsApp audios and improvised lists between guests, house cooks, and staff—causing missed quantities, manual supplier splits across 6 partners, and hours reconciling receipts by hand.',
       gc_overview_p2:
         'Starting from that real-world pain point, I mapped and designed the complete architecture before writing the first line of code: the Concierge creates a stay in /admin and shares a zero-login link (/e/:codigo); the cook picks items or proportional kits on mobile and submits the order; the team approves, dispatches supplier-formatted WhatsApp messages, logs invoices by payer, and closes the order with an automated .xlsx workbook.',
       gc_pill_1: '172 Items / 6 Suppliers',
@@ -253,7 +283,7 @@
       gc_arch_label: '02 • Technical Architecture & Security',
       gc_arch_title: 'React 19, Supabase with RLS, and ExcelJS financial settlement',
       gc_arch_intro:
-        'Engineered for zero friction on the cook’s phone and strict financial governance for the Concierge team, backed by PostgreSQL Row Level Security.',
+        'Engineered for zero friction on the cook\u2019s phone and strict financial governance for the Concierge team, backed by PostgreSQL Row Level Security.',
       gc_arch_c1_title: 'React 19, TypeScript & Tailwind v4',
       gc_arch_c1_desc:
         'Responsive interface built with React 19, strict TypeScript, Vite 8, and Tailwind CSS v4. The menu automatically scales 5 preset kits (BBQ, Feijoada, Breakfast, Tropical Bar, Kids) based on guest count and stay duration.',
@@ -283,14 +313,14 @@
       tour_guided: 'Guided Tour',
       tour_free: 'Free Explore',
       btn_restart: 'Restart Tour',
-      btn_free_explore: 'Free Explore',
+      btn_free_explore: 'Explore freely',
       btn_resume_tour: 'Resume Guide',
       rail_steps: [
         '1. Login',
         '2. Create Stay',
         '3. Menu Link',
         '4. Cook Order',
-        '5. Open Order',
+        '5. Approve Order',
         '6. Invoices',
         '7. Close & .xlsx'
       ],
@@ -303,6 +333,7 @@
       guests_word: 'guests',
       days_word: 'days',
       items_word: 'items',
+      item_word: 'item',
       units_word: 'units',
 
       // Step 1: Login
@@ -337,9 +368,9 @@
       btn_copy_link: 'Copy Link',
       btn_whatsapp_invite: 'WhatsApp',
       btn_open_menu: 'Open Menu (Cook Link)',
-      toast_stay_saved: 'Stay created! Route /e/MIR-204 is ready for the cook.',
+      toast_stay_saved: 'Stay created! Exclusive link sent via WhatsApp — opens on mobile with no app download or password.',
       toast_link_copied: 'Link /e/MIR-204 copied to clipboard!',
-      toast_wa_invite: 'WhatsApp invite text generated for Chef Camila (/e/MIR-204).',
+      toast_wa_invite: 'WhatsApp invite sent to Chef Camila — passwordless mobile access.',
 
       // Step 4: Cook Menu
       menu_welcome: 'No-login access active for',
@@ -348,13 +379,13 @@
       kit_applied_tag: 'applied',
       btn_similar_yes: 'Accept substitute: Yes',
       btn_similar_no: 'Accept substitute: No',
-      summary_selected: 'selected in cart',
+      summary_selected: 'in cart',
       summary_est: 'Est. base:',
       btn_send_order: 'Close / Send Order',
       toast_kit_added: 'Kit scaled for 8 guests & 4 days added to cart!',
       toast_order_sent: 'Order #1 registered! Routed to Concierge approval queue.',
 
-      // Step 5, 6, 7: Orders & Detail
+      // Step 5a: Order list
       orders_queue_title: 'House Orders Queue',
       status_pending: '⏳ Pending Approval',
       status_suppliers: '📲 Send to Suppliers',
@@ -362,6 +393,15 @@
       status_finalized: '✅ Finalized',
       btn_open_order: 'Open Order #1',
       btn_back_list: '← Back to queue',
+
+      // Step 5b: Suppliers tab (new!)
+      btn_approve_send: 'Approve & Dispatch to Suppliers',
+      btn_whatsapp_preview: 'WhatsApp Preview',
+      sup_tab_label: 'Items by Supplier',
+      wa_preview_label: 'WhatsApp message preview:',
+      toast_approved: 'Order approved! Lists dispatched to 6 suppliers via WhatsApp.',
+
+      // Step 6 & 7: Order detail tabs
       phase_1: '1. Approval',
       phase_2: '2. Suppliers',
       phase_3: '3. Prep & Invoices',
@@ -369,8 +409,6 @@
       dtab_items: 'Purchase Order',
       dtab_notes: 'Receipts & Invoices',
       dtab_audit: 'Stay & Audit Trail',
-      btn_whatsapp_preview: 'WhatsApp Preview',
-      btn_approve_send: 'Approve & Dispatch',
       fin_total_notes: 'Total Invoices',
       fin_paid_guest: 'Paid by Guest',
       fin_paid_concierge: 'Paid by Other / Concierge',
@@ -383,60 +421,81 @@
       payer_guest: 'Guest (Advance)',
       payer_concierge: 'Other / Concierge',
       btn_attach_nfe: 'Attach Mock Receipt / Invoice & Save',
-      nfe_mock_badge: 'Invoice Attached (Private Bucket)',
-      nfe_mock_key: 'Mock DANFE • 60s Signed URL',
+      nfe_mock_badge: 'Invoice Attached (Private Storage)',
+      nfe_mock_key: 'Receipt stored securely, tracking what was paid by the Guest vs. Paralelo 17',
       btn_close_order: 'Close / Finalize Order',
-      xlsx_ready_title: 'Consolidated ExcelJS (.xlsx) Sheet Ready',
+      xlsx_ready_title: 'Spreadsheet .xlsx ready for accounting',
       xlsx_ready_sub: 'General summary tab + color-coded supplier tabs ready for settlement.',
       btn_download_xlsx: 'Download Demo Summary (.csv)',
       audit_title: 'Audit Trail (America/Bahia)',
-      toast_nfe_added: 'Mock invoice attached and financial cards updated!',
-      toast_order_closed: 'Order #1 finalized! Consolidated .xlsx sheet unlocked.',
+      toast_nfe_added: 'Receipt stored securely, tracking what was paid by the Guest vs. Paralelo 17.',
+      toast_order_closed: 'Order #1 finalized! Spreadsheet ready for accounting unlocked.',
 
-      // Coachmark UI
-      cm_step_of: 'Step {n} of 7',
-      cm_done_badge: 'Completed • 7 of 7',
-      cm_prev: 'Previous',
-      cm_next: 'Next (Auto)',
-      cm_free: 'Free explore',
-      cm_restart: 'Restart Tour',
-      cm_steps: {
+      // Narrative Strip (new!)
+      ns_persona_admin: '👔 Paralelo 17 Team (Dashboard)',
+      ns_persona_cook: '📱 Cook\'s Phone (No password)',
+      ns_step_of: 'Step {n} of 7',
+      ns_done_badge: '✅ Completed • 7 of 7',
+      ns_prev: '← Previous',
+      ns_next: 'Advance →',
+      ns_skip: 'Skip step →',
+      ns_free: 'Free explore',
+      ns_restart: '↻ Restart',
+      ns_steps: {
         '1': {
-          title: '1/7 • Concierge Login (/admin)',
-          desc: 'The operations team signs into the admin panel using pre-configured profiles. Click "Enter Dashboard" to begin.'
+          title: 'Step 1 of 7 — Team Login',
+          desc: 'The Paralelo 17 team signs into the dashboard with pre-configured profiles. Click "Enter Dashboard" to begin.'
         },
         '2': {
-          title: '2/7 • Create a Stay',
-          desc: 'Review or edit the demo stay (Casa Mirante), dates, and guests. Click "Save Stay" to generate the unique cook link.'
+          title: 'Step 2 of 7 — Create Stay',
+          desc: 'Fill in or adjust Casa Mirante\'s details, dates, and guests. Click "Save Stay" to generate the cook\'s exclusive link.'
         },
         '3': {
-          title: '3/7 • Passwordless Cook Link',
-          desc: 'The system generates /e/MIR-204 for WhatsApp. The cook opens it on mobile with zero login! Click "Open Menu (Cook Link)".'
+          title: 'Step 3 of 7 — Cook\'s Link',
+          desc: 'The system generates an exclusive link sent via WhatsApp — opens on mobile with no app download or password. Click "Open Menu (Cook Link)".'
         },
         '4a': {
-          title: '4/7 • Add Items in the Menu',
-          desc: 'You are now in the cook’s view (/e/MIR-204). Browse suppliers or Ready Kits and click "+" to add at least 1 item.'
+          title: 'Step 4 of 7 — Cook\'s Menu',
+          desc: 'You are now seeing Chef Camila\'s phone view. Browse suppliers or Ready Kits and click "+" to add at least 1 item.'
         },
         '4b': {
-          title: '4/7 • Close / Send Order',
-          desc: 'Item added and cart updated! Now click "Close / Send Order" to submit the list to the Concierge.'
+          title: 'Step 4 of 7 — Send Order',
+          desc: 'Item added! Now click "Close / Send Order" to submit the list to the Concierge.'
         },
-        '5': {
-          title: '5/7 • Open Order in Admin Queue',
-          desc: 'Back in /admin, Chef Camila’s order #1 is waiting in "Pending Approval". Click "Open Order #1" to inspect suppliers and receipts.'
+        '5a': {
+          title: 'Step 5 of 7 — Open Order in Dashboard',
+          desc: 'Back in the Paralelo 17 dashboard, Chef Camila\'s order is waiting. Click "Open Order #1" to see items by supplier.'
+        },
+        '5b': {
+          title: 'Step 5 of 7 — Approve & Send to Suppliers',
+          desc: 'Review items grouped by supplier and the WhatsApp message ready to send. Click "Approve & Dispatch to Suppliers" to proceed.'
         },
         '6': {
-          title: '6/7 • Manage Purchase Invoices',
-          desc: 'Check received items, select who paid, and click "Attach Mock Receipt / Invoice & Save" to simulate private bucket upload.'
+          title: 'Step 6 of 7 — Invoices & Receipts',
+          desc: 'Verify received items, select who paid, and click "Attach Mock Receipt / Invoice & Save" to store securely.'
         },
         '7': {
-          title: '7/7 • Close / Finalize Order',
-          desc: 'With the invoice logged and balances updated, click "Close / Finalize Order" to complete the cycle and unlock the .xlsx sheet.'
+          title: 'Step 7 of 7 — Finalize Order',
+          desc: 'With the invoice logged and balances updated, click "Close / Finalize Order" to complete the cycle and unlock the spreadsheet.'
         },
         '7done': {
-          title: 'Full Cycle Completed!',
-          desc: 'Order finalized, audit trail recorded, and ExcelJS report ready. Restart the tour anytime or explore freely.'
+          title: 'Full Cycle Completed! 🎉',
+          desc: 'Order finalized, audit trail recorded, and spreadsheet ready for accounting. Restart the tour anytime or explore freely.'
         }
+      },
+
+      // Micro-balloon one-liners (new!)
+      mb_steps: {
+        '1': '👆 Click "Enter Dashboard"',
+        '2': '💾 Fill in & save the stay',
+        '3': '📲 Open the Cook\'s Menu',
+        '4a': '➕ Add 1 item here',
+        '4b': '📩 Send the order to the team',
+        '5a': '📋 Click to open Order #1',
+        '5b': '📲 Approve & send via WhatsApp',
+        '6': '🧾 Attach a mock invoice',
+        '7': '✅ Close & generate spreadsheet',
+        '7done': '🎉 Tour completed!'
       }
     }
   };
@@ -546,15 +605,16 @@
 
   /* ------------------------------------------------------------------------
      Sandbox Application State
+     tourStep: '1'|'2'|'3'|'4a'|'4b'|'5a'|'5b'|'6'|'7'|'7done'
      ------------------------------------------------------------------------ */
   var state = null;
 
   function createInitialState() {
     return {
       tourActive: true,
-      tourStep: '1', // '1' | '2' | '3' | '4a' | '4b' | '5' | '6' | '7' | '7done'
-      screen: 'login', // 'login' | 'admin' | 'menu'
-      adminTab: 'stays', // 'stays' | 'orders'
+      tourStep: '1',
+      screen: 'login',
+      adminTab: 'stays',
       stayFilter: 'active',
       showNewStayForm: true,
       selectedProfile: 'andre',
@@ -589,10 +649,10 @@
       activeStayCode: 'MIR-204',
       activeSupplier: 'peixaria',
       appliedKits: {},
-      cart: {}, // { itemId: { qty, similar } }
+      cart: {},
       orders: [],
       selectedOrderId: null,
-      orderDetailTab: 'items', // 'items' | 'notes' | 'audit'
+      orderDetailTab: 'items',
       showWhatsappPreview: false,
       nfeDraft: {
         supplier: 'peixaria',
@@ -655,6 +715,13 @@
     return { count: count, units: units, total: total };
   }
 
+  /* Returns the word "item" or "items" (PT: "item"/"itens") based on count */
+  function itemsWord(count) {
+    var dict = I18N[lang] || I18N.pt;
+    if (count === 1) return dict.item_word || (lang === 'en' ? 'item' : 'item');
+    return dict.items_word || (lang === 'en' ? 'items' : 'itens');
+  }
+
   function getCurrentOrder() {
     if (!state.selectedOrderId) return null;
     for (var i = 0; i < state.orders.length; i++) {
@@ -672,7 +739,11 @@
         var toastEl = rootEl && rootEl.querySelector('.sb-toast');
         if (toastEl) toastEl.remove();
       }
-    }, 2200);
+    }, 2800);
+  }
+
+  function clearToast() {
+    state.toast = null;
   }
 
   function esc(str) {
@@ -697,7 +768,7 @@
   }
 
   /* ------------------------------------------------------------------------
-     Business Actions (Driven by Both Real Clicks & "Next Auto")
+     Business Actions
      ------------------------------------------------------------------------ */
   function doLogin() {
     var prof = PROFILES.find(function (p) {
@@ -707,6 +778,7 @@
     state.screen = 'admin';
     state.adminTab = 'stays';
     state.showNewStayForm = true;
+    clearToast();
     if (state.tourActive && state.tourStep === '1') {
       state.tourStep = '2';
     }
@@ -746,6 +818,7 @@
 
     state.activeStayCode = 'MIR-204';
     state.showNewStayForm = false;
+    clearToast();
     if (state.tourActive && (state.tourStep === '1' || state.tourStep === '2')) {
       state.tourStep = '3';
     }
@@ -756,6 +829,7 @@
   function doOpenMenu(code) {
     state.activeStayCode = code || 'MIR-204';
     state.screen = 'menu';
+    clearToast();
     if (state.tourActive && (state.tourStep === '3' || state.tourStep === '2')) {
       var stats = getCartStats();
       state.tourStep = stats.count > 0 ? '4b' : '4a';
@@ -821,7 +895,6 @@
   function doSendOrder() {
     var stats = getCartStats();
     if (stats.count === 0) {
-      // Auto-add first item if triggered via Auto/Next
       state.cart['px-1'] = { qty: 2, similar: true };
       stats = getCartStats();
     }
@@ -852,13 +925,13 @@
       stayCode: state.activeStayCode || 'MIR-204',
       house: state.stayDraft.house || 'Casa Mirante — Trancoso',
       cook: 'Chef Camila',
-      status: 'pending', // 'pending' | 'suppliers' | 'prep' | 'finalized'
+      status: 'pending',
       createdAt: '21:14',
       items: orderItems,
       totalEstimate: stats.total,
       notes: [],
       audit: [
-        { time: '21:14 BRT', pt: 'Pedido #1 criado por Chef Camila via /e/MIR-204', en: 'Order #1 created by Chef Camila via /e/MIR-204' }
+        { time: '21:14 BRT', pt: 'Pedido #1 criado por Chef Camila — acesso sem senha pelo celular', en: 'Order #1 created by Chef Camila — passwordless mobile access' }
       ]
     };
 
@@ -868,31 +941,48 @@
     state.nfeDraft.amount = stats.total.toFixed(2);
     state.screen = 'admin';
     state.adminTab = 'orders';
+    clearToast();
 
     if (state.tourActive) {
-      state.tourStep = '5';
+      state.tourStep = '5a';
     }
     showToast(t('toast_order_sent'));
-    scrollTargetLater('step-5-open-order-btn');
+    scrollTargetLater('step-5a-open-order-btn');
   }
 
   function doOpenOrder(orderId) {
     state.selectedOrderId = orderId || (state.orders[0] && state.orders[0].id);
     var ord = getCurrentOrder();
     if (!ord) return;
+    // Don't skip 5b: show the items tab (Pedido de Compras) first with WA preview
+    state.orderDetailTab = 'items';
+    state.showWhatsappPreview = true;
+    clearToast();
+    if (state.tourActive && (state.tourStep === '5a' || state.tourStep === '4b')) {
+      state.tourStep = '5b';
+    }
+    renderAndScroll('step-5b-approve-btn');
+  }
+
+  function doApproveAndSend() {
+    var ord = getCurrentOrder();
+    if (!ord) return;
     if (ord.status === 'pending') {
       ord.status = 'prep';
       ord.audit.push({
         time: '21:16 BRT',
-        pt: 'Pedido aprovado e enviado aos fornecedores por ' + state.loggedInUser,
-        en: 'Order approved & dispatched to suppliers by ' + state.loggedInUser
+        pt: 'Pedido aprovado e listas enviadas aos fornecedores por ' + state.loggedInUser,
+        en: 'Order approved & lists dispatched to suppliers by ' + state.loggedInUser
       });
     }
     state.orderDetailTab = 'notes';
-    if (state.tourActive && (state.tourStep === '5' || state.tourStep === '4b')) {
+    state.showWhatsappPreview = false;
+    clearToast();
+    if (state.tourActive && state.tourStep === '5b') {
       state.tourStep = '6';
     }
-    renderAndScroll('step-6-attach-nfe-btn');
+    showToast(t('toast_approved'));
+    scrollTargetLater('step-6-attach-nfe-btn');
   }
 
   function doAttachMockNfe() {
@@ -918,10 +1008,11 @@
     }
     ord.audit.push({
       time: '21:18 BRT',
-      pt: 'NF-e anexada (' + supObj.pt + ' • ' + formatBRL(amt) + ') no bucket privado',
-      en: 'Mock invoice attached (' + supObj.en + ' • ' + formatBRL(amt) + ') in private bucket'
+      pt: 'Comprovante salvo — ' + supObj.pt + ' • ' + formatBRL(amt),
+      en: 'Receipt stored securely — ' + supObj.en + ' • ' + formatBRL(amt)
     });
 
+    clearToast();
     if (state.tourActive && state.tourStep === '6') {
       state.tourStep = '7';
     }
@@ -938,10 +1029,11 @@
     ord.status = 'finalized';
     ord.audit.push({
       time: '21:20 BRT',
-      pt: 'Pedido #1 finalizado por ' + state.loggedInUser + ' • Planilha ExcelJS gerada',
-      en: 'Order #1 finalized by ' + state.loggedInUser + ' • ExcelJS workbook generated'
+      pt: 'Pedido #1 finalizado por ' + state.loggedInUser + ' • Planilha pronta para prestação de contas',
+      en: 'Order #1 finalized by ' + state.loggedInUser + ' • Spreadsheet ready for accounting'
     });
 
+    clearToast();
     if (state.tourActive) {
       state.tourStep = '7done';
     }
@@ -950,6 +1042,7 @@
   }
 
   function jumpToTourStep(targetStep) {
+    clearToast();
     if (targetStep === '1') {
       state.screen = 'login';
       state.tourStep = '1';
@@ -994,45 +1087,60 @@
       renderAndScroll('step-4b-send-order-btn');
       return;
     }
-    if (targetStep === '5') {
+    if (targetStep === '5' || targetStep === '5a') {
       if (state.orders.length === 0) doSendOrder();
       state.screen = 'admin';
       state.adminTab = 'orders';
       state.selectedOrderId = null;
-      state.tourStep = '5';
-      renderAndScroll('step-5-open-order-btn');
+      state.tourStep = '5a';
+      renderAndScroll('step-5a-open-order-btn');
       return;
     }
-    if (targetStep === '6') {
+    if (targetStep === '5b') {
       if (state.orders.length === 0) doSendOrder();
       state.screen = 'admin';
       state.adminTab = 'orders';
       state.selectedOrderId = state.orders[0].id;
+      state.orderDetailTab = 'items';
+      state.showWhatsappPreview = true;
+      state.tourStep = '5b';
+      renderAndScroll('step-5b-approve-btn');
+      return;
+    }
+    if (targetStep === '6') {
+      if (state.orders.length === 0) doSendOrder();
+      var ord6 = state.orders[0];
+      if (ord6.status === 'pending') ord6.status = 'prep';
+      state.screen = 'admin';
+      state.adminTab = 'orders';
+      state.selectedOrderId = ord6.id;
       state.orderDetailTab = 'notes';
+      state.showWhatsappPreview = false;
       state.tourStep = '6';
       renderAndScroll('step-6-attach-nfe-btn');
       return;
     }
     if (targetStep === '7') {
       if (state.orders.length === 0) doSendOrder();
-      var ord = state.orders[0];
+      var ord7 = state.orders[0];
       state.screen = 'admin';
       state.adminTab = 'orders';
-      state.selectedOrderId = ord.id;
+      state.selectedOrderId = ord7.id;
       state.orderDetailTab = 'notes';
-      if (ord.notes.length === 0) {
-        ord.notes.push({
+      state.showWhatsappPreview = false;
+      if (ord7.notes.length === 0) {
+        ord7.notes.push({
           id: 'nfe-1',
           nfeNum: 'NF-e 004.812',
           supplierId: 'peixaria',
           supplierPt: 'Peixaria',
           supplierEn: 'Seafood',
-          amount: ord.totalEstimate || 256,
+          amount: ord7.totalEstimate || 256,
           date: '2026-12-18',
           payer: 'guest'
         });
       }
-      if (ord.status === 'finalized') ord.status = 'prep';
+      if (ord7.status === 'finalized') ord7.status = 'prep';
       state.tourStep = '7';
       renderAndScroll('step-7-close-order-btn');
     }
@@ -1045,7 +1153,8 @@
       case '3': doOpenMenu('MIR-204'); break;
       case '4a': doChangeQty('px-1', 2); break;
       case '4b': doSendOrder(); break;
-      case '5': doOpenOrder(state.orders[0] && state.orders[0].id); break;
+      case '5a': doOpenOrder(state.orders[0] && state.orders[0].id); break;
+      case '5b': doApproveAndSend(); break;
       case '6': doAttachMockNfe(); break;
       case '7': doCloseOrder(); break;
       default: break;
@@ -1053,7 +1162,7 @@
   }
 
   function handleTourPrev() {
-    var order = ['1', '2', '3', '4a', '4b', '5', '6', '7', '7done'];
+    var order = ['1', '2', '3', '4a', '4b', '5a', '5b', '6', '7', '7done'];
     var idx = order.indexOf(state.tourStep);
     if (idx <= 0) return;
     var prev = order[idx - 1];
@@ -1098,8 +1207,63 @@
      ------------------------------------------------------------------------ */
   function getStepNumber(stepId) {
     if (stepId === '4a' || stepId === '4b') return 4;
+    if (stepId === '5a' || stepId === '5b') return 5;
     if (stepId === '7done') return 7;
     return parseInt(stepId, 10) || 1;
+  }
+
+  /* ---- Narrative Strip (replaces big coachmark) ---- */
+  function renderNarrativeStrip() {
+    if (!state.tourActive) {
+      return (
+        '<div class="sb-narrative-strip sb-narrative-free">' +
+        '  <div class="sb-ns-left">' +
+        '    <span class="sb-ns-free-label">' + esc(lang === 'en' ? 'Free Explore Mode' : 'Modo Livre — Explore à vontade') + '</span>' +
+        '  </div>' +
+        '  <div class="sb-ns-actions">' +
+        '    <button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="toggle-tour">' + esc(t('btn_resume_tour')) + '</button>' +
+        '    <button type="button" class="sb-ns-btn" data-action="restart-tour">' + esc(t('ns_restart')) + '</button>' +
+        '  </div>' +
+        '</div>'
+      );
+    }
+
+    var dict = I18N[lang] || I18N.pt;
+    var nsData = dict.ns_steps[state.tourStep] || dict.ns_steps['1'];
+    var stepNum = getStepNumber(state.tourStep);
+    var isDone = state.tourStep === '7done';
+    var isCookStep = (state.tourStep === '4a' || state.tourStep === '4b');
+    var persona = isCookStep ? t('ns_persona_cook') : t('ns_persona_admin');
+    var personaClass = isCookStep ? 'sb-ns-persona-cook' : 'sb-ns-persona-admin';
+    var pct = Math.round((stepNum / 7) * 100);
+    var prevDisabled = state.tourStep === '1' ? ' disabled' : '';
+    var isDoneOrFree = isDone;
+
+    var actionBtns = isDoneOrFree
+      ? '<button type="button" class="sb-ns-btn" data-action="toggle-tour">' + esc(t('ns_free')) + '</button>' +
+        '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="restart-tour">' + esc(t('ns_restart')) + '</button>'
+      : '<button type="button" class="sb-ns-btn" data-action="tour-prev"' + prevDisabled + '>' + esc(t('ns_prev')) + '</button>' +
+        '<button type="button" class="sb-ns-btn" data-action="toggle-tour">' + esc(t('ns_free')) + '</button>' +
+        '<button type="button" class="sb-ns-btn sb-ns-btn-primary" data-action="tour-next">' + esc(t('ns_skip')) + '</button>';
+
+    var badgeText = isDone ? t('ns_done_badge') : t('ns_step_of').replace('{n}', String(stepNum));
+
+    return (
+      '<div class="sb-narrative-strip">' +
+      '  <div class="sb-ns-top">' +
+      '    <div class="sb-ns-left">' +
+      '      <span class="sb-ns-persona ' + personaClass + '">' + esc(persona) + '</span>' +
+      '      <span class="sb-ns-badge">' + esc(badgeText) + '</span>' +
+      '    </div>' +
+      '    <div class="sb-ns-actions">' + actionBtns + '</div>' +
+      '  </div>' +
+      '  <div class="sb-ns-progress-track"><div class="sb-ns-progress-fill" style="width:' + pct + '%"></div></div>' +
+      '  <div class="sb-ns-body">' +
+      '    <strong class="sb-ns-title">' + esc(nsData.title) + '</strong>' +
+      '    <p class="sb-ns-desc">' + esc(nsData.desc) + '</p>' +
+      '  </div>' +
+      '</div>'
+    );
   }
 
   function renderChrome() {
@@ -1227,9 +1391,9 @@
     var d = state.stayDraft;
     var formHtml = state.showNewStayForm
       ? '<form class="sb-card sb-card-highlight" id="sb-new-stay-form">' +
-        '  <div class="sb-stay-top">' +
+        '<div class="sb-stay-top">' +
         '    <h4 class="sb-card-title">' + esc(t('new_stay_title')) + '</h4>' +
-        '    <span class="sb-badge sb-badge-amber">POST /rest/v1/estadias</span>' +
+        '    <span class="sb-badge sb-badge-amber">' + esc(lang === 'en' ? '📝 Quick setup' : '📝 Cadastro rápido') + '</span>' +
         '  </div>' +
         '  <div class="sb-form-grid">' +
         '    <div class="sb-field sb-col-span-2">' +
@@ -1361,10 +1525,22 @@
       .join('');
 
     var stats = getCartStats();
+    var cartLabel = stats.count + ' ' + itemsWord(stats.count) + ' ' + esc(t('summary_selected'));
+
+    // Cook-view mobile banner
+    var cookBanner = (
+      '<div class="sb-cook-phone-banner">' +
+      '  <div class="sb-cook-phone-icon">📱</div>' +
+      '  <div>' +
+      '    <strong>' + esc(lang === 'en' ? 'Cook\'s Phone View — Chef Camila (No login)' : 'Visão no celular da Cozinheira — Chef Camila (acesso sem login)') + '</strong>' +
+      '    <span>' + esc(lang === 'en' ? 'Exclusive WhatsApp link — opens on mobile with no app download or password' : 'Link exclusivo enviado no WhatsApp — abre no celular sem baixar app e sem senha') + '</span>' +
+      '  </div>' +
+      '</div>'
+    );
 
     return (
-      '<div class="sb-app-screen">' +
-      '  <div class="sb-app-header">' +
+      '<div class="sb-app-screen sb-cook-screen">' +
+      '  <div class="sb-app-header sb-cook-header">' +
       '    <div class="sb-brand">' +
       '      <span class="sb-brand-icon">🍳</span>' +
       '      <div>' +
@@ -1377,6 +1553,7 @@
       '      <button type="button" class="sb-ghost-dark-btn" data-action="back-admin">' + esc(t('btn_back_admin')) + '</button>' +
       '    </div>' +
       '  </div>' +
+      cookBanner +
       '  <div class="sb-app-body">' +
       '    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">' +
       '      <span style="font-size:0.76rem;font-weight:700;color:#57534e;">⚡ ' + esc(t('kits_label')) + ' ' + esc(state.stayDraft.guests) + ' ' + esc(t('guests_word')) + '):</span>' +
@@ -1387,7 +1564,7 @@
       '    <div class="sb-items-grid">' + itemsHtml + '</div>' +
       '    <div class="sb-bottom-summary">' +
       '      <div class="sb-summary-stats">' +
-      '        <strong class="sb-tabular">' + stats.count + ' ' + esc(t('items_word')) + ' ' + esc(t('summary_selected')) + '</strong>' +
+      '        <strong class="sb-tabular">' + cartLabel + '</strong>' +
       '        <span class="sb-tabular">' + esc(t('summary_est')) + ' ' + formatBRL(stats.total) + '</span>' +
       '      </div>' +
       '      <button type="button" class="sb-btn sb-btn-amber" data-action="send-order" data-tour-target="step-4b-send-order-btn">' +
@@ -1399,13 +1576,30 @@
     );
   }
 
+  function buildWhatsappText(ord) {
+    var grouped = {};
+    ord.items.forEach(function (it) {
+      if (!grouped[it.sup]) grouped[it.sup] = [];
+      grouped[it.sup].push(it);
+    });
+    var lines = ['*Trancoso Concierge — Pedido #' + ord.number + ' (' + ord.house + ')*'];
+    Object.keys(grouped).forEach(function (supId) {
+      var sup = getSupplierObj(supId);
+      lines.push('\n*[' + (lang === 'en' ? sup.en : sup.pt) + ']*');
+      grouped[supId].forEach(function (it) {
+        lines.push('• ' + it.qty + ' ' + it.unit + ' — ' + (lang === 'en' ? it.en : it.pt));
+      });
+    });
+    return lines.join('\n');
+  }
+
   function renderAdminOrders() {
     var ord = getCurrentOrder();
     if (!ord) {
       if (state.orders.length === 0) {
         return (
           '<div class="sb-card">' +
-          '  <p style="margin:0;color:#57534e;font-size:0.9rem;">Nenhum pedido enviado ainda. Abra o cardápio da estadia para criar o Pedido #1.</p>' +
+          '  <p style="margin:0;color:#57534e;font-size:0.9rem;">' + esc(lang === 'en' ? 'No orders submitted yet. Open the cook\'s menu to create Order #1.' : 'Nenhum pedido enviado ainda. Abra o cardápio da estadia para criar o Pedido #1.') + '</p>' +
           '</div>'
         );
       }
@@ -1413,6 +1607,7 @@
         .map(function (o) {
           var badgeCls = o.status === 'finalized' ? 'sb-badge-emerald' : 'sb-badge-amber';
           var statusLbl = o.status === 'finalized' ? t('status_finalized') : t('status_pending');
+          var itemsCount = o.items.length;
           return (
             '<div class="sb-card sb-card-highlight">' +
             '  <div class="sb-order-row">' +
@@ -1423,11 +1618,11 @@
             '      </div>' +
             '      <div class="sb-stay-meta" style="margin-top:0.35rem;margin-bottom:0;">' +
             '        <span>👩‍🍳 ' + esc(o.cook) + '</span>' +
-            '        <span class="sb-tabular">📦 ' + o.items.length + ' ' + esc(t('items_word')) + '</span>' +
+            '        <span class="sb-tabular">📦 ' + itemsCount + ' ' + esc(itemsWord(itemsCount)) + '</span>' +
             '        <span class="sb-tabular">💰 ' + formatBRL(o.totalEstimate) + '</span>' +
             '      </div>' +
             '    </div>' +
-            '    <button type="button" class="sb-btn sb-btn-amber" data-action="open-order" data-order="' + esc(o.id) + '" data-tour-target="step-5-open-order-btn">' +
+            '    <button type="button" class="sb-btn sb-btn-amber" data-action="open-order" data-order="' + esc(o.id) + '" data-tour-target="step-5a-open-order-btn">' +
             '      ' + esc(t('btn_open_order')) + ' →' +
             '    </button>' +
             '  </div>' +
@@ -1453,8 +1648,8 @@
 
     var phases = [
       { lbl: t('phase_1'), state: 'is-done' },
-      { lbl: t('phase_2'), state: 'is-done' },
-      { lbl: t('phase_3'), state: isFinalized ? 'is-done' : 'is-active' },
+      { lbl: t('phase_2'), state: (state.tourStep === '5a' || state.tourStep === '5b') ? 'is-active' : 'is-done' },
+      { lbl: t('phase_3'), state: isFinalized ? 'is-done' : ((state.tourStep === '6' || state.tourStep === '7') ? 'is-active' : '') },
       { lbl: t('phase_4'), state: isFinalized ? 'is-done' : '' }
     ];
     var stepperHtml = phases
@@ -1463,46 +1658,60 @@
       })
       .join('');
 
-    var whatsappText = '';
-    if (state.showWhatsappPreview) {
-      var grouped = {};
-      ord.items.forEach(function (it) {
-        if (!grouped[it.sup]) grouped[it.sup] = [];
-        grouped[it.sup].push(it);
-      });
-      var lines = ['*Trancoso Concierge — Pedido #' + ord.number + ' (' + ord.house + ')*'];
-      Object.keys(grouped).forEach(function (supId) {
-        var sup = getSupplierObj(supId);
-        lines.push('\n*[' + (lang === 'en' ? sup.en : sup.pt) + ']*');
-        grouped[supId].forEach(function (it) {
-          lines.push('• ' + it.qty + ' ' + it.unit + ' — ' + (lang === 'en' ? it.en : it.pt));
-        });
-      });
-      whatsappText = '<div class="sb-whatsapp-box">' + esc(lines.join('\n')) + '</div>';
-    }
-
     var tabContent = '';
+
+    // Step 5b: items tab with WhatsApp preview + approve button
     if (state.orderDetailTab === 'items') {
-      var rowsHtml = ord.items
-        .map(function (it) {
-          var sup = getSupplierObj(it.sup);
+      var grouped5b = {};
+      ord.items.forEach(function (it) {
+        if (!grouped5b[it.sup]) grouped5b[it.sup] = [];
+        grouped5b[it.sup].push(it);
+      });
+
+      var supGroupsHtml = Object.keys(grouped5b).map(function (supId) {
+        var sup = getSupplierObj(supId);
+        var supColor = sup.color;
+        var supName = lang === 'en' ? sup.en : sup.pt;
+        var supItems = grouped5b[supId].map(function (it) {
           return (
             '<tr>' +
-            '  <td><span class="sb-badge" style="background:' + sup.color + ';color:' + (sup.id === 'frios-laticinios' ? '#1c1917' : '#fff') + ';">' + esc(lang === 'en' ? sup.en : sup.pt) + '</span></td>' +
             '  <td><strong>' + esc(lang === 'en' ? it.en : it.pt) + '</strong></td>' +
             '  <td class="sb-tabular">' + it.qty + ' ' + esc(it.unit) + '</td>' +
             '  <td class="sb-tabular">' + formatBRL(it.qty * it.price) + '</td>' +
             '</tr>'
           );
-        })
-        .join('');
+        }).join('');
+        return (
+          '<div style="margin-bottom:0.75rem;">' +
+          '  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;">' +
+          '    <span class="sb-badge" style="background:' + supColor + ';color:' + (sup.id === 'frios-laticinios' ? '#1c1917' : '#fff') + ';">' + esc(supName) + '</span>' +
+          '  </div>' +
+          '  <table class="sb-xlsx-table" style="width:100%;">' +
+          '    <tbody>' + supItems + '</tbody>' +
+          '  </table>' +
+          '</div>'
+        );
+      }).join('');
+
+      var waText = buildWhatsappText(ord);
+      var waPreviewHtml = state.showWhatsappPreview
+        ? '<div class="sb-whatsapp-box" style="margin-top:0.65rem;">' +
+          '  <div style="font-size:0.7rem;font-weight:700;color:#166534;margin-bottom:0.4rem;">📲 ' + esc(t('wa_preview_label')) + '</div>' +
+          esc(waText) +
+          '</div>'
+        : '';
+
       tabContent =
-        '<div class="sb-xlsx-table-wrap">' +
-        '  <table class="sb-xlsx-table">' +
-        '    <thead><tr><th>' + esc(t('field_supplier')) + '</th><th>Item</th><th>Qtd</th><th>Est.</th></tr></thead>' +
-        '    <tbody>' + rowsHtml + '</tbody>' +
-        '  </table>' +
+        '<div class="sb-card" style="margin-top:0;">' +
+        '  <h4 class="sb-card-title" style="margin-bottom:0.65rem !important;">' + esc(t('sup_tab_label')) + '</h4>' +
+        '  <div class="sb-xlsx-table-wrap">' + supGroupsHtml + '</div>' +
+        '  <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.65rem;flex-wrap:wrap;">' +
+        '    <button type="button" class="sb-btn sb-btn-outline sb-btn-sm" data-action="toggle-wa-preview">📲 ' + esc(t('btn_whatsapp_preview')) + '</button>' +
+        '    <button type="button" class="sb-btn sb-btn-amber" data-action="approve-send" data-tour-target="step-5b-approve-btn">✅ ' + esc(t('btn_approve_send')) + ' →</button>' +
+        '  </div>' +
+        waPreviewHtml +
         '</div>';
+
     } else if (state.orderDetailTab === 'audit') {
       var auditRows = ord.audit
         .map(function (a) {
@@ -1544,7 +1753,7 @@
             '    <strong style="display:block;font-size:0.86rem;margin-top:0.25rem;color:#3b0764;">' +
             esc(n.nfeNum) + ' • ' + esc(lang === 'en' ? n.supplierEn : n.supplierPt) +
             '    </strong>' +
-            '    <span style="font-size:0.74rem;color:#6b21a8;">' + esc(t('nfe_mock_key')) + ' • ' + esc(n.date) + '</span>' +
+            '    <span style="font-size:0.74rem;color:#6b21a8;">' + esc(n.date) + '</span>' +
             '  </div>' +
             '  <div style="text-align:right;">' +
             '    <strong class="sb-tabular" style="font-size:0.95rem;color:#1c1917;display:block;">' + formatBRL(n.amount) + '</strong>' +
@@ -1620,12 +1829,10 @@
       '      ' + finalBadge +
       '    </div>' +
       '    <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">' +
-      '      <button type="button" class="sb-btn sb-btn-outline sb-btn-sm" data-action="toggle-wa-preview">📲 ' + esc(t('btn_whatsapp_preview')) + '</button>' +
       '      ' + closeOrderBtn +
       '    </div>' +
       '  </div>' +
       '  <div class="sb-stepper-4" style="margin-bottom:0.85rem;">' + stepperHtml + '</div>' +
-      whatsappText +
       '  <div class="sb-detail-tabs" style="margin-top:0.5rem;">' +
       '    <button type="button" class="sb-detail-tab ' + (state.orderDetailTab === 'items' ? 'is-active' : '') + '" data-action="order-tab" data-tab="items">' + esc(t('dtab_items')) + '</button>' +
       '    <button type="button" class="sb-detail-tab is-purple ' + (state.orderDetailTab === 'notes' ? 'is-active' : '') + '" data-action="order-tab" data-tab="notes">' + esc(t('dtab_notes')) + ' (' + ord.notes.length + ')</button>' +
@@ -1668,43 +1875,25 @@
     );
   }
 
-  function renderCoachmark() {
+  /* ---- Micro-Balloon (compact, 1-line tip, points to the target button) ---- */
+  function renderMicroBalloon() {
     if (!state.tourActive) {
       return '<div class="sb-coachmark is-hidden" id="sb-coachmark"></div>';
     }
-    var stepData = (I18N[lang] && I18N[lang].cm_steps[state.tourStep]) || I18N.pt.cm_steps['1'];
-    var stepNum = getStepNumber(state.tourStep);
-    var pct = Math.round((stepNum / 7) * 100);
-    var isDone = state.tourStep === '7done';
-    var badgeText = isDone ? t('cm_done_badge') : t('cm_step_of').replace('{n}', String(stepNum));
-    var prevDisabled = state.tourStep === '1' ? ' disabled' : '';
-
-    var actionButtons = isDone
-      ? '<button type="button" class="sb-cm-btn" data-action="toggle-tour">' + esc(t('btn_free_explore')) + '</button>' +
-        '<button type="button" class="sb-cm-btn sb-cm-btn-primary" data-action="restart-tour">↺ ' + esc(t('cm_restart')) + '</button>'
-      : '<button type="button" class="sb-cm-btn" data-action="tour-prev"' + prevDisabled + '>' + esc(t('cm_prev')) + '</button>' +
-        '<button type="button" class="sb-cm-btn" data-action="toggle-tour">' + esc(t('cm_free')) + '</button>' +
-        '<button type="button" class="sb-cm-btn sb-cm-btn-primary" data-action="tour-next">' + esc(t('cm_next')) + ' →</button>';
+    var dict = I18N[lang] || I18N.pt;
+    var mbText = dict.mb_steps[state.tourStep] || dict.mb_steps['1'];
 
     return (
-      '<aside class="sb-coachmark" id="sb-coachmark" role="dialog" aria-live="polite" data-placement="bottom">' +
+      '<aside class="sb-coachmark sb-coachmark-micro" id="sb-coachmark" role="tooltip" aria-live="polite" data-placement="bottom">' +
       '  <div class="sb-coachmark-arrow" aria-hidden="true"></div>' +
-      '  <div class="sb-cm-top">' +
-      '    <span class="sb-cm-step-label">' + esc(badgeText) + '</span>' +
-      '  </div>' +
-      '  <div class="sb-cm-progress-track"><div class="sb-cm-progress-fill" style="width:' + pct + '%;"></div></div>' +
-      '  <h4 class="sb-cm-title">' + esc(stepData.title) + '</h4>' +
-      '  <p class="sb-cm-desc">' + esc(stepData.desc) + '</p>' +
-      '  <div class="sb-cm-actions">' +
-      '    <div class="sb-cm-btn-group">' + actionButtons + '</div>' +
-      '  </div>' +
+      '  <span class="sb-mb-text">' + esc(mbText) + '</span>' +
       '</aside>'
     );
   }
 
   /* ------------------------------------------------------------------------
-     Coachmark Positioning & Target Spotlight Engine
-     Guarantees balloon never overflows viewport & never covers target button
+     Coachmark (Micro-Balloon) Positioning Engine
+     Guarantees balloon never covers target button or any inputs
      ------------------------------------------------------------------------ */
   function getActiveTargetSelector() {
     switch (state.tourStep) {
@@ -1713,7 +1902,8 @@
       case '3': return '[data-tour-target="step-3-open-menu-btn"]';
       case '4a': return '[data-tour-target="step-4a-add-item-btn"]';
       case '4b': return '[data-tour-target="step-4b-send-order-btn"]';
-      case '5': return '[data-tour-target="step-5-open-order-btn"]';
+      case '5a': return '[data-tour-target="step-5a-open-order-btn"]';
+      case '5b': return '[data-tour-target="step-5b-approve-btn"]';
       case '6': return '[data-tour-target="step-6-attach-nfe-btn"]';
       case '7': return '[data-tour-target="step-7-close-order-btn"]';
       case '7done': return '[data-tour-target="step-7done-xlsx-card"]';
@@ -1745,8 +1935,8 @@
     var target = selector ? rootEl.querySelector(selector) : null;
     if (!target) {
       cm.setAttribute('data-placement', 'center');
-      cm.style.top = '16px';
-      cm.style.left = '16px';
+      cm.style.top = '10px';
+      cm.style.left = '10px';
       return;
     }
 
@@ -1755,12 +1945,13 @@
     var stageRect = stage.getBoundingClientRect();
     var tRect = target.getBoundingClientRect();
     var cmRect = cm.getBoundingClientRect();
-    var cw = cmRect.width || 330;
-    var ch = cmRect.height || 175;
+    var cw = cmRect.width || 240;
+    var ch = cmRect.height || 42;
     var vw = window.innerWidth || document.documentElement.clientWidth || 1280;
     var vh = window.innerHeight || document.documentElement.clientHeight || 800;
-    var margin = 10;
-    var gap = 14;
+    var margin = 8;
+    var inItemCard = !!target.closest('.sb-item-card');
+    var gap = inItemCard ? 18 : 10;
 
     var tLeft = tRect.left - stageRect.left;
     var tTop = tRect.top - stageRect.top;
@@ -1771,6 +1962,15 @@
 
     var waBtn = document.getElementById('floating-whatsapp-btn');
     var waRect = waBtn ? waBtn.getBoundingClientRect() : null;
+
+    // Gather all interactive controls, item cards & toast to avoid overlapping (excluding target itself)
+    var controlRects = [];
+    rootEl.querySelectorAll('input, select, textarea, button, .sb-qty-val, .sb-fin-card, .sb-nfe-preview, .sb-item-card, .sb-toast').forEach(function (el) {
+      if (el === target || target.contains(el)) return;
+      if (el.contains(target) && !el.classList.contains('sb-item-card')) return;
+      var r = el.getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) controlRects.push(r);
+    });
 
     var vpMinLeft = Math.max(8, margin - stageRect.left);
     var vpMaxLeft = Math.min(stageRect.width - cw - 8, vw - margin - cw - stageRect.left);
@@ -1793,7 +1993,7 @@
     }
 
     var isMobile = vw <= 640;
-    var order = isMobile ? ['top', 'bottom'] : ['top', 'bottom', 'left', 'right'];
+    var order = isMobile ? ['bottom', 'top'] : ['top', 'bottom', 'left', 'right'];
     var candidates = [];
 
     order.forEach(function (dir) {
@@ -1801,6 +2001,9 @@
       if (dir === 'bottom') {
         candTop = tBottom + gap;
         candLeft = clamp(tCenterX - cw / 2, vpMinLeft, vpMaxLeft);
+        if (waRect && candLeft + cw > waRect.left - 8 && stageRect.top + candTop + ch > waRect.top - 8) {
+          candLeft = clamp(waRect.left - stageRect.left - cw - 10, vpMinLeft, vpMaxLeft);
+        }
       } else if (dir === 'top') {
         candTop = tTop - ch - gap;
         candLeft = clamp(tCenterX - cw / 2, vpMinLeft, vpMaxLeft);
@@ -1832,7 +2035,13 @@
         candTop + ch <= stageRect.height - 6;
 
       var overlapsTarget = rectsOverlap(absBox, tRect, 6);
-      var overlapsWa = waRect ? rectsOverlap(absBox, waRect, 4) : false;
+      var overlapsWa = waRect ? rectsOverlap(absBox, waRect, 6) : false;
+
+      // Count how many interactive controls this overlaps
+      var overlapsControls = 0;
+      controlRects.forEach(function (cr) {
+        if (rectsOverlap(absBox, cr, 3)) overlapsControls++;
+      });
 
       candidates.push({
         dir: dir,
@@ -1843,7 +2052,8 @@
         inStage: inStage,
         overlapsTarget: overlapsTarget,
         overlapsWa: overlapsWa,
-        score: (inVp ? 100 : 0) + (inStage ? 40 : 0) + (!overlapsTarget ? 60 : 0) + (!overlapsWa ? 10 : 0)
+        overlapsControls: overlapsControls,
+        score: (inVp ? 100 : 0) + (inStage ? 40 : 0) + (!overlapsTarget ? 60 : 0) + (!overlapsWa ? 80 : 0) + (-overlapsControls * 90)
       });
     });
 
@@ -1856,8 +2066,6 @@
     var finalTop = best.top;
     var finalDir = best.dir;
 
-    // Fallback: if best is still outside viewport vertically without overlapping target,
-    // pick the vertical side with more viewport space and clamp without overlapping target.
     if (!best.inVp) {
       var spaceAbove = tTop - stageMinTop;
       var spaceBelow = stageRect.height - 8 - tBottom;
@@ -1876,10 +2084,10 @@
     cm.style.top = Math.round(finalTop) + 'px';
 
     if (finalDir === 'top' || finalDir === 'bottom') {
-      var arrowX = clamp(tCenterX - finalLeft, 20, cw - 20);
+      var arrowX = clamp(tCenterX - finalLeft, 16, cw - 16);
       cm.style.setProperty('--arrow-left', Math.round(arrowX) + 'px');
     } else {
-      var arrowY = clamp(tCenterY - finalTop, 20, ch - 20);
+      var arrowY = clamp(tCenterY - finalTop, 16, ch - 16);
       cm.style.setProperty('--arrow-top', Math.round(arrowY) + 'px');
     }
   }
@@ -1896,21 +2104,38 @@
     if (!rootEl || !targetAttr) return;
     var target = rootEl.querySelector('[data-tour-target="' + targetAttr + '"]');
     if (!target) return;
-    var rect = target.getBoundingClientRect();
+    var sbShell = rootEl.querySelector('.sb-shell');
+    if (!sbShell) return;
+
     var vh = window.innerHeight || 800;
-    if (rect.top < 90 || rect.bottom > vh - 160) {
-      var isLocoSmooth =
-        document.documentElement.classList.contains('has-scroll-smooth') &&
-        typeof scroll !== 'undefined' &&
-        scroll &&
-        typeof scroll.scrollTo === 'function';
+    var isLocoSmooth =
+      document.documentElement.classList.contains('has-scroll-smooth') &&
+      typeof scroll !== 'undefined' &&
+      scroll &&
+      typeof scroll.scrollTo === 'function';
+
+    var shellRect = sbShell.getBoundingClientRect();
+    var rect = target.getBoundingClientRect();
+
+    // Keep the top of .sb-shell (stepper + narrative strip) and the target visible together
+    var isMob = (window.innerWidth || 1280) <= 640;
+    var bottomPad = isMob ? 90 : 48;
+    var targetFitsWithShell = (rect.bottom - shellRect.top) <= (vh - bottomPad);
+    var scrollAnchor = targetFitsWithShell ? sbShell : target;
+    var offsetVal = targetFitsWithShell ? -14 : -Math.round(vh * 0.45);
+
+    if (shellRect.top < 8 || rect.bottom > vh - bottomPad || rect.top < 56) {
       if (isLocoSmooth) {
         try {
+          if (typeof scroll.update === 'function') scroll.update();
           if (typeof scroll.start === 'function') scroll.start();
-          scroll.scrollTo(target, { offset: -Math.round(vh * 0.4), duration: 200, disableLerp: true });
+          scroll.scrollTo(scrollAnchor, { offset: offsetVal, duration: 160, disableLerp: true });
         } catch (e) {}
-      } else if (typeof target.scrollIntoView === 'function') {
-        target.scrollIntoView({ block: 'center', behavior: 'auto' });
+      } else if (typeof scrollAnchor.scrollIntoView === 'function') {
+        scrollAnchor.scrollIntoView({
+          block: targetFitsWithShell ? 'start' : 'center',
+          behavior: 'auto'
+        });
       }
     }
   }
@@ -1960,10 +2185,11 @@
     rootEl.innerHTML =
       '<div class="sb-shell">' +
       renderChrome() +
+      renderNarrativeStrip() +
       '  <div class="sb-stage">' +
       toastHtml +
       screenHtml +
-      renderCoachmark() +
+      renderMicroBalloon() +
       '  </div>' +
       '</div>';
 
@@ -2007,13 +2233,14 @@
           break;
         case 'logout':
           state.screen = 'login';
+          clearToast();
           if (state.tourActive) state.tourStep = '1';
           render();
           break;
         case 'admin-tab':
           state.adminTab = btn.getAttribute('data-tab');
           if (state.adminTab === 'orders' && state.orders.length > 0 && state.tourActive && state.tourStep === '3') {
-            state.tourStep = '5';
+            state.tourStep = '5a';
           }
           render();
           break;
@@ -2033,6 +2260,7 @@
         case 'back-admin':
           state.screen = 'admin';
           state.adminTab = state.orders.length > 0 ? 'orders' : 'stays';
+          clearToast();
           render();
           break;
         case 'apply-kit':
@@ -2061,6 +2289,9 @@
         case 'open-order':
           doOpenOrder(btn.getAttribute('data-order'));
           break;
+        case 'approve-send':
+          doApproveAndSend();
+          break;
         case 'back-orders-list':
           state.selectedOrderId = null;
           render();
@@ -2078,6 +2309,10 @@
           break;
         case 'download-csv':
           downloadDemoCsv();
+          break;
+        case 'stay-filter':
+          state.stayFilter = btn.getAttribute('data-val');
+          render();
           break;
         default:
           break;
