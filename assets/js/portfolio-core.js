@@ -38,6 +38,10 @@
     cassiano: {
       pt: 'Cassiano Imóveis — Estudo de Caso | André Carvalho',
       en: 'Cassiano Imóveis — Case Study | André Carvalho'
+    },
+    compras: {
+      pt: 'Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho',
+      en: 'Purchasing Management System — Case Study & Sandbox | André Carvalho'
     }
   };
 
@@ -53,6 +57,7 @@
       about: 'Sobre',
       nav_contact: 'Contato',
       contact: 'Contato',
+      nav_compras: 'Gestão de Compras',
       nav_success: 'Sucesso',
       nav_archive: 'Arquivo',
       nav_error: 'Erro',
@@ -77,6 +82,7 @@
       intro_desc: 'A união entre desenvolvimento moderno e otimização operacional me coloca em uma posição estratégica: crio experiências digitais fluidas enquanto elimino ineficiências nos bastidores.',
       recent_work: 'Projetos Recentes',
       cassiano_subtitle_home: 'Desenvolvimento Web & Astro 4 • Trancoso / Porto Seguro',
+      compras_subtitle_home: 'Design & Full-Stack / Concierge • React 19 + Supabase',
       view_project: 'Ver projeto',
       view_all_work: 'Ver todos os projetos',
       view_all_projects: 'Ver todos os projetos',
@@ -93,6 +99,9 @@
       table_year: 'Ano',
       cassiano_location: 'Brasil (Porto Seguro / Trancoso, BA)',
       cassiano_services: 'Desenvolvimento Web & Astro 4',
+      compras_title: 'Sistema de Gestão de Compras',
+      compras_location: 'Brasil (Sul da Bahia • Concierge)',
+      compras_services: 'Design & Full-Stack / Concierge',
 
       // About
       about_hero_1: 'Otimizando operações',
@@ -183,6 +192,7 @@
       about: 'About',
       nav_contact: 'Contact',
       contact: 'Contact',
+      nav_compras: 'Purchasing System',
       nav_success: 'Success',
       nav_archive: 'Archive',
       nav_error: 'Error',
@@ -207,6 +217,7 @@
       intro_desc: 'The intersection of cutting-edge frontend engineering and backend automation positions me uniquely: crafting fluid digital experiences while eliminating operational bottlenecks.',
       recent_work: 'Recent Work',
       cassiano_subtitle_home: 'Web Development & Astro 4 • Trancoso / Porto Seguro',
+      compras_subtitle_home: 'Design & Full-Stack / Concierge • React 19 + Supabase',
       view_project: 'View project',
       view_all_work: 'View all work',
       view_all_projects: 'View all work',
@@ -223,6 +234,9 @@
       table_year: 'Year',
       cassiano_location: 'Brazil (Porto Seguro / Trancoso, BA)',
       cassiano_services: 'Web Development & Astro 4',
+      compras_title: 'Purchasing Management System',
+      compras_location: 'Brazil (Southern Bahia • Concierge)',
+      compras_services: 'Design & Full-Stack / Concierge',
 
       // About
       about_hero_1: 'Optimizing operations',
@@ -314,14 +328,21 @@
 
   function detectPageKey() {
     const bodyKey = document.body && document.body.dataset ? document.body.dataset.pageKey : '';
-    if (bodyKey && PAGE_TITLES[bodyKey]) return bodyKey;
+    if (bodyKey) {
+      if (PAGE_TITLES[bodyKey]) return bodyKey;
+      if (bodyKey === 'gestao-de-compras') return 'compras';
+    }
 
     const main = document.querySelector('main[data-barba-namespace]');
     const ns = main ? main.getAttribute('data-barba-namespace') : '';
-    if (ns && PAGE_TITLES[ns]) return ns;
+    if (ns) {
+      if (PAGE_TITLES[ns]) return ns;
+      if (ns === 'gestao-de-compras') return 'compras';
+    }
 
     const path = (window.location.pathname || '').toLowerCase();
     if (path.includes('cassiano-imoveis')) return 'cassiano';
+    if (path.includes('gestao-de-compras')) return 'compras';
     if (path.includes('work')) return 'work';
     if (path.includes('about')) return 'about';
     if (path.includes('contact')) return 'contact';
@@ -455,6 +476,10 @@
     updateBrazilClock();
     syncWhatsAppButtonAttrs();
 
+    try {
+      window.dispatchEvent(new CustomEvent('portfolio:langchange', { detail: { lang: currentLang } }));
+    } catch (e) {}
+
     if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
       setTimeout(function () {
         if (typeof scroll !== 'undefined' && scroll && typeof scroll.update === 'function') {
@@ -472,6 +497,7 @@
     const lower = href.toLowerCase();
     let targetPage = null;
     if (lower.includes('cassiano-imoveis.html')) targetPage = 'cassiano';
+    else if (lower.includes('gestao-de-compras.html')) targetPage = 'compras';
     else if (lower.includes('work.html')) targetPage = 'work';
     else if (lower.includes('about.html')) targetPage = 'about';
     else if (lower.includes('contact.html')) targetPage = 'contact';
@@ -484,7 +510,9 @@
 
     const t = DICT[currentLang] || DICT.pt;
     loadingWords.querySelectorAll('h2:not(.home-active):not(.home-active-last)').forEach(function (h2) {
-      if (h2.getAttribute('data-page') === targetPage) {
+      const dp = h2.getAttribute('data-page');
+      const isMatch = dp === targetPage || (targetPage === 'compras' && dp === 'gestao-de-compras');
+      if (isMatch) {
         h2.classList.add('active');
         const span = h2.querySelector('[data-i18n]');
         if (span) {
