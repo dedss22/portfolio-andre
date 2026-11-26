@@ -9,8 +9,28 @@ const selectAll = (e) => document.querySelectorAll(e);
 
 initPageTransitions();
 
+// Accessibility - skip the intro loader for prefers-reduced-motion
+function prefersReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+
+function skipLoaderReducedMotion() {
+  gsap.set(".loading-screen", { top: "calc(-100%)" });
+  gsap.set(".loading-screen .rounded-div-wrap.bottom", { height: "0vh" });
+  gsap.set(".loading-words", { opacity: 0 });
+  gsap.set("main .once-in", { clearProps: true });
+  gsap.set("html", { cursor: "auto" });
+  if (typeof scroll !== "undefined" && scroll) {
+    if (typeof scroll.start === "function") scroll.start();
+    if (typeof scroll.update === "function") scroll.update();
+  }
+  if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
+}
+
 // Animation - First Page Load
 function initLoaderHome() { 
+
+  if (prefersReducedMotion()) { skipLoaderReducedMotion(); return; }
 
   var tl = gsap.timeline();
 
@@ -147,6 +167,8 @@ function initLoaderHome() {
 
 // Animation - First Page Load
 function initLoader() { 
+
+  if (prefersReducedMotion()) { skipLoaderReducedMotion(); return; }
 
   var tl = gsap.timeline();
 
