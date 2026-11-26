@@ -19,22 +19,22 @@
   var I18N = {
     pt: {
       // Page Case Study Copy ([data-gc-i18n])
-      gc_eyebrow: 'Estudo de Caso + Sandbox • 2026',
-      gc_hero_title: 'Sistema de Gestão de Compras',
+      gc_eyebrow: 'Estudo de Caso + Sandbox • Paralelo 17 • 2026',
+      gc_hero_title: 'Sistema de Gestão de Compras — Paralelo 17',
       gc_hero_lead:
-        'Plataforma operacional sob medida para uma empresa imobiliária com operação de Concierge: conecta o painel administrativo (/admin) à cozinheira na casa de temporada via link único sem login (/e/:codigo), unificando pedidos, WhatsApp por fornecedor, notas fiscais e planilha .xlsx.',
-      gc_meta_client_val: 'Imobiliária Concierge • Sul da Bahia',
-      gc_meta_services_val: 'Design & Engenharia Full-Stack',
+        'Na rotina diária da Paralelo 17, percebi o gargalo das compras de estadias feitas por áudios e mensagens soltas no WhatsApp. Desenhei todo o fluxo ponta a ponta — do painel da equipe (/admin) ao cardápio sem login para a cozinheira (/e/:codigo) e fechamento com notas fiscais — e construí a plataforma completa em produção.',
+      gc_meta_client_val: 'Paralelo 17 (Concierge) • Sul da Bahia',
+      gc_meta_services_val: 'Desenho de Fluxo & Engenharia Full-Stack',
       gc_sb_badge: 'Demo Interativa • Dados Fictícios',
       gc_sb_heading: 'Teste o fluxo completo Dono + Cozinheira em 7 passos guiados',
       gc_sb_sub:
         'Siga os balões interativos para simular do login do Concierge até o fechamento da compra com nota fiscal e planilha .xlsx.',
-      gc_overview_label: '01 • Visão Geral & Desafio',
-      gc_overview_title: 'Conectando o Concierge imobiliário à cozinha da casa sem atrito',
+      gc_overview_label: '01 • Origem, Fluxo & Entrega',
+      gc_overview_title: 'Como identifiquei o gargalo na Paralelo 17, desenhei o fluxo e construí o sistema',
       gc_overview_p1:
-        'Em operações imobiliárias de alto padrão com serviço de Concierge no Sul da Bahia (região de Trancoso), cada estadia envolve coordenar listas de compras entre hóspedes, a cozinheira contratada para a residência e múltiplos fornecedores locais (peixaria, açougue, hortifruti, frios, bebidas e mercado).',
+        'Acompanhando de perto a rotina de Concierge das casas de temporada na Paralelo 17 (Sul da Bahia), percebi a necessidade real por trás de cada hospedagem: as listas de compras dependiam de áudios e mensagens soltas no WhatsApp entre hóspedes, cozinheira e equipe, gerando esquecimentos de unidades, retrabalho ao separar 6 fornecedores locais e horas fechando notas fiscais na mão.',
       gc_overview_p2:
-        'O processo anterior dependia de áudios e listas soltas em mensagens, gerando esquecimentos de unidades, falta de rastreabilidade nas notas fiscais e horas gastas fechando prestações de contas manuais. A solução eliminou esse gargalo separando duas experiências na mesma base de dados: o painel completo da equipe (/admin) e um cardápio mobile-first sem senha (/e/:codigo) para a cozinheira montar o pedido direto do celular.',
+        'Antes de escrever a primeira linha de código, desenhei toda a arquitetura de fluxo para unir ponta a ponta sem atrito: o Concierge cria a estadia em /admin e libera um link único sem senha (/e/:codigo); a cozinheira escolhe itens ou kits proporcionais pelo celular e envia o pedido; a equipe aprova, dispara listas formatadas por fornecedor no WhatsApp, gerencia as notas de compra separando quem pagou e fecha o pedido gerando automaticamente a planilha .xlsx consolidada.',
       gc_pill_1: '172 Itens / 6 Fornecedores',
       gc_pill_2: '5 Kits Proporcionais',
       gc_pill_3: 'Link sem Login (/e/:codigo)',
@@ -230,22 +230,22 @@
     },
     en: {
       // Page Case Study Copy
-      gc_eyebrow: 'Case Study + Sandbox • 2026',
-      gc_hero_title: 'Purchasing Management System',
+      gc_eyebrow: 'Case Study + Sandbox • Paralelo 17 • 2026',
+      gc_hero_title: 'Purchasing Management System — Paralelo 17',
       gc_hero_lead:
-        'Tailor-made operational platform for a luxury real estate agency with Concierge service: connects the admin team (/admin) with the house cook via a zero-login link (/e/:codigo), unifying orders, supplier WhatsApp lists, invoices, and .xlsx reporting.',
-      gc_meta_client_val: 'Real Estate Concierge • Southern Bahia',
-      gc_meta_services_val: 'Design & Full-Stack Engineering',
+        'Working inside Paralelo 17’s day-to-day Concierge operation, I spotted the bottleneck of managing stay groceries through scattered WhatsApp voice notes. I designed the entire end-to-end flow—from the team admin panel (/admin) to a passwordless cook menu (/e/:codigo) and invoice settlement—and built the full system into production.',
+      gc_meta_client_val: 'Paralelo 17 (Concierge) • Southern Bahia',
+      gc_meta_services_val: 'Workflow Design & Full-Stack Engineering',
       gc_sb_badge: 'Interactive Demo • Mock Data',
       gc_sb_heading: 'Test the full Owner + Cook workflow in 7 guided steps',
       gc_sb_sub:
         'Follow the interactive coachmark balloons from Concierge login through cook ordering, invoice upload, and final .xlsx settlement.',
-      gc_overview_label: '01 • Overview & Challenge',
-      gc_overview_title: 'Connecting real estate Concierge teams to the house kitchen seamlessly',
+      gc_overview_label: '01 • Origin, Workflow & Build',
+      gc_overview_title: 'How I spotted the bottleneck at Paralelo 17, designed the flow, and built it end to end',
       gc_overview_p1:
-        'In high-end vacation rental operations with Concierge service in Southern Bahia (Trancoso region), every stay requires coordinating grocery lists across guests, the house cook, and six local supplier categories (seafood, butcher, produce, deli, beverages, and market).',
+        'Observing Paralelo 17’s luxury vacation rental Concierge routine in Southern Bahia, I noticed a clear operational need: every stay turned into scattered WhatsApp audios and improvised lists between guests, house cooks, and staff—causing missed quantities, manual supplier splits across 6 partners, and hours reconciling receipts by hand.',
       gc_overview_p2:
-        'The legacy workflow relied on voice notes and fragmented chat messages, causing missed quantities, untracked receipts, and hours spent reconciling spreadsheets manually. The platform solved this by pairing two experiences on a single database: the full operations dashboard (/admin) and a passwordless mobile-first menu (/e/:codigo) for the cook.',
+        'Starting from that real-world pain point, I mapped and designed the complete architecture before writing the first line of code: the Concierge creates a stay in /admin and shares a zero-login link (/e/:codigo); the cook picks items or proportional kits on mobile and submits the order; the team approves, dispatches supplier-formatted WhatsApp messages, logs invoices by payer, and closes the order with an automated .xlsx workbook.',
       gc_pill_1: '172 Items / 6 Suppliers',
       gc_pill_2: '5 Proportional Kits',
       gc_pill_3: 'No-Login Link (/e/:codigo)',
@@ -1778,8 +1778,14 @@
       vpMinLeft = margin - stageRect.left;
       vpMaxLeft = vw - margin - cw - stageRect.left;
     }
-    var vpMinTop = margin - stageRect.top;
-    var vpMaxTop = vh - margin - ch - stageRect.top;
+    var stageMinTop = 8;
+    var stageMaxTop = Math.max(stageMinTop, stageRect.height - ch - 8);
+    var vpMinTop = Math.max(stageMinTop, margin - stageRect.top);
+    var vpMaxTop = Math.min(stageMaxTop, vh - margin - ch - stageRect.top);
+    if (vpMaxTop < vpMinTop) {
+      vpMinTop = stageMinTop;
+      vpMaxTop = stageMaxTop;
+    }
 
     function clamp(val, min, max) {
       if (max < min) return min;
@@ -1853,14 +1859,14 @@
     // Fallback: if best is still outside viewport vertically without overlapping target,
     // pick the vertical side with more viewport space and clamp without overlapping target.
     if (!best.inVp) {
-      var spaceAbove = tRect.top - margin;
-      var spaceBelow = vh - margin - tRect.bottom;
-      if (spaceAbove >= spaceBelow) {
+      var spaceAbove = tTop - stageMinTop;
+      var spaceBelow = stageRect.height - 8 - tBottom;
+      if (spaceAbove >= ch + gap || spaceAbove >= spaceBelow) {
         finalDir = 'top';
-        finalTop = clamp(tTop - ch - gap, vpMinTop, tTop - ch - 8);
+        finalTop = clamp(tTop - ch - gap, stageMinTop, Math.max(stageMinTop, tTop - ch - 8));
       } else {
         finalDir = 'bottom';
-        finalTop = clamp(tBottom + gap, tBottom + 8, Math.max(tBottom + 8, vpMaxTop));
+        finalTop = clamp(tBottom + gap, tBottom + 8, Math.max(tBottom + 8, stageMaxTop));
       }
       finalLeft = clamp(tCenterX - cw / 2, vpMinLeft, vpMaxLeft);
     }

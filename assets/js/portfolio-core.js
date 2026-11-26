@@ -40,8 +40,8 @@
       en: 'Cassiano Imóveis — Case Study | André Carvalho'
     },
     compras: {
-      pt: 'Sistema de Gestão de Compras — Estudo de Caso & Sandbox | André Carvalho',
-      en: 'Purchasing Management System — Case Study & Sandbox | André Carvalho'
+      pt: 'Sistema de Gestão de Compras — Paralelo 17 | André Carvalho',
+      en: 'Purchasing Management System — Paralelo 17 | André Carvalho'
     }
   };
 
@@ -57,7 +57,7 @@
       about: 'Sobre',
       nav_contact: 'Contato',
       contact: 'Contato',
-      nav_compras: 'Gestão de Compras',
+      nav_compras: 'Compras — Paralelo 17',
       nav_success: 'Sucesso',
       nav_archive: 'Arquivo',
       nav_error: 'Erro',
@@ -82,7 +82,7 @@
       intro_desc: 'A união entre desenvolvimento moderno e otimização operacional me coloca em uma posição estratégica: crio experiências digitais fluidas enquanto elimino ineficiências nos bastidores.',
       recent_work: 'Projetos Recentes',
       cassiano_subtitle_home: 'Desenvolvimento Web & Astro 4 • Trancoso / Porto Seguro',
-      compras_subtitle_home: 'Design & Full-Stack / Concierge • React 19 + Supabase',
+      compras_subtitle_home: 'Paralelo 17 (Concierge) • Da dor real e desenho do fluxo ao sistema',
       view_project: 'Ver projeto',
       view_all_work: 'Ver todos os projetos',
       view_all_projects: 'Ver todos os projetos',
@@ -99,9 +99,9 @@
       table_year: 'Ano',
       cassiano_location: 'Brasil (Porto Seguro / Trancoso, BA)',
       cassiano_services: 'Desenvolvimento Web & Astro 4',
-      compras_title: 'Sistema de Gestão de Compras',
-      compras_location: 'Brasil (Sul da Bahia • Concierge)',
-      compras_services: 'Design & Full-Stack / Concierge',
+      compras_title: 'Sistema de Gestão de Compras — Paralelo 17',
+      compras_location: 'Brasil (Sul da Bahia • Paralelo 17)',
+      compras_services: 'Desenho de Fluxo & Full-Stack',
 
       // About
       about_hero_1: 'Otimizando operações',
@@ -192,7 +192,7 @@
       about: 'About',
       nav_contact: 'Contact',
       contact: 'Contact',
-      nav_compras: 'Purchasing System',
+      nav_compras: 'Purchasing — Paralelo 17',
       nav_success: 'Success',
       nav_archive: 'Archive',
       nav_error: 'Error',
@@ -217,7 +217,7 @@
       intro_desc: 'The intersection of cutting-edge frontend engineering and backend automation positions me uniquely: crafting fluid digital experiences while eliminating operational bottlenecks.',
       recent_work: 'Recent Work',
       cassiano_subtitle_home: 'Web Development & Astro 4 • Trancoso / Porto Seguro',
-      compras_subtitle_home: 'Design & Full-Stack / Concierge • React 19 + Supabase',
+      compras_subtitle_home: 'Paralelo 17 (Concierge) • Workflow design to production system',
       view_project: 'View project',
       view_all_work: 'View all work',
       view_all_projects: 'View all work',
@@ -234,9 +234,9 @@
       table_year: 'Year',
       cassiano_location: 'Brazil (Porto Seguro / Trancoso, BA)',
       cassiano_services: 'Web Development & Astro 4',
-      compras_title: 'Purchasing Management System',
-      compras_location: 'Brazil (Southern Bahia • Concierge)',
-      compras_services: 'Design & Full-Stack / Concierge',
+      compras_title: 'Purchasing Management System — Paralelo 17',
+      compras_location: 'Brazil (Southern Bahia • Paralelo 17)',
+      compras_services: 'Workflow Design & Full-Stack',
 
       // About
       about_hero_1: 'Optimizing operations',
