@@ -155,11 +155,11 @@
     return t;
   }
 
-  /** Link wa.me: so os digitos do telefone e o texto codificado. */
+  /** SANDBOX: sem links de mensagem (a demonstracao nao tem contatos). */
   function linkWhatsApp(lead) {
     var fone = String(lead.telefone || '').replace(/\D/g, '');
     var texto = mensagemWhatsApp(lead);
-    return 'https://wa.me/' + fone + (texto ? '?text=' + encodeURIComponent(texto) : '');
+    void fone; void texto; return '#';
   }
 
   var DDI = ['351', '598', '595', '54', '56', '34', '39', '33', '49', '44', '41', '31', '1'];

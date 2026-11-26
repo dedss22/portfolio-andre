@@ -1,7 +1,7 @@
 /* Copia de demonstracao (sandbox do portfolio) do painel Cassiano Imoveis. Caminhos ajustados; a API e simulada por ../mock-api.js. */
 /* Painel: fotos do imovel (enviar, ver, ordenar, capa, legenda, remover). Dados sempre por textContent/value; sem estilo inline.
    Antes de enviar, o navegador redimensiona e recodifica a foto num canvas (qualidade adaptativa, limite duro de 2 MB):
-   isso tambem APAGA os metadados EXIF/GPS. Os bytes vao para /api/admin/imoveis/:id/fotos (a Function passa ao Storage). */
+   isso tambem APAGA os metadados EXIF/GPS. Os bytes vao para /api/admin/imoveis/:id/fotos (no sandbox, simulado por ../mock-api.js). */
 (function () {
   'use strict';
   var P = window.Painel, h = P.h;
@@ -28,7 +28,7 @@
     maisTras: 'Mover para trás', maisFrente: 'Mover para frente', remover: 'Remover',
     legenda: 'Legenda (opcional)',
     removerTitulo: 'Remover esta foto?', removerTexto: 'Ela sai do imóvel e do armazenamento. Não dá para desfazer.', removerOk: 'Remover foto', cancelar: 'Cancelar',
-    naoConfigurado: 'O envio de fotos ainda não foi ativado no Supabase. Falta rodar o arquivo APLICAR-0004-FOTOS.sql uma vez (passo a passo no LEIA-ME do banco). Suas outras informações continuam funcionando.',
+    naoConfigurado: 'O envio de fotos não está disponível agora. Suas outras informações continuam funcionando.',
     reduzindo: 'Preparando a foto…', enviando: 'Enviando… ', enviada: 'Enviada',
     erros: {
       limite: 'Este imóvel já tem 20 fotos. Remova alguma para enviar outra.',

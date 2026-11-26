@@ -1,5 +1,5 @@
 // Copia sem alteracao de logica (sandbox do portfolio): codigo puro do servidor, roda no navegador.
-// Gerador de .xlsx sem dependencias, para rodar em Cloudflare Workers (so Uint8Array e TextEncoder).
+// Gerador de .xlsx sem dependencias, para rodar em qualquer ambiente JS (so Uint8Array e TextEncoder).
 // Um .xlsx e um ZIP de XMLs. Usamos ZIP "stored" (sem compressao), CRC32 por tabela e texto "inlineStr"
 // (sem sharedStrings). Celulas de texto sao neutralizadas contra injecao de formula.
 import { serialExcel } from './datas.js';

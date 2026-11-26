@@ -1,6 +1,6 @@
 // Copia sem alteracao de logica (sandbox do portfolio): codigo puro do servidor, roda no navegador.
 // Regras de reserva de temporada: validacao, preco por noite, estadia minima e insercao sem sobreposicao.
-// Puro (sem I/O proprio). A insercao recebe um "db" com a interface prepare().bind().first()/all()/run() (adaptador db-pg.mjs, Postgres).
+// Puro (sem I/O proprio). A insercao recebe um "db" com a interface prepare().bind().first()/all()/run().
 import { ehDataIso, noites, listarNoites, hojeBahia, noitesNoMes } from './datas.js';
 const ehConflitoDeDatas = () => false; // sandbox: sem banco
 
@@ -101,7 +101,7 @@ export function violaEstadiaMinima({ entrada, saida, minimoCasa, temporadas, est
 
 /**
  * SQL de insercao atomica: so insere se nao houver reserva ativa sobreposta. 0 linhas = conflito.
- * Os casts sao obrigatorios no Postgres: num INSERT ... SELECT os parametros nao herdam o tipo da coluna de destino.
+ * Os casts sao obrigatorios no banco: num INSERT ... SELECT os parametros nao herdam o tipo da coluna de destino.
  * Pre-reserva expirada nao bloqueia aqui; o gatilho do banco a marca como 'cancelado' ao gravar a nova reserva.
  * Se duas pessoas gravarem ao mesmo tempo, a restricao de exclusao do banco (23P01) barra a segunda: inserirReserva trata.
  */

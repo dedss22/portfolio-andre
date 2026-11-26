@@ -1,5 +1,5 @@
 // Copia sem alteracao de logica (sandbox do portfolio): codigo puro do servidor, roda no navegador.
-// Planilha "Agenda geral" (.xlsx) e CSV, a partir dos dados de agenda.mjs. Puro, sem I/O, compativel com Workers.
+// Planilha "Agenda geral" (.xlsx) e CSV, a partir dos dados de agenda.mjs. Puro, sem I/O.
 // Aba 1 = o modelo impresso: um bloco por mes (titulo, dias com dia da semana, uma linha por casa, reservas como celulas
 // mescladas na largura das noites, cor por ORIGEM, linha "Unidades livres") e a legenda uma vez no fim. Depois: Periodos livres,
 // Reservas e Ocupacao e receita. Todos os textos fixos estao em TEXTOS (o dono aprova antes do merge).
