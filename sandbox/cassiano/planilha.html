@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Planilha da agenda | Sandbox Cassiano Imóveis</title>
+<link rel="stylesheet" href="planilha.css">
+</head>
+<body>
+<main class="pl" aria-labelledby="pl-titulo">
+  <div class="pl-intro">
+    <h1 id="pl-titulo">Planilha da agenda geral</h1>
+    <p>É a planilha que o painel exporta no modelo que o dono já usava: uma linha por casa, um dia por coluna e cada reserva colorida pela origem. As pré-reservas aparecem em amarelo.</p>
+    <div class="pl-periodo" role="group" aria-label="Período da planilha">
+      <button type="button" class="pl-chip" data-dias="30" aria-pressed="true">Próximos 30 dias</button>
+      <button type="button" class="pl-chip" data-dias="60" aria-pressed="false">Próximos 60 dias</button>
+      <button type="button" class="pl-chip" data-dias="90" aria-pressed="false">Próximos 90 dias</button>
+    </div>
+  </div>
+  <section class="xl-janela" aria-label="Visualizador da planilha">
+    <div class="xl-topo">
+      <div class="xl-titulo"><span class="xl-icone" aria-hidden="true">X</span><strong id="pl-arquivo">agenda-geral.xlsx</strong><span class="xl-selo">Gerada no navegador</span></div>
+      <button type="button" class="xl-baixar" id="pl-baixar">Baixar .xlsx</button>
+    </div>
+    <div class="xl-formula" aria-hidden="true"><span class="xl-nome" id="pl-celula">A1</span><span class="xl-fx">fx</span><span class="xl-texto" id="pl-formula"></span></div>
+    <div class="xl-grade" id="pl-grade" tabindex="0" role="region" aria-label="Planilha. Role para os lados para ver mais dias."></div>
+    <div class="xl-abas" role="tablist" aria-label="Abas da planilha" id="pl-abas"></div>
+  </section>
+  <p class="pl-nota" id="pl-status" role="status" aria-live="polite"></p>
+</main>
+<script src="mock-api.js"></script>
+<script src="planilha.js"></script>
+</body>
+</html>

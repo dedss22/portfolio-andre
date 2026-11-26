@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#162038">
+<title>Gerenciar imóveis | Painel Cassiano Imóveis (demonstração)</title>
+<link rel="stylesheet" href="fotos.css">
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="../sandbox.css">
+<link rel="stylesheet" href="publicar.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="icones.css">
+</head>
+<body>
+<a class="pular" href="#principal">Pular para o conteúdo</a>
+<header class="topo" id="topo"></header>
+<main id="principal" tabindex="-1">
+  <section id="vista-lista">
+    <h1 id="titulo-lista">Gerenciar imóveis de venda</h1>
+    <section class="publicar" id="publicar" aria-labelledby="publicar-titulo" hidden></section>
+    <div class="chips" role="group" aria-label="Tipo de imóvel" id="f-negocio"></div>
+    <div class="acoes centro"><a class="botao primario grande" id="novo" href="#/novo/venda">Criar novo imóvel</a></div>
+    <form class="filtros" id="filtros" role="search" aria-label="Filtrar imóveis">
+      <div class="linha">
+        <div class="campo"><label for="f-q">Buscar por título, código ou bairro</label><input type="search" id="f-q" maxlength="60" autocomplete="off"></div>
+        <div class="campo"><label for="f-status">Situação</label><select id="f-status"><option value="">Todas</option></select></div>
+      </div>
+      <label class="marca-op" for="f-lixeira"><input type="checkbox" id="f-lixeira"> Mostrar a lixeira</label>
+    </form>
+    <p id="contagem" role="status" aria-live="polite"></p>
+    <table class="tabela" id="tabela">
+      <caption class="so-leitor">Imóveis cadastrados</caption>
+      <thead><tr><th scope="col">Código</th><th scope="col">Imóvel</th><th scope="col">Preço</th><th scope="col">Detalhes</th><th scope="col">Situação</th><th scope="col">Atualizado</th><th scope="col">Ações</th></tr></thead>
+      <tbody id="lista"></tbody>
+    </table>
+    <nav class="paginacao" id="paginacao" aria-label="Páginas" hidden>
+      <button class="botao" type="button" id="pag-anterior">Anterior</button>
+      <span id="pag-texto"></span>
+      <button class="botao" type="button" id="pag-proxima">Próxima</button>
+    </nav>
+  </section>
+  <section id="vista-form" hidden></section>
+</main>
+<script src="../mock-api.js"></script>
+<script src="painel.js"></script>
+<script src="fotos.js"></script>
+<script src="imoveis.js"></script>
+<script src="publicar.js"></script>
+<script src="sandbox-publicar.js"></script>
+</body>
+</html>

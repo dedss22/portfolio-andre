@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#162038">
+<title>Entrar | Painel Cassiano Imóveis (demonstração)</title>
+<link rel="stylesheet" href="painel.css">
+<link rel="stylesheet" href="../sandbox.css">
+</head>
+<body class="pagina-login">
+<header class="topo"><span class="marca">Cassiano Imóveis</span></header>
+<main id="principal">
+  <section class="cartao login" aria-labelledby="titulo">
+    <h1 id="titulo">Entrar no painel</h1>
+    <p>Esta é a mesma tela de entrada do painel, em modo de demonstração: não há senha e nenhum dado sai do seu navegador.</p>
+    <form id="form" novalidate>
+      <div class="campo-f">
+        <label for="email">E-mail</label>
+        <input id="email" name="email" type="email" value="dono@exemplo.test" readonly>
+      </div>
+      <p id="erro" class="erro-login" role="alert" hidden></p>
+      <button type="submit" id="entrar" class="botao primario largo">Entrar na demonstração</button>
+    </form>
+  </section>
+</main>
+<script src="../mock-api.js"></script>
+<script src="login-demo.js"></script>
+</body>
+</html>

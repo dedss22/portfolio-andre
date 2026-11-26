@@ -1,0 +1,14 @@
+/* Painel: bloco "Publicar no site" (tela Gerenciar imoveis). Usa as variaveis de painel.css; sem estilo inline. */
+.publicar { background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; padding: 16px; margin: 0 0 16px; display: grid; gap: 8px; min-width: 0; }
+.publicar[hidden] { display: none; }
+.publicar h2 { margin: 0; font-size: 18px; }
+.publicar p { margin: 0; overflow-wrap: anywhere; }
+.publicar .publicar-ajuda { color: var(--suave); font-size: 14px; }
+.publicar .publicar-linha { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
+.publicar .publicar-ultima { color: var(--texto); }
+.publicar .publicar-pendentes { color: var(--morno); font-weight: 600; }
+.publicar .publicar-estado { color: var(--ok); font-weight: 600; }
+.publicar .publicar-estado.erro { color: var(--erro); }
+.publicar .publicar-aviso { border: 1px solid var(--morno); background: #fffbeb; color: var(--morno); border-radius: 8px; padding: 8px 12px; }
+.publicar .botao { max-width: 100%; }
+@media (max-width: 480px) { .publicar .botao { width: 100%; } }
