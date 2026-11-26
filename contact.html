@@ -4,16 +4,16 @@
       <meta charset="utf-8"/>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Contato — André Carvalho</title>
-      <meta name="description" content="Vamos iniciar um projeto juntos. Entre em contato com André Carvalho — Desenvolvedor Web (Astro) e Otimizador de Processos (Python) em Porto Seguro, BA, Brasil."/>
+      <meta name="description" content="Conte o que está travando o seu dia a dia. Fale com André Carvalho sobre sites, sistemas sob medida e automações. Atendimento 100% digital e remoto."/>
       <meta property="og:title" content="Contato — André Carvalho"/>
-      <meta property="og:description" content="Vamos iniciar um projeto juntos. Entre em contato com André Carvalho — Desenvolvedor Web (Astro) e Otimizador de Processos (Python) em Porto Seguro, BA, Brasil."/>
+      <meta property="og:description" content="Conte o que está travando o seu dia a dia. Fale com André Carvalho sobre sites, sistemas sob medida e automações. Atendimento 100% digital e remoto."/>
       <meta property="og:image" content="https://www.andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta property="og:url" content="https://www.andrecarvalhodev.com.br/contact.html"/>
       <meta property="og:site_name" content="André Carvalho"/>
       <meta property="og:locale" content="pt_BR"/>
       <meta property="og:type" content="website"/>
       <meta name="twitter:title" content="Contato — André Carvalho"/>
-      <meta name="twitter:description" content="Vamos iniciar um projeto juntos. Entre em contato com André Carvalho — Desenvolvedor Web (Astro) e Otimizador de Processos (Python) em Porto Seguro, BA, Brasil."/>
+      <meta name="twitter:description" content="Conte o que está travando o seu dia a dia. Fale com André Carvalho sobre sites, sistemas sob medida e automações. Atendimento 100% digital e remoto."/>
       <meta name="twitter:image" content="https://www.andrecarvalhodev.com.br/andre_workspace.jpg"/>
       <meta name="twitter:card" content="summary_large_image"/>
       <meta name="google" content="notranslate"/>
@@ -33,14 +33,14 @@
         "@id": "https://www.andrecarvalhodev.com.br/contact.html#webpage",
         "url": "https://www.andrecarvalhodev.com.br/contact.html",
         "name": "Contato — André Carvalho",
-        "description": "Vamos iniciar um projeto juntos. Entre em contato com André Carvalho — Desenvolvedor Web (Astro) e Otimizador de Processos (Python) em Porto Seguro, BA, Brasil.",
+        "description": "Conte o que está travando o seu dia a dia. Fale com André Carvalho sobre sites, sistemas sob medida e automações. Atendimento 100% digital e remoto.",
         "inLanguage": "pt-BR",
         "mainEntity": {
           "@type": "Person",
           "name": "André Carvalho",
           "email": "andrecarvalho2@gmail.com",
           "url": "https://www.andrecarvalhodev.com.br/",
-          "jobTitle": "Desenvolvedor Web & Otimizador de Processos",
+          "jobTitle": "Desenvolvedor Web & Automações",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "Porto Seguro",
@@ -61,6 +61,7 @@
       <link href="assets/css/styleguide.css" rel="stylesheet">
       <link href="assets/css/components.css" rel="stylesheet">
       <link href="assets/css/style-new.css" rel="stylesheet">
+      <noscript><style>.loading-container{display:none !important}</style></noscript>
       
    <style>
   /* Requirement 1: Remover o botão azul gigante "View" que tampa a tela */
@@ -773,8 +774,8 @@
       <div class="row once-in">
          <div class="flex-col">
             <h1>
-               <span><span class="profile-picture" aria-hidden="true"></span> <span data-i18n="contact_hero_1">Vamos iniciar</span></span>
-               <span><span data-i18n="contact_hero_2">um projeto juntos</span></span>
+               <span><span class="profile-picture" aria-hidden="true"></span> <span data-i18n="contact_hero_1">Vamos destravar</span></span>
+               <span><span data-i18n="contact_hero_2">o seu processo</span></span>
             </h1>
          </div>
          <div class="flex-col">
@@ -798,7 +799,7 @@
          <div class="flex-col">
             <form class="form" id="contact-form" method="post" action="https://formsubmit.co/andrecarvalho2@gmail.com" novalidate>
                <div class="website-field">
-                  <label class="label" for="form-tel">Phone Number</label>
+                  <label class="label" for="form-tel" data-i18n="contact_label_tel">Telefone</label>
                   <input class="field" type="text" id="form-tel" name="tel" tabindex="-1" autocomplete="off">
                </div>
                <div class="form-col">
@@ -813,18 +814,18 @@
                </div>
                <div class="form-col">
                   <h5>03</h5>
-                  <label class="label" for="form-company" data-i18n="contact_label_org">Qual é a sua empresa ou organização?</label>
-                  <input class="field" type="text" id="form-company" name="company" value="" required placeholder="Empresa Ltda ®" data-i18n-placeholder="ph_company">
+                  <label class="label" for="form-company" data-i18n="contact_label_org">Qual é a sua empresa ou projeto?</label>
+                  <input class="field" type="text" id="form-company" name="company" value="" required placeholder="Sua empresa ou projeto pessoal" data-i18n-placeholder="ph_company">
                </div>
                <div class="form-col">
                   <h5>04</h5>
-                  <label class="label" for="form-service" data-i18n="contact_label_services">Quais serviços você procura?</label>
-                  <input class="field" type="text" id="form-service" name="service" value="" required placeholder="Web Design, Desenvolvimento Astro, Automações..." data-i18n-placeholder="ph_service">
+                  <label class="label" for="form-service" data-i18n="contact_label_services">O que você quer resolver?</label>
+                  <input class="field" type="text" id="form-service" name="service" value="" required placeholder="Automatizar uma planilha, criar um site, integrar o WhatsApp..." data-i18n-placeholder="ph_service">
                </div>
                <div class="form-col">
                   <h5>05</h5>
                   <label class="label" for="form-message" data-i18n="contact_label_message">Sua mensagem</label>
-                  <textarea class="field" id="form-message" name="message" rows="8" required placeholder="Olá André, preciso de ajuda com ... *" data-i18n-placeholder="ph_message"></textarea>
+                  <textarea class="field" id="form-message" name="message" rows="8" required placeholder="Olá André, hoje eu perco tempo com ... *" data-i18n-placeholder="ph_message"></textarea>
                </div>
                <div class="btn-contact-send">
                   <div class="btn btn-round" data-scroll data-scroll-speed="2" data-scroll-offset="-50%, 0%">
@@ -860,9 +861,9 @@
             <h5 data-i18n="contact_business_title">Dados Profissionais</h5>
             <ul class="links-wrap contact-business-links">
                <li><p>André Carvalho</p></li>
-               <li><p data-i18n="biz_role">Desenvolvedor Web & Otimizador de Processos</p></li>
+               <li><p data-i18n="biz_role">Desenvolvedor Web & Automações</p></li>
                <li><p>Paralelo 17</p></li>
-               <li><p data-i18n="biz_location">Porto Seguro / Trancoso, BA • Brasil</p></li>
+               <li><p data-i18n="biz_location">Brasil • Atendimento 100% remoto</p></li>
             </ul>
             <h5 data-i18n="contact_socials_title">Redes Sociais</h5>
             <ul class="links-wrap contact-socials-links">

@@ -20,8 +20,8 @@
 
   const PAGE_TITLES = {
     home: {
-      pt: 'André Carvalho • Desenvolvedor Web & Otimizador de Processos',
-      en: 'André Carvalho • Web Developer & Process Optimizer'
+      pt: 'André Carvalho • Desenvolvedor Web & Automações',
+      en: 'André Carvalho • Web Developer & Automation'
     },
     work: {
       pt: 'Projetos — André Carvalho',
@@ -42,6 +42,10 @@
     compras: {
       pt: 'Sistema de Gestão de Compras — Paralelo 17 | André Carvalho',
       en: 'Purchasing Management System — Paralelo 17 | André Carvalho'
+    },
+    notfound: {
+      pt: 'Página não encontrada — André Carvalho',
+      en: 'Page not found — André Carvalho'
     }
   };
 
@@ -77,9 +81,9 @@
 
       // Index
       hero_role_1: 'Desenvolvedor Web',
-      hero_role_2: '& Otimizador de Processos',
-      intro_title: 'Potencializando empresas com plataformas web ultrarrápidas em Astro e automações inteligentes em Python. Zero gargalos, código limpo e arquitetura de alta performance.',
-      intro_desc: 'A união entre desenvolvimento moderno e otimização operacional me coloca em uma posição estratégica: crio experiências digitais fluidas enquanto elimino ineficiências nos bastidores.',
+      hero_role_2: '& Automações',
+      intro_title: 'Resolvo gargalos digitais: sites rápidos, sistemas sob medida e automações que tiram o trabalho manual e repetitivo do seu dia.',
+      intro_desc: 'Planilha que ninguém aguenta mais, pedido perdido no WhatsApp, cadastro feito duas vezes, processo que trava tudo. Eu entendo como o seu dia funciona e construo a ferramenta certa, 100% remoto.',
       recent_work: 'Projetos Recentes',
       cassiano_subtitle_home: 'Plataforma imobiliária + painel administrativo',
       compras_subtitle_home: 'Paralelo 17 (Concierge) • Da dor real e desenho do fluxo ao sistema',
@@ -91,9 +95,9 @@
       work_hero_1: 'Criando plataformas web',
       work_hero_2: 'de alta performance & automações',
       filter_all: 'Todos',
-      filter_design: 'Design',
-      filter_dev: 'Desenvolvimento',
-      table_client: 'Cliente',
+      filter_sites: 'Sites & Plataformas',
+      filter_systems: 'Sistemas & Automações',
+      table_client: 'Projeto / Cliente',
       table_location: 'Localização',
       table_services: 'Serviços',
       table_year: 'Ano',
@@ -200,39 +204,40 @@
       compras_services: 'Desenho de Fluxo & Full-Stack',
 
       // About
-      about_hero_1: 'Otimizando operações',
-      about_hero_2: '& desenvolvendo plataformas web modernas',
-      about_bio_main: 'Ajudo empresas a acelerarem seus resultados através de plataformas web modernas, ultrarrápidas e arquiteturas escaláveis em Astro, combinadas com automações inteligentes em Python. Cada projeto é desenvolvido com foco cirúrgico em performance, código limpo e eliminação de gargalos operacionais.',
-      about_bio_sub: 'Sempre em evolução nos bastidores.',
+      about_hero_1: 'Resolvendo gargalos digitais',
+      about_hero_2: '& tirando o trabalho repetitivo do caminho',
+      about_bio_main: 'Ajudo empresas e pessoas a resolver o que trava o dia a dia no digital: o site lento, a planilha que virou sistema, o atendimento que depende de copiar e colar no WhatsApp, o mesmo cadastro feito em três lugares. Primeiro entendo o processo; depois construo a solução, seja um site, um sistema sob medida ou uma automação.',
+      about_bio_sub: 'Trabalho 100% digital e remoto.',
       about_services_title: 'Como posso ajudar',
-      service_1_title: 'Desenvolvimento Web Moderno',
-      service_1_desc: 'Criação de sites e portais de alta conversão construídos em Astro 4, Tailwind CSS e JavaScript moderno. Arquitetura componentizada, SEO técnico impecável e tempo de carregamento ultrarrápido.',
-      service_2_title: 'Automações & Processos',
-      service_2_desc: 'Otimização de fluxos operacionais e rotinas de negócios com Python e integrações de dados. Eliminação de tarefas manuais repetitivas, estruturação de pipelines de mídia e esteiras operacionais eficientes na Paralelo 17.',
-      service_3_title: 'Solução Completa',
-      service_3_desc: 'Do conceito e arquitetura até a implementação e deploy contínuo. A união entre engenharia front-end de ponta e automação de bastidores para entregar produtos digitais consistentes e robustos.',
-      about_track_title: 'Engenharia de Precisão<br>& Mentalidade de Produto',
-      about_track_desc: 'Atuação contínua em projetos de alta demanda, estruturação de soluções digitais corporativas e desenvolvimento de ecossistemas web de alta fidelidade. Foco inegociável em métricas reais, estabilidade técnica e código feito para escalar.',
-      about_img_alt: 'André Carvalho — Desenvolvedor Web & Otimizador de Processos',
+      service_1_title: 'Sites rápidos',
+      service_1_desc: 'Sites que abrem rápido, funcionam bem no celular e estão preparados para o Google. Mostram o seu trabalho com clareza e levam o visitante direto ao contato. Feitos em Astro, com código enxuto.',
+      service_2_title: 'Sistemas sob medida',
+      service_2_desc: 'Quando a planilha não dá mais conta: painéis e sistemas feitos para o seu processo, com um cadastro só, histórico e acesso pelo navegador. Você não precisa adaptar o seu jeito de trabalhar a um programa genérico. Dados guardados no Supabase.',
+      service_3_title: 'Automações',
+      service_3_desc: 'Tarefas que alguém repete todo dia, como copiar dados, montar relatórios, organizar pedidos que chegam pelo WhatsApp ou atualizar cadastros, passam a rodar sozinhas. Menos erro de digitação e mais tempo livre. Scripts em Python e integrações com as ferramentas que você já usa.',
+      about_track_title: 'Primeiro o problema,<br>depois o código',
+      about_track_desc: 'Antes de escrever qualquer linha, entendo como o trabalho acontece hoje: onde se perde tempo, onde os dados se repetem, onde as coisas travam. A solução nasce daí, do tamanho da necessidade, sem complicar o que pode ser simples.',
+      about_img_alt: 'André Carvalho — Desenvolvedor Web & Automações',
 
       // Contact
-      contact_hero_1: 'Vamos iniciar',
-      contact_hero_2: 'um projeto juntos',
+      contact_hero_1: 'Vamos destravar',
+      contact_hero_2: 'o seu processo',
       contact_label_name: 'Qual é o seu nome?',
       contact_label_email: 'Qual é o seu e-mail?',
-      contact_label_org: 'Qual é a sua empresa ou organização?',
-      contact_label_services: 'Quais serviços você procura?',
+      contact_label_tel: 'Telefone',
+      contact_label_org: 'Qual é a sua empresa ou projeto?',
+      contact_label_services: 'O que você quer resolver?',
       contact_label_message: 'Sua mensagem',
       contact_btn_send: 'Enviar mensagem',
       contact_details_title: 'Detalhes de Contato',
       contact_business_title: 'Dados Profissionais',
-      biz_role: 'Desenvolvedor Web & Otimizador de Processos',
-      biz_location: 'Porto Seguro / Trancoso, BA • Brasil',
+      biz_role: 'Desenvolvedor Web & Automações',
+      biz_location: 'Brasil • Atendimento 100% remoto',
       ph_name: 'João Silva *',
       ph_email: 'joao@empresa.com *',
-      ph_company: 'Empresa Ltda ®',
-      ph_service: 'Web Design, Desenvolvimento Astro, Automações...',
-      ph_message: 'Olá André, preciso de ajuda com ... *',
+      ph_company: 'Sua empresa ou projeto pessoal',
+      ph_service: 'Automatizar uma planilha, criar um site, integrar o WhatsApp...',
+      ph_message: 'Olá André, hoje eu perco tempo com ... *',
 
       // Case Study: Cassiano Imóveis
       case_back_work: 'Voltar para Projetos',
@@ -274,7 +279,12 @@
       // Adaptive WhatsApp Button
       wa_aria: 'Conversar pelo WhatsApp',
       wa_title: 'Falar no WhatsApp',
-      wa_prefill: 'Olá André! Vi seu portfólio e gostaria de conversar sobre um projeto.'
+      wa_prefill: 'Olá André! Vi seu portfólio e gostaria de conversar sobre um projeto.',
+
+      // 404 page
+      nf_title: 'Página não encontrada',
+      nf_desc: 'O endereço que você acessou não existe ou foi movido.',
+      nf_btn_home: 'Voltar ao início'
     },
     en: {
       // Common / Navigation / Footer
@@ -307,9 +317,9 @@
 
       // Index
       hero_role_1: 'Web Developer',
-      hero_role_2: '& Process Optimizer',
-      intro_title: 'Empowering modern businesses with ultra-fast web platforms in Astro and intelligent Python automations. Zero bloat, clean code, and peak operational performance.',
-      intro_desc: 'The intersection of cutting-edge frontend engineering and backend automation positions me uniquely: crafting fluid digital experiences while eliminating operational bottlenecks.',
+      hero_role_2: '& Automation',
+      intro_title: 'I fix digital bottlenecks: fast websites, custom systems and automations that take manual, repetitive work off your plate.',
+      intro_desc: 'A spreadsheet nobody can keep up with, orders lost in WhatsApp, the same data typed in twice, a process that holds everything up. I learn how your day really works and build the right tool, fully remote.',
       recent_work: 'Recent Work',
       cassiano_subtitle_home: 'Real estate platform + admin panel',
       compras_subtitle_home: 'Paralelo 17 (Concierge) • Workflow design to production system',
@@ -321,9 +331,9 @@
       work_hero_1: 'Crafting high-performance',
       work_hero_2: 'web platforms & automations',
       filter_all: 'All',
-      filter_design: 'Design',
-      filter_dev: 'Development',
-      table_client: 'Client',
+      filter_sites: 'Websites & Platforms',
+      filter_systems: 'Systems & Automation',
+      table_client: 'Project / Client',
       table_location: 'Location',
       table_services: 'Services',
       table_year: 'Year',
@@ -430,39 +440,40 @@
       compras_services: 'Workflow Design & Full-Stack',
 
       // About
-      about_hero_1: 'Optimizing operations',
-      about_hero_2: '& building modern web platforms',
-      about_bio_main: 'I help businesses accelerate their growth through ultra-fast, modern web platforms and scalable Astro architectures, combined with intelligent Python automations. Every project is built with surgical focus on performance, clean code, and operational efficiency.',
-      about_bio_sub: 'Always evolving behind the scenes.',
+      about_hero_1: 'Fixing digital bottlenecks',
+      about_hero_2: '& clearing repetitive work out of the way',
+      about_bio_main: 'I help businesses and individuals fix what slows their day down online: the sluggish website, the spreadsheet that turned into a system, customer service that runs on copy and paste into WhatsApp, the same record entered in three places. I understand the process first, then build the fix: a website, a custom system or an automation.',
+      about_bio_sub: 'Fully digital, fully remote.',
       about_services_title: 'How I can help',
-      service_1_title: 'Modern Web Development',
-      service_1_desc: 'High-converting websites and portals built with Astro 4, Tailwind CSS, and modern JavaScript. Component-driven architecture, pristine technical SEO, and blazing-fast loading speeds.',
-      service_2_title: 'Automations & Workflows',
-      service_2_desc: 'Optimizing operational workflows and business logic using Python and custom API integrations. Eliminating repetitive tasks, structuring media pipelines, and scaling systems at Paralelo 17.',
-      service_3_title: 'Full-Cycle Solution',
-      service_3_desc: 'From concept and system architecture to production deployment. Combining cutting-edge frontend engineering with backend automation to deliver robust, high-performance digital products.',
-      about_track_title: 'Precision Engineering<br>& Product Mindset',
-      about_track_desc: 'Continuous track record building high-fidelity digital solutions and robust enterprise architectures. Uncompromising focus on real-world metrics, code reliability, and systems engineered to scale.',
-      about_img_alt: 'André Carvalho — Web Developer & Process Optimizer',
+      service_1_title: 'Fast websites',
+      service_1_desc: 'Websites that load fast, work well on phones and are ready for Google. They show your work clearly and take visitors straight to getting in touch. Built with Astro and lean code.',
+      service_2_title: 'Custom systems',
+      service_2_desc: 'For when the spreadsheet can’t keep up: dashboards and systems built around your process, with one shared record, a full history and access from any browser. No bending the way you work to fit generic software. Data stored in Supabase.',
+      service_3_title: 'Automations',
+      service_3_desc: 'Tasks someone repeats every day, like copying data, putting reports together, sorting orders that arrive on WhatsApp or updating records, start running on their own. Fewer typos, more free time. Python scripts and integrations with the tools you already use.',
+      about_track_title: 'Problem first,<br>code second',
+      about_track_desc: 'Before writing a single line, I look at how the work gets done today: where time is lost, where data gets duplicated, where things get stuck. The solution comes from there, sized to the need, without complicating what can stay simple.',
+      about_img_alt: 'André Carvalho — Web Developer & Automation',
 
       // Contact
-      contact_hero_1: 'Let’s start',
-      contact_hero_2: 'a project together',
+      contact_hero_1: 'Let’s fix what’s',
+      contact_hero_2: 'slowing you down',
       contact_label_name: "What's your name?",
       contact_label_email: "What's your email?",
-      contact_label_org: "What's the name of your organization?",
-      contact_label_services: 'What services are you looking for?',
+      contact_label_tel: 'Phone number',
+      contact_label_org: "What's your company or project?",
+      contact_label_services: 'What do you want to solve?',
       contact_label_message: 'Your message',
       contact_btn_send: 'Send message',
       contact_details_title: 'Contact Details',
       contact_business_title: 'Business Details',
-      biz_role: 'Web Developer & Process Optimizer',
-      biz_location: 'Porto Seguro / Trancoso, BA • Brazil',
+      biz_role: 'Web Developer & Automation',
+      biz_location: 'Brazil • Working 100% remotely',
       ph_name: 'John Doe *',
       ph_email: 'john@doe.com *',
-      ph_company: 'John & Doe ®',
-      ph_service: 'Web Design, Astro Development, Automations...',
-      ph_message: 'Hello André, can you help me with ... *',
+      ph_company: 'Your company or personal project',
+      ph_service: 'Automate a spreadsheet, build a website, connect WhatsApp...',
+      ph_message: 'Hi André, right now I lose time on ... *',
 
       // Case Study: Cassiano Imóveis
       case_back_work: 'Back to Work',
@@ -504,7 +515,12 @@
       // Adaptive WhatsApp Button
       wa_aria: 'Chat on WhatsApp',
       wa_title: 'Message on WhatsApp',
-      wa_prefill: 'Hi André! I saw your portfolio and would like to discuss a project.'
+      wa_prefill: 'Hi André! I saw your portfolio and would like to discuss a project.',
+
+      // 404 page
+      nf_title: 'Page not found',
+      nf_desc: 'The address you visited does not exist or has moved.',
+      nf_btn_home: 'Back to home'
     }
   };
 
