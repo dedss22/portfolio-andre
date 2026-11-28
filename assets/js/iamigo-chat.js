@@ -1,6 +1,6 @@
 /* ==========================================================================
    I.Amigo — Live Conversational AI Chat & Bilingual PT|EN Integration
-   Connects to https://i-amigo.andrebalbino2.workers.dev (Groq Llama 3.3 70B)
+   Connects to https://i-amigo.andrebalbino2.workers.dev (Groq GPT-OSS 120B)
    with warm local friend fallback on 429 or network unavailability.
    ========================================================================== */
 (function () {
@@ -23,8 +23,8 @@
       ia_send_label: 'Enviar mensagem',
       ia_hint_enter: 'Enter envia',
       ia_hint_shift: 'Shift+Enter quebra linha',
-      ia_badge_online: 'Groq Online • Llama 3.3',
-      ia_badge_online_title: 'Conectado ao Groq Llama 3.3 70B via Cloudflare Worker',
+      ia_badge_online: 'Groq Online • GPT-OSS 120B',
+      ia_badge_online_title: 'Conectado ao Groq AI (GPT-OSS 120B) via Cloudflare Worker',
       ia_badge_local: 'Modo Amigo Local',
       ia_badge_local_title: 'Respondendo localmente no navegador',
       ia_typing_label: 'I.Amigo está digitando',
@@ -48,8 +48,8 @@
       ia_c2_title: 'Cloudflare Worker Proxy',
       ia_c2_desc: 'As mensagens vão direto para o Worker em produção com validação de origem (CORS) e limite de histórico. A chave da API permanece protegida nos Secrets da Cloudflare, nunca exposta no navegador.',
       ia_c3_num: '03 / INFERÊNCIA & FALLBACK',
-      ia_c3_title: 'Groq Llama 3.3 70B Free Tier',
-      ia_c3_desc: 'Inferência ultrarrápida com llama-3.3-70b-versatile via API da Groq. Se a cota gratuita (429) ou a rede oscilar, o chat alterna automaticamente para o Modo Amigo Local sem interromper o papo.',
+      ia_c3_title: 'Groq Free Tier (GPT-OSS 120B)',
+      ia_c3_desc: 'Inferência ultrarrápida com openai/gpt-oss-120b e fallback automático de modelos via API da Groq. Se a cota gratuita (429) ou a rede oscilar, o chat alterna para o Modo Amigo Local sem interromper o papo.',
       ia_repo_link: 'Ver código-fonte no GitHub (dedss22/i-amigo) ↗',
       ia_cta_label: '02 • Próximo Passo',
       ia_cta_title: 'Quer integrar IA, automações ou uma experiência sob medida no seu site?',
@@ -65,8 +65,8 @@
       ia_send_label: 'Send message',
       ia_hint_enter: 'Enter sends',
       ia_hint_shift: 'Shift+Enter new line',
-      ia_badge_online: 'Groq Online • Llama 3.3',
-      ia_badge_online_title: 'Connected to Groq Llama 3.3 70B via Cloudflare Worker',
+      ia_badge_online: 'Groq Online • GPT-OSS 120B',
+      ia_badge_online_title: 'Connected to Groq AI (GPT-OSS 120B) via Cloudflare Worker',
       ia_badge_local: 'Local Friend Mode',
       ia_badge_local_title: 'Replying locally in the browser',
       ia_typing_label: 'I.Amigo is typing',
@@ -90,8 +90,8 @@
       ia_c2_title: 'Cloudflare Worker Proxy',
       ia_c2_desc: 'Messages go directly to the production Worker with strict origin validation (CORS) and history trimming. The API key stays protected inside Cloudflare Secrets, never exposed in the browser.',
       ia_c3_num: '03 / INFERENCE & FALLBACK',
-      ia_c3_title: 'Groq Llama 3.3 70B Free Tier',
-      ia_c3_desc: 'Ultra-low-latency inference powered by llama-3.3-70b-versatile on Groq. If the free tier hits 429 or the network drops, the chat gracefully transitions to Local Friend Mode without breaking flow.',
+      ia_c3_title: 'Groq Free Tier (GPT-OSS 120B)',
+      ia_c3_desc: 'Ultra-low-latency inference powered by openai/gpt-oss-120b on Groq with automatic model fallback. If the free tier hits 429 or the network drops, the chat gracefully transitions to Local Friend Mode without breaking flow.',
       ia_repo_link: 'View source code on GitHub (dedss22/i-amigo) ↗',
       ia_cta_label: '02 • Next Step',
       ia_cta_title: 'Want to integrate AI, automations or a custom experience into your website?',
