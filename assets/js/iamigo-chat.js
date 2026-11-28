@@ -27,6 +27,9 @@
       ia_badge_online_title: 'Conectado ao Groq AI (GPT-OSS 120B) via Cloudflare Worker',
       ia_badge_local: 'Modo Amigo Local',
       ia_badge_local_title: 'Respondendo localmente no navegador',
+      ia_badge_rest: 'Descansando rapidinho',
+      ia_badge_rest_title: 'Atingiu o limite gratuito momentâneo — volta em instantes',
+      ia_sleepy_reply: 'Ahh... deu um soninho!! Vou descansar um tempinho, volte daqui a pouquinho para a gente se falar mais! Adorei nossa conversa e gostaria muito de continuar sendo seu amigo! :)',
       ia_typing_label: 'I.Amigo está digitando',
       ia_greeting: 'Sou I.Amigo, sua I.A Amiga :). Vamos conversar sobre o que hoje?!',
       ia_contact_cta: 'Conversar com o André (sem compromisso) ↗',
@@ -69,6 +72,9 @@
       ia_badge_online_title: 'Connected to Groq AI (GPT-OSS 120B) via Cloudflare Worker',
       ia_badge_local: 'Local Friend Mode',
       ia_badge_local_title: 'Replying locally in the browser',
+      ia_badge_rest: 'Resting for a moment',
+      ia_badge_rest_title: 'Temporary free tier limit reached — back in a few moments',
+      ia_sleepy_reply: "Aww... I just got a little sleepy!! I'm going to rest for a short bit — come back in a few moments so we can talk more! I loved our chat and would really love to stay your friend! :)",
       ia_typing_label: 'I.Amigo is typing',
       ia_greeting: "I'm I.Amigo, your friendly A.I :). What should we talk about today?!",
       ia_contact_cta: 'Chat with André (no strings attached) ↗',
@@ -144,11 +150,20 @@
     if (!modeBadgeEl || !modeBadgeTextEl) return;
     var t = getCopy(state.lang);
     var isOnline = state.connectionMode === 'online';
+    var isRest = state.connectionMode === 'rest';
 
     modeBadgeEl.classList.toggle('iamigo-badge--online', isOnline);
     modeBadgeEl.classList.toggle('iamigo-badge--local', !isOnline);
-    modeBadgeTextEl.textContent = isOnline ? t.ia_badge_online : t.ia_badge_local;
-    modeBadgeEl.title = isOnline ? t.ia_badge_online_title : t.ia_badge_local_title;
+    if (isOnline) {
+      modeBadgeTextEl.textContent = t.ia_badge_online;
+      modeBadgeEl.title = t.ia_badge_online_title;
+    } else if (isRest) {
+      modeBadgeTextEl.textContent = t.ia_badge_rest;
+      modeBadgeEl.title = t.ia_badge_rest_title;
+    } else {
+      modeBadgeTextEl.textContent = t.ia_badge_local;
+      modeBadgeEl.title = t.ia_badge_local_title;
+    }
   }
 
   function syncLanguageUI(newLang) {
@@ -865,6 +880,13 @@
       updateModeBadge();
       replyObj = {
         text: result.text,
+        includeContactLink: false
+      };
+    } else if (result && result.reason === 'rate-limit') {
+      state.connectionMode = 'rest';
+      updateModeBadge();
+      replyObj = {
+        text: t.ia_sleepy_reply,
         includeContactLink: false
       };
     } else {
