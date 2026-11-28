@@ -27,11 +27,11 @@
     pt: {
       guia: [
         'Clique em <strong>“Entrar na demonstração”</strong>. Não tem senha: você entra como o dono.',
-        'Clique em <strong>“Criar novo imóvel”</strong>, preencha título, destino, tipo e preço e <strong>salve o rascunho</strong>. Depois, se quiser, adicione uma foto do seu computador (ela não sai do navegador).',
-        'Mude a situação para <strong>Publicado</strong> (botão “Publicar” no formulário) e, na lista, clique em <strong>“Publicar no site”</strong>. Veja as etapas do build.',
+        'Clique em <strong>“Criar novo imóvel”</strong>: o formulário já vem com um <strong>exemplo preenchido</strong>. Mude o que quiser e clique em <strong>Publicar</strong>. Siga os balões amarelos dentro do painel.',
+        'Volte para a lista e clique em <strong>“Publicar no site”</strong>. Veja as etapas do build: se algo falhar, o site anterior continua no ar.',
         'Esta é a prévia do site. O imóvel que você publicou aparece aqui com o selo <strong>Novo</strong>.',
-        'Agora você é o visitante: escolha a <strong>entrada</strong> e a <strong>saída</strong> no calendário e clique em <strong>“Fazer pré-reserva”</strong>.',
-        'De volta ao painel: na <strong>Agenda geral</strong>, escolha “Próximos 30 dias” ou “Próximos 90 dias” e clique na faixa amarela tracejada para ver a <strong>validade</strong> da pré-reserva.',
+        'Agora você é o visitante: as datas já vêm sugeridas. Mude se quiser e clique em <strong>“Fazer pré-reserva”</strong>.',
+        'De volta ao painel: a <strong>Agenda geral</strong> já abre no período certo. Clique na faixa tracejada da sua pré-reserva para ver a <strong>validade</strong>.',
         'Esta é a planilha que o dono baixa. A sua pré-reserva aparece em amarelo. Clique em <strong>“Baixar .xlsx”</strong> para abrir no Excel.'
       ],
       ok: 'Feito!', passo: 'Passo', de: 'de', concluidos: 'concluídos', fim: 'Pronto! Você fez o ciclo completo do dono: cadastrou, publicou, recebeu uma pré-reserva e conferiu a planilha.',
@@ -41,11 +41,11 @@
     en: {
       guia: [
         'Click <strong>“Entrar na demonstração”</strong> (enter the demo). No password: you sign in as the owner.',
-        'Click <strong>“Criar novo imóvel”</strong> (new listing), fill in title, destination, type and price and <strong>save the draft</strong>. Optionally add a photo from your computer (it never leaves your browser).',
-        'Set it to <strong>Published</strong> (the “Publicar” button in the form), then click <strong>“Publicar no site”</strong> (publish to site) in the list and watch the build steps.',
+        'Click <strong>“Criar novo imóvel”</strong> (new listing): the form comes <strong>pre-filled with an example</strong>. Change anything you like and click <strong>Publicar</strong> (publish). Follow the yellow balloons inside the panel.',
+        'Go back to the list and click <strong>“Publicar no site”</strong> (publish to site). Watch the build steps: if anything fails, the previous site stays online.',
         'This is the website preview. The listing you published shows up here with a <strong>Novo</strong> (new) badge.',
-        'Now you are the guest: pick <strong>check-in</strong> and <strong>check-out</strong> dates and click <strong>“Fazer pré-reserva”</strong> (pre-book).',
-        'Back in the panel: in the <strong>Agenda geral</strong> (combined calendar), pick “Próximos 30 dias” and click the dashed yellow bar to see the pre-booking <strong>expiry</strong>.',
+        'Now you are the guest: dates are already suggested. Change them if you like and click <strong>“Fazer pré-reserva”</strong> (pre-book).',
+        'Back in the panel: the <strong>Agenda geral</strong> (combined calendar) already opens on the right period. Click your dashed pre-booking bar to see its <strong>expiry</strong>.',
         'This is the spreadsheet the owner downloads. Your pre-booking appears in yellow. Click <strong>“Baixar .xlsx”</strong> to open it in Excel.'
       ],
       ok: 'Done!', passo: 'Step', de: 'of', concluidos: 'completed', fim: 'All set! You went through the owner’s full cycle: added a listing, published it, received a pre-booking and checked the spreadsheet.',
@@ -74,6 +74,14 @@
     var raiz = document.getElementById('cassiano-sandbox');
     if (!raiz || raiz.getAttribute('data-pronto')) return;
     raiz.setAttribute('data-pronto', '1');
+    // Cada visita nova (aba nova do navegador) começa com os dados de demonstração limpos.
+    try {
+      if (!sessionStorage.getItem('cassiano-sandbox:sessao')) {
+        localStorage.removeItem(CHAVE);
+        ['cassiano-sandbox:guia-off', 'cassiano-sandbox:guia-vistos', 'cassiano-sandbox:guia-festa'].forEach(function (k) { sessionStorage.removeItem(k); });
+        sessionStorage.setItem('cassiano-sandbox:sessao', '1');
+      }
+    } catch (e) { /* armazenamento bloqueado: segue com o que houver */ }
     var palco = raiz.querySelector('.csb-palco'), url = raiz.querySelector('[data-csb-url]');
     var abas = Array.prototype.slice.call(raiz.querySelectorAll('.csb-tab'));
     var frames = {}, atual = null, tourAtivo = false, passoAtual = 0;
