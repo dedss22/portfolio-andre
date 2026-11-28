@@ -454,6 +454,29 @@
   color: #E0F2FE;
 }
 
+/* Subtle bilingual EN-mode coaching pills shown ONLY when EN is active and visitor writes in PT */
+.iamigo-bubble-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.iamigo-bubble-actions[hidden] {
+  display: none;
+}
+
+.iamigo-bubble-actions .iamigo-subtle-link {
+  font-family: inherit;
+  line-height: 1.3;
+  cursor: pointer;
+  text-align: left;
+  max-width: 100%;
+}
+
 /* Typing indicator */
 .iamigo-typing {
   display: inline-flex;
@@ -743,6 +766,11 @@
   .iamigo-btn-ghost {
     padding: 6px 9px;
     font-size: 0.73rem;
+  }
+
+  .iamigo-bubble-actions .iamigo-subtle-link {
+    font-size: 0.775rem;
+    padding: 5px 10px;
   }
 }
 
