@@ -541,6 +541,8 @@
   // ------------------------------------------------------------------ faixa de demonstracao nas telas do painel
   function faixa() {
     if (!document.body || !document.body.hasAttribute('data-sandbox-faixa') && !/\/admin\//.test(location.pathname)) return;
+    // Dentro da moldura do portfólio o aviso (e o botão de restaurar) já aparecem uma vez na página: não repetir.
+    if (window.parent !== window) return;
     var f = document.createElement('div');
     f.className = 'sbx-faixa'; f.setAttribute('role', 'note');
     var t = document.createElement('span');
