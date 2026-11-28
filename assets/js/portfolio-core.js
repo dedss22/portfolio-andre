@@ -43,6 +43,10 @@
       pt: 'Sistema de Gestão de Compras — Paralelo 17 | André Carvalho',
       en: 'Purchasing Management System — Paralelo 17 | André Carvalho'
     },
+    iamigo: {
+      pt: 'I.Amigo — Sua I.A Amiga! | André Carvalho',
+      en: 'I.Amigo — Your Friendly A.I! | André Carvalho'
+    },
     notfound: {
       pt: 'Página não encontrada — André Carvalho',
       en: 'Page not found — André Carvalho'
@@ -62,6 +66,7 @@
       nav_contact: 'Contato',
       contact: 'Contato',
       nav_compras: 'Compras — Paralelo 17',
+      nav_iamigo: 'I.Amigo',
       nav_success: 'Sucesso',
       nav_archive: 'Arquivo',
       nav_error: 'Erro',
@@ -87,6 +92,7 @@
       recent_work: 'Projetos Recentes',
       cassiano_subtitle_home: 'Plataforma imobiliária + painel administrativo',
       compras_subtitle_home: 'Paralelo 17 (Concierge) • Da dor real e desenho do fluxo ao sistema',
+      iamigo_subtitle_home: 'Chat com I.A amigável • Groq AI + Cloudflare Worker',
       view_project: 'Ver projeto',
       view_all_work: 'Ver todos os projetos',
       view_all_projects: 'Ver todos os projetos',
@@ -202,6 +208,9 @@
       compras_title: 'Sistema de Gestão de Compras — Paralelo 17',
       compras_location: 'Brasil (Sul da Bahia • Paralelo 17)',
       compras_services: 'Desenho de Fluxo & Full-Stack',
+      iamigo_title: 'I.Amigo — Sua I.A Amiga!',
+      iamigo_location: 'Web • Cloudflare Worker & Groq',
+      iamigo_services: 'IA Conversacional & Web App',
 
       // About
       about_hero_1: 'Resolvendo gargalos digitais',
@@ -298,6 +307,7 @@
       nav_contact: 'Contact',
       contact: 'Contact',
       nav_compras: 'Purchasing — Paralelo 17',
+      nav_iamigo: 'I.Amigo',
       nav_success: 'Success',
       nav_archive: 'Archive',
       nav_error: 'Error',
@@ -323,6 +333,7 @@
       recent_work: 'Recent Work',
       cassiano_subtitle_home: 'Real estate platform + admin panel',
       compras_subtitle_home: 'Paralelo 17 (Concierge) • Workflow design to production system',
+      iamigo_subtitle_home: 'Friendly A.I chat • Groq AI + Cloudflare Worker',
       view_project: 'View project',
       view_all_work: 'View all work',
       view_all_projects: 'View all work',
@@ -438,6 +449,9 @@
       compras_title: 'Purchasing Management System — Paralelo 17',
       compras_location: 'Brazil (Southern Bahia • Paralelo 17)',
       compras_services: 'Workflow Design & Full-Stack',
+      iamigo_title: 'I.Amigo — Your Friendly A.I!',
+      iamigo_location: 'Web • Cloudflare Worker & Groq',
+      iamigo_services: 'Conversational AI & Web App',
 
       // About
       about_hero_1: 'Fixing digital bottlenecks',
@@ -549,6 +563,7 @@
     const path = (window.location.pathname || '').toLowerCase();
     if (path.includes('cassiano-imoveis')) return 'cassiano';
     if (path.includes('gestao-de-compras')) return 'compras';
+    if (path.includes('i-amigo')) return 'iamigo';
     if (path.includes('work')) return 'work';
     if (path.includes('about')) return 'about';
     if (path.includes('contact')) return 'contact';
@@ -704,6 +719,7 @@
     let targetPage = null;
     if (lower.includes('cassiano-imoveis.html')) targetPage = 'cassiano';
     else if (lower.includes('gestao-de-compras.html')) targetPage = 'compras';
+    else if (lower.includes('i-amigo.html')) targetPage = 'iamigo';
     else if (lower.includes('work.html')) targetPage = 'work';
     else if (lower.includes('about.html')) targetPage = 'about';
     else if (lower.includes('contact.html')) targetPage = 'contact';
