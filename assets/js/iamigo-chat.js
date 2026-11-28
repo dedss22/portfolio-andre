@@ -636,10 +636,57 @@
   }
 
   function scrollToBottom() {
-    messagesEl.scrollTo({
-      top: messagesEl.scrollHeight,
-      behavior: 'smooth'
+    var apply = function () {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    };
+    apply();
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(function () {
+        apply();
+        window.setTimeout(apply, 60);
+      });
+    }
+  }
+
+  function appendInlineMarkdown(targetEl, rawText) {
+    var tokenRe = /(\*\*[^*]+\*\*|\*[^*\n]+\*)/g;
+    var lastIdx = 0;
+    var match;
+    while ((match = tokenRe.exec(rawText)) !== null) {
+      if (match.index > lastIdx) {
+        targetEl.appendChild(document.createTextNode(rawText.slice(lastIdx, match.index)));
+      }
+      var token = match[0];
+      if (token.slice(0, 2) === '**' && token.slice(-2) === '**') {
+        var strong = document.createElement('strong');
+        strong.textContent = token.slice(2, -2);
+        targetEl.appendChild(strong);
+      } else {
+        var em = document.createElement('em');
+        em.textContent = token.slice(1, -1);
+        targetEl.appendChild(em);
+      }
+      lastIdx = match.index + token.length;
+    }
+    if (lastIdx < rawText.length) {
+      targetEl.appendChild(document.createTextNode(rawText.slice(lastIdx)));
+    }
+  }
+
+  function appendFormattedParagraph(targetEl, block) {
+    var lines = String(block || '').split(/\n/);
+    lines.forEach(function (line, idx) {
+      if (idx > 0) {
+        targetEl.appendChild(document.createElement('br'));
+      }
+      appendInlineMarkdown(targetEl, line);
     });
+  }
+
+  function cleanRepeatedGreeting(replyText) {
+    var cleaned = String(replyText || '').trim();
+    cleaned = cleaned.replace(/^(?:Sou I\.Amigo,\s*sua I\.A Amiga\s*:?\)?\.?\s*(?:Vamos conversar sobre o que hoje\?!)?\s*)/i, '');
+    return cleaned.trim() || String(replyText || '').trim();
   }
 
   function createMessageBubble(role, text, options) {
@@ -672,12 +719,12 @@
     var paragraphs = String(text || '').split(/\n{2,}/).filter(Boolean);
     if (paragraphs.length === 0) {
       var p = document.createElement('p');
-      p.textContent = text;
+      appendFormattedParagraph(p, text);
       bubble.appendChild(p);
     } else {
       paragraphs.forEach(function (block) {
         var p = document.createElement('p');
-        p.textContent = block.trim();
+        appendFormattedParagraph(p, block.trim());
         bubble.appendChild(p);
       });
     }
@@ -740,7 +787,7 @@
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
     var timeoutId = window.setTimeout(function () {
       if (controller) controller.abort();
-    }, 18000);
+    }, 26000);
 
     var payload = {
       messages: history.slice(-16).map(function (msg) {
@@ -773,7 +820,7 @@
           }
           return {
             ok: true,
-            text: data.reply.trim()
+            text: cleanRepeatedGreeting(data.reply)
           };
         });
       })

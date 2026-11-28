@@ -27,7 +27,10 @@
 }
 
 .iamigo-hero-section .container.medium {
-  max-width: 1040px;
+  width: 100%;
+  max-width: 1360px;
+  padding-left: clamp(14px, 3vw, 44px);
+  padding-right: clamp(14px, 3vw, 44px);
 }
 
 /* Compact Breadcrumb + Title Bar above the fold */
@@ -78,8 +81,8 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: clamp(460px, calc(100dvh - 188px), 620px);
-  min-height: 440px;
+  height: clamp(500px, calc(100dvh - 165px), 690px);
+  min-height: 460px;
   background:
     radial-gradient(520px circle at 12% 0%, rgba(56, 189, 248, 0.08), transparent 62%),
     radial-gradient(480px circle at 92% 100%, rgba(2, 132, 199, 0.1), transparent 65%),
@@ -300,8 +303,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 6px 4px 12px;
-  scroll-behavior: smooth;
+  padding: 6px 8px 16px;
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.26) transparent;
 }
@@ -365,13 +367,23 @@
 }
 
 .iamigo-bubble {
-  max-width: min(640px, 84%);
-  padding: 13px 17px;
+  max-width: min(820px, 84%);
+  padding: 13px 18px;
   border-radius: 20px;
   font-size: 0.96875rem;
   line-height: 1.56;
   word-wrap: break-word;
   overflow-wrap: anywhere;
+}
+
+.iamigo-bubble strong {
+  font-weight: 650;
+  color: #FFFFFF;
+}
+
+.iamigo-bubble em {
+  font-style: italic;
+  color: #E2E8F0;
 }
 
 .iamigo-msg--assistant .iamigo-bubble {
