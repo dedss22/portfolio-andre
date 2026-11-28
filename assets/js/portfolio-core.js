@@ -524,6 +524,17 @@
     }
   };
 
+  /* Per-page dictionaries: a page can load assets/js/i18n-<page>.js (before this file)
+     that pushes { titles: {key: {pt, en}}, dict: {pt: {...}, en: {...}} } into
+     window.PORTFOLIO_I18N_EXT, so new case studies never need to edit this file. */
+  (Array.isArray(window.PORTFOLIO_I18N_EXT) ? window.PORTFOLIO_I18N_EXT : []).forEach(function (ext) {
+    if (!ext) return;
+    ['pt', 'en'].forEach(function (l) {
+      if (ext.dict && ext.dict[l]) Object.assign(DICT[l], ext.dict[l]);
+    });
+    if (ext.titles) Object.assign(PAGE_TITLES, ext.titles);
+  });
+
   function getSavedLang() {
     try {
       return localStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'pt';
