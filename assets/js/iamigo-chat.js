@@ -61,17 +61,18 @@
     en: {
       doc_title: 'I.Amigo — Your Friendly A.I! | André Carvalho',
       ia_page_title: 'I.Amigo — Your Friendly A.I!',
-      ia_tagline: 'Your Friendly A.I!',
+      ia_tagline: 'Your Friendly A.I • English Mode',
+      ia_tagline_title: 'Dedicated English persona — switch PT | EN anytime to chat in Portuguese',
       ia_new_chat: 'New chat',
       ia_input_label: 'Type your message to I.Amigo',
-      ia_input_placeholder: 'Write anything to chat...',
+      ia_input_placeholder: 'Write anything to chat in English...',
       ia_send_label: 'Send message',
       ia_hint_enter: 'Enter sends',
       ia_hint_shift: 'Shift+Enter new line',
       ia_badge_online: 'Groq Online • GPT-OSS 120B',
-      ia_badge_online_title: 'Connected to Groq AI (GPT-OSS 120B) via Cloudflare Worker',
+      ia_badge_online_title: 'Connected to Groq AI (GPT-OSS 120B) in English Mode via Cloudflare Worker',
       ia_badge_local: 'Local Friend Mode',
-      ia_badge_local_title: 'Replying locally in the browser',
+      ia_badge_local_title: 'Replying locally in English Mode in the browser',
       ia_badge_rest: 'Resting for a moment',
       ia_badge_rest_title: 'Temporary free tier limit reached — back in a few moments',
       ia_sleepy_reply: "Aww... I just got a little sleepy!! I'm going to rest for a short bit — come back in a few moments so we can talk more! I loved our chat and would really love to stay your friend! :)",
@@ -179,6 +180,15 @@
       }
     });
 
+    var taglineEl = document.querySelector('.iamigo-tagline');
+    if (taglineEl) {
+      if (t.ia_tagline_title) {
+        taglineEl.title = t.ia_tagline_title;
+      } else {
+        taglineEl.removeAttribute('title');
+      }
+    }
+
     chatInputEl.placeholder = t.ia_input_placeholder;
     sendBtnEl.setAttribute('aria-label', t.ia_send_label);
     sendBtnEl.title = t.ia_send_label;
@@ -205,9 +215,14 @@
       }
     }
 
-    // Update any subtle contact CTA labels already rendered
-    messagesEl.querySelectorAll('.iamigo-subtle-link').forEach(function (link) {
+    // Update only contact CTA links without touching EN->PT coach action pills
+    messagesEl.querySelectorAll('.iamigo-subtle-link[data-ia-contact-cta]').forEach(function (link) {
       link.textContent = t.ia_contact_cta;
+    });
+
+    // Show EN->PT coach pills only while the interface is in EN mode
+    messagesEl.querySelectorAll('.iamigo-bubble-actions').forEach(function (wrap) {
+      wrap.hidden = state.lang !== 'en';
     });
 
     updateModeBadge();
@@ -228,6 +243,14 @@
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  function looksLikePortuguese(text) {
+    var raw = String(text || '');
+    if (!raw.trim()) return false;
+    if (/[ãõç]/i.test(raw)) return true;
+    var norm = normalizeText(raw);
+    return /\b(oi|ola|tudo bem|como vai|voce|vc|falar|quero|nao|sim|obrigado|obrigada|bom dia|boa tarde|boa noite|portugues|entendi|pra|comigo|porque|tambem)\b/.test(norm);
   }
 
   function pickFreshVariant(category, variants) {
@@ -280,6 +303,16 @@
       state.memory.lastTopic = 'greeting';
       return {
         text: 'Nice to meet you, ' + newName + '! Tell me, what is on your mind today?'
+      };
+    }
+
+    if (/\b(practice english|teach me.*phrase|everyday phrase|learn english)\b/.test(norm)) {
+      state.memory.lastTopic = 'english-practice';
+      return {
+        text: pickFreshVariant('en-practice-phrase', [
+          'Awesome! Here is a super useful everyday phrase: **"How\'s it going?"** — it\'s a friendly, natural way to say *"How are you?"*.\n\nIf someone asks *"How\'s it going?"*, you can simply reply: *"Pretty good! How about you?"* Want to try answering me right now? **Hey! How\'s it going today?**',
+          'Let\'s do it! Try this natural everyday phrase: **"I\'m down for that!"** — it means *"I\'m in / I\'d love to!"*.\n\nFor example: *"Want to grab a coffee?"* — *"Yeah, I\'m down for that!"* Can you try writing a short sentence using **"I\'m down"**?'
+        ])
       };
     }
 
@@ -632,8 +665,21 @@
 
   function generateLocalReply(userText) {
     var norm = normalizeText(userText);
-    var looksEnglish = state.lang === 'en' && !/\b(oi|ola|tudo bem|voce|dia|musica|filme|projeto|obrigado)\b/.test(norm);
-    if (looksEnglish || /\b(how was your day|recommend a song|random curiosity|bring a project idea)\b/.test(norm)) {
+    if (state.lang === 'en') {
+      if (looksLikePortuguese(userText)) {
+        state.memory.lastTopic = 'english-coach';
+        return {
+          text: pickFreshVariant('en-pt-coach', [
+            'Opa! I noticed you wrote in Portuguese! In **EN** mode, I am tuned to chat **100% in English** with you.\n\nIf you prefer Portuguese, you can switch the whole page back to **PT** below. Or, if you want to **practice English together right now**, try this easy starter phrase: *"Hi I.Amigo! My day is going great — how about yours?"*',
+            'Hey! Looks like you wrote in Portuguese! In **EN** mode, I\'m your dedicated English-speaking buddy.\n\nYou can switch the page to **PT** anytime using the button below, or stay here to **practice English**! Try saying: *"I\'m doing well today! Let\'s talk about music or coffee."* Ready when you are!'
+          ]),
+          includeLangCoachActions: true
+        };
+      }
+      return generateLocalReplyEn(userText, norm);
+    }
+
+    if (/\b(how was your day|recommend a song|random curiosity|bring a project idea)\b/.test(norm)) {
       return generateLocalReplyEn(userText, norm);
     }
     return generateLocalReplyPt(userText, norm);
@@ -701,6 +747,7 @@
   function cleanRepeatedGreeting(replyText) {
     var cleaned = String(replyText || '').trim();
     cleaned = cleaned.replace(/^(?:Sou I\.Amigo,\s*sua I\.A Amiga\s*:?\)?\.?\s*(?:Vamos conversar sobre o que hoje\?!)?\s*)/i, '');
+    cleaned = cleaned.replace(/^(?:I['’]m I\.Amigo,\s*your friendly A\.I\s*:?\)?\.?\s*(?:What should we talk about today\?!)?\s*)/i, '');
     return cleaned.trim() || String(replyText || '').trim();
   }
 
@@ -752,10 +799,42 @@
       link.className = 'iamigo-subtle-link';
       link.href = CONTACT_URL;
       link.setAttribute('data-barba-prevent', '');
+      link.setAttribute('data-ia-contact-cta', 'true');
       link.textContent = t.ia_contact_cta;
 
       linkWrap.appendChild(link);
       bubble.appendChild(linkWrap);
+    }
+
+    if (role === 'assistant' && opts.includeLangCoachActions && state.lang === 'en') {
+      var actionsWrap = document.createElement('div');
+      actionsWrap.className = 'iamigo-bubble-actions';
+
+      var switchPtBtn = document.createElement('button');
+      switchPtBtn.type = 'button';
+      switchPtBtn.className = 'iamigo-subtle-link iamigo-action-switch-pt';
+      switchPtBtn.textContent = 'Mudar para Português (PT)';
+      switchPtBtn.addEventListener('click', function () {
+        if (typeof window.portfolioSetLanguage === 'function') {
+          window.portfolioSetLanguage('pt');
+        } else {
+          var ptBtn = document.querySelector('.nav-bar .lang-switch .btn-pt');
+          if (ptBtn) ptBtn.click();
+        }
+      });
+
+      var practiceEnBtn = document.createElement('button');
+      practiceEnBtn.type = 'button';
+      practiceEnBtn.className = 'iamigo-subtle-link iamigo-action-practice-en';
+      practiceEnBtn.textContent = 'Praticar Inglês aqui! / Practice English';
+      practiceEnBtn.addEventListener('click', function () {
+        if (state.isBusy) return;
+        handleSendMessage("Awesome! Let's practice English together. Can you teach me a cool everyday phrase?");
+      });
+
+      actionsWrap.appendChild(switchPtBtn);
+      actionsWrap.appendChild(practiceEnBtn);
+      bubble.appendChild(actionsWrap);
     }
 
     row.appendChild(bubble);
@@ -805,6 +884,7 @@
     }, 26000);
 
     var payload = {
+      lang: state.lang === 'en' ? 'en' : 'pt',
       messages: history.slice(-16).map(function (msg) {
         return {
           role: msg.role,
@@ -868,6 +948,9 @@
     state.messages.push({ role: 'user', content: text });
     createMessageBubble('user', text);
 
+    var activeLang = state.lang === 'en' ? 'en' : 'pt';
+    var showLangCoachActions = activeLang === 'en' && looksLikePortuguese(text);
+
     var typingNode = createTypingIndicator();
     var result = await requestWorkerReply(state.messages);
 
@@ -880,14 +963,16 @@
       updateModeBadge();
       replyObj = {
         text: result.text,
-        includeContactLink: false
+        includeContactLink: false,
+        includeLangCoachActions: showLangCoachActions
       };
     } else if (result && result.reason === 'rate-limit') {
       state.connectionMode = 'rest';
       updateModeBadge();
       replyObj = {
         text: t.ia_sleepy_reply,
-        includeContactLink: false
+        includeContactLink: false,
+        includeLangCoachActions: showLangCoachActions
       };
     } else {
       state.connectionMode = 'local';
@@ -902,6 +987,7 @@
     state.messages.push({ role: 'assistant', content: replyObj.text });
     createMessageBubble('assistant', replyObj.text, {
       includeContactLink: Boolean(replyObj.includeContactLink),
+      includeLangCoachActions: Boolean(replyObj.includeLangCoachActions || showLangCoachActions),
       fallbackNote: fallbackNote
     });
 
